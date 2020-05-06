@@ -1,0 +1,15 @@
+#!/bin/sh
+#
+# @name DJI F550 SITL
+#
+# @type Hexacopter x
+#
+# @maintainer Vojtech Spurny <vojtech.spurny@fel.cvut.cz>
+#
+
+sh /etc/init.d/rc.mc_defaults
+
+set MAV_TYPE 13
+
+set MIXER hexa_x
+

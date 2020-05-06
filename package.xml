@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>mrs_simulation</name>
+  <version>1.0.0</version>
+  <description>This package contains scripts for spawning of vehicles</description>
+
+  <maintainer email="vojtech.spurny@fel.cvut.cz">Vojtech Spurny</maintainer>
+
+  <license>free of charge</license>
+
+  <author email="vojtech.spurny@fel.cvut.cz">Vojtech Spurny</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>rospy</build_depend>
+  <depend>gazebo</depend>
+  <depend>gazebo_ros</depend>
+  <depend>px4</depend>
+  <depend>mavlink_sitl_gazebo</depend>
+  <depend>mrs_gazebo_common_resources</depend>
+
+  <export>
+    <!-- gazebo_ros_paths_plugin automatically adds these to
+      GAZEBO_PLUGIN_PATH and GAZEBO_MODEL_PATH when you do this export inside
+      the package.xml file. You can than use URIs of type model://my_package/stuff. -->
+    <gazebo_ros gazebo_model_path="${prefix}/models"/>
+    <gazebo_ros gazebo_media_path="${prefix}"/>
+  </export>
+
+</package>

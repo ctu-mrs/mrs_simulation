@@ -1,0 +1,14 @@
+#!/bin/sh
+#
+# @name Eagle.One Mk2 SITL
+#
+# @type Octocopter x
+#
+# @maintainer Tomas Baca <tomas.baca@fel.cvut.cz>
+#
+
+sh /etc/init.d/rc.mc_defaults
+
+set MAV_TYPE 14
+
+set MIXER octo_x_reversed
