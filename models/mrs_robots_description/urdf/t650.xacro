@@ -954,6 +954,25 @@
   </xacro:if>
   <!--}-->
 
+  <!-- Servo camera {-->
+  <xacro:if value="$(arg enable_servo_camera)">
+    <xacro:servo_camera_macro
+      namespace="${namespace}"
+      name="servo_camera_macro"
+      parent="base_link"
+      offset_x="0.2"
+      offset_y="0.0"
+      offset_z="-0.10"
+      offset_roll="0.0"
+      offset_yaw="0.0"
+      offset_pitch="0.0"
+      max_pitch_rate="0.1"
+      camera_type="servo_camera"
+      update_rate="30.0">
+    </xacro:servo_camera_macro>
+  </xacro:if>
+  <!--}-->
+
   <!-- ========================== other sensors ========================= -->
 
   <!-- Teraranger Tower Evo {-->
@@ -1072,6 +1091,25 @@
       f2="$(arg uvled_fr_r)"
       namespace="${namespace}"
       parent_link="base_link"/>
+  </xacro:if>
+  <!--}-->
+
+  <!-- Light {-->
+  <xacro:if value="$(arg enable_light)">
+    <xacro:light_macro
+      namespace="${namespace}"
+      name="light_macro"
+      parent="base_link"
+      offset_x="0.2"
+      offset_y="0.0"
+      offset_z="-0.10"
+      offset_roll="0.0"
+      offset_yaw="0.0"
+      offset_pitch="0.0"
+      max_pitch_rate="0.1"
+      initial_on="1"
+      update_rate="30.0">
+    </xacro:light_macro>
   </xacro:if>
   <!--}-->
 

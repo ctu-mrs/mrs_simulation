@@ -1891,7 +1891,7 @@ limitations under the License.
         </visual>
       </link>
       <gazebo>
-        <plugin name="servo_camera_plugin" filename="libservo_camera_plugin.so">
+        <plugin name="servo_camera_plugin" filename="libMRSGazeboServoCameraPlugin.so">
           <offset_x>${offset_x}</offset_x>
           <offset_y>${offset_y}</offset_y>
           <offset_z>${offset_z}</offset_z>
@@ -2230,7 +2230,7 @@ limitations under the License.
         </visual>
       </link>
       <gazebo>
-        <plugin name="light_gazebo_plugin" filename="liblight_gazebo_plugin.so">
+        <plugin name="light_gazebo_plugin" filename="libMRSGazeboLightPlugin.so">
           <offset_x>${offset_x}</offset_x>
           <offset_y>${offset_y}</offset_y>
           <offset_z>${offset_z}</offset_z>
