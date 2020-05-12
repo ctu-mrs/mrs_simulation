@@ -25,5 +25,6 @@ cd ~/catkin_ws/src
 ln -s ~/simulation
 source /opt/ros/melodic/setup.bash
 cd ~/catkin_ws
+catkin init
 
 echo "install part ended"
