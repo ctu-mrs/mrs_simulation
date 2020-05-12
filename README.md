@@ -1,7 +1,17 @@
-# mrs_simulation repository
-Support for spawning vehicles into gazebo simulation.
+# MRS simulation 
+ 
+## Overview
+Support for spawning vehicles into Gazebo simulation, where user can select from multiple UAV platforms. 
+This platforms can be additionaly equipped with several sensors (rangefinders, 2d lidars, stereo cameras etc.).
 
-## 1. Start of the Gazebo simulator
+## Usage
+
+> :warning: **If you are not using this repository together with the [mrs_uav_core](https://github.com/ctu-mrs/uav_core) repository**: 
+>
+> * Alias `spawn_uav=rosrun mrs_simulation spawn` doesn't exist for you and then you have to write the whole command!
+> * The autocompletion will not be available for you either.
+
+### Start of the Gazebo simulator
 
 To start the prepared example of Gazebo world call:
 
@@ -11,8 +21,8 @@ roslaunch simulation mrs_simulation.launch world_file:='$(find mrs_gazebo_common
 
 At this point the Gazebo world will only contain the environment with grass plane but with no vehicles yet.
 
-## 2. Spawning of UAVs 
-The command `rosrun mrs_simulation spawn` can be used to perform the following tasks:
+### Spawning of UAVs 
+The command `spawn_uav` can be used to perform the following tasks:
 
 * Spawn the vehicle models in the Gazebo simulation (ids from 1 - 250). This is done internally by calling service `/gazebo/spawn_sdf_model`.
   
@@ -24,14 +34,14 @@ The command `rosrun mrs_simulation spawn` can be used to perform the following t
 For the capability of the script see help:
 
 ```bash
-rosrun mrs_simulation spawn --help
+spawn_uav --help
 ```
 
 Not all sensors have to be available for selected type of uav (DJI f450, DJI f550, Tarot t650 and Eagle.one mk2). Please check possible settings for
 the selected type of UAV by calling command: 
 
 ```bash
-rosrun mrs_simulation spawn --$UAV_TYPE --available-sensors
+spawn_uav --$UAV_TYPE --available-sensors
 ```
 
 #### Spawning on single PC
@@ -39,13 +49,13 @@ rosrun mrs_simulation spawn --$UAV_TYPE --available-sensors
 An example for spawning the DJI F550 vehicle with id 1 and additional sensors, running generated launch file directly, and deleting models from gazebo simulation after closing the script.
 
 ```bash
-rosrun mrs_simulation spawn 1 --f550 --enable-bluefox-camera --enable-rangefinder --run --delete
+spawn_uav 1 --f550 --enable-bluefox-camera --enable-rangefinder --run --delete
 ```
 
 To spawn multiple vehicles use additional terminal windows/panels or chain the spawn commands by running the previous commands in background.
 
 ```bash
-rosrun mrs_simulation spawn 1 --f550 --run --delete --enable-rangefinder & rosrun mrs_simulation spawn 2 --f550 --run --delete --enable-rangefinder && fg
+spawn_uav 1 --f550 --run --delete --enable-rangefinder & spawn_uav 2 --f550 --run --delete --enable-rangefinder && fg
 ```
 
 Note that this approach will hide the output of all but one spawn script. A recommended practise to using multiple terminal panels.
@@ -65,8 +75,8 @@ In order to run a simulation distributed to multiple machines, these prerequisit
 * To spawn a vehicle from non-central machine with IP address `IP_ADDR`, extend the spawning example with parameter `--mavlink-address`, i.e.
 
 ```bash
-    rosrun mrs_simulation spawn 1 --enable-bluefox-camera --enable-rangefinder --run --delete --mavlink-address IP_ADDR
+    spawn_uav 1 --enable-bluefox-camera --enable-rangefinder --run --delete --mavlink-address IP_ADDR
 ```
 
-## 3. Running the MRS control pipeline
+### Running the MRS control pipeline
 Check out the wiki on [how to run control core](https://ctu-mrs.github.io/docs/simulation/howto.html#3-run-the-control-core).
