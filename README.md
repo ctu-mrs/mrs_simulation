@@ -1,7 +1,17 @@
-# mrs_simulation repository
-Support for spawning vehicles into gazebo simulation.
+# MRS simulation 
+ 
+## Overview
+Support for spawning vehicles into Gazebo simulation, where user can select from multiple UAV platforms. 
+This platforms can be additionaly equipped with several sensors (rangefinders, 2d lidars, stereo cameras etc.).
 
-## 1. Start of the Gazebo simulator
+## Usage
+
+> :warning: **If you are not using this repository together with the [mrs_uav_core](https://github.com/ctu-mrs/uav_core) repository**: 
+>
+> * Alias `spawn_uav=rosrun mrs_simulation spawn` doesn't exist for you and then you have to write the whole command!
+> * The autocompletion will not be available for you either.
+
+### Start of the Gazebo simulator
 
 To start the prepared example of Gazebo world call:
 
@@ -11,12 +21,7 @@ roslaunch simulation mrs_simulation.launch world_file:='$(find mrs_gazebo_common
 
 At this point the Gazebo world will only contain the environment with grass plane but with no vehicles yet.
 
-## 2. Spawning of UAVs 
-> :warning: **If you are not using this repository together with the [mrs_uav_core](https://github.com/ctu-mrs/uav_core) repository**: 
->
-> * Alias `spawn_uav=rosrun mrs_simulation spawn` doesn't exist for you and then you have to write the whole command!
-> * The autocompletion will not be available for you either.
-
+### Spawning of UAVs 
 The command `spawn_uav` can be used to perform the following tasks:
 
 * Spawn the vehicle models in the Gazebo simulation (ids from 1 - 250). This is done internally by calling service `/gazebo/spawn_sdf_model`.
@@ -73,5 +78,5 @@ In order to run a simulation distributed to multiple machines, these prerequisit
     spawn_uav 1 --enable-bluefox-camera --enable-rangefinder --run --delete --mavlink-address IP_ADDR
 ```
 
-## 3. Running the MRS control pipeline
+### Running the MRS control pipeline
 Check out the wiki on [how to run control core](https://ctu-mrs.github.io/docs/simulation/howto.html#3-run-the-control-core).
