@@ -12,7 +12,7 @@ roslaunch simulation mrs_simulation.launch world_file:='$(find mrs_gazebo_common
 At this point the Gazebo world will only contain the environment with grass plane but with no vehicles yet.
 
 ## 2. Spawning of UAVs 
-> :information_source: **If you are not using this repository together with the mrs_uav_core repository**: 
+> :warning: **If you are not using this repository together with the [mrs_uav_core](https://github.com/ctu-mrs/uav_core) repository**: 
 >
 > * Alias `spawn_uav=rosrun mrs_simulation spawn` doesn't exist for you and then you have to write the whole command!
 > * The autocompletion will not be available for you either.
