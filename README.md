@@ -1,4 +1,4 @@
-# MRS simulation 
+# MRS simulation [![Build Status](https://travis-ci.com/ctu-mrs/mrs_simulation.svg?branch=master)](https://travis-ci.com/ctu-mrs/mrs_simulation) 
  
 ## Overview
 Support for spawning vehicles into Gazebo simulation, where user can select from multiple UAV platforms. 
