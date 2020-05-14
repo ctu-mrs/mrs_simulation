@@ -146,6 +146,21 @@ def get_model_xacro_file(vehicle_type):
 
     return model_pathname, model_xml 
 
+def check_for_uvdar_package():
+
+    uvdar_pkg = "uvdar_gazebo_plugin"
+
+    try:
+        model_pkg_path = rospack.get_path(uvdar_pkg)
+    except rospkg.common.ResourceNotFound, e:
+         print_error("===================================================================================")
+         print_error("   Package \'%s\' was not found. " % uvdar_pkg)
+         print_error("   Note: This package is specific to the UVDAR project.")
+         print_error("===================================================================================")
+         sys.exit(3)
+
+    return
+
 def spawn_model(
         mav_sys_id, vehicle_type, tcp_port, udp_port, pose,
         ros_master_uri=None,
@@ -203,6 +218,9 @@ def spawn_model(
         os.environ[ROS_MASTER_URI] = ros_master_uri
 
     model_pathname, model_xml = get_model_xacro_file(vehicle_type)
+
+    if enable_uv_camera or enable_uv_leds or enable_uv_beacon:
+        check_for_uvdar_package()
 
     kwargs = {
         'mappings': {
