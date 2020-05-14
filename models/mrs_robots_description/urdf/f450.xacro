@@ -1161,28 +1161,28 @@
             parent_link="base_link"
             number="b1"
             frequency="${f}">
-            <origin xyz="0.01 0 ${height}-0.05" rpy="0 1.57079632679 0" />
+            <origin xyz="0.01 0 ${height}" rpy="0 1.57079632679 0" />
           </xacro:uvled_macro>
           <xacro:uvled_macro
             namespace="${namespace}"
             parent_link="base_link"
             number="b2"
             frequency="${f}">
-            <origin xyz="0 0.01 ${height}-0.05" rpy="0 1.57079632679 1.5708" />
+            <origin xyz="0 0.01 ${height}" rpy="0 1.57079632679 1.5708" />
           </xacro:uvled_macro>
           <xacro:uvled_macro
             namespace="${namespace}"
             parent_link="base_link"
             number="b3"
             frequency="${f}">
-            <origin xyz="-0.01 0 ${height}-0.05" rpy="0 1.57079632679 3.14159265359" />
+            <origin xyz="-0.01 0 ${height}" rpy="0 1.57079632679 3.14159265359" />
           </xacro:uvled_macro>
           <xacro:uvled_macro
             namespace="${namespace}"
             parent_link="base_link"
             number="b4"
             frequency="${f}">
-            <origin xyz="0 -0.01 ${height}-0.05" rpy="0 1.57079632679 -1.5708" />
+            <origin xyz="0 -0.01 ${height}" rpy="0 1.57079632679 -1.5708" />
           </xacro:uvled_macro>
         </xacro:macro>
   <!--}-->
