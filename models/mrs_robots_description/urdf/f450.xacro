@@ -1152,10 +1152,55 @@
   </xacro:macro>
   <!--}-->
 
+  <!-- UV led - beacon configuration {-->
+        <xacro:macro name="uvled_beacon"
+          params="height f namespace parent_link">
+          <!-- UV LED -->
+          <xacro:uvled_macro
+            namespace="${namespace}"
+            parent_link="base_link"
+            number="b1"
+            frequency="${f}">
+            <origin xyz="0.01 0 ${height}-0.05" rpy="0 1.57079632679 0" />
+          </xacro:uvled_macro>
+          <xacro:uvled_macro
+            namespace="${namespace}"
+            parent_link="base_link"
+            number="b2"
+            frequency="${f}">
+            <origin xyz="0 0.01 ${height}-0.05" rpy="0 1.57079632679 1.5708" />
+          </xacro:uvled_macro>
+          <xacro:uvled_macro
+            namespace="${namespace}"
+            parent_link="base_link"
+            number="b3"
+            frequency="${f}">
+            <origin xyz="-0.01 0 ${height}-0.05" rpy="0 1.57079632679 3.14159265359" />
+          </xacro:uvled_macro>
+          <xacro:uvled_macro
+            namespace="${namespace}"
+            parent_link="base_link"
+            number="b4"
+            frequency="${f}">
+            <origin xyz="0 -0.01 ${height}-0.05" rpy="0 1.57079632679 -1.5708" />
+          </xacro:uvled_macro>
+        </xacro:macro>
+  <!--}-->
+
   <xacro:if value="$(arg enable_uv_leds)">
     <xacro:uvled_quadrotor
       f1="$(arg uvled_fr_l)"
       f2="$(arg uvled_fr_r)"
+      namespace="${namespace}"
+      parent_link="base_link"/>
+  </xacro:if>
+  <!--}-->
+
+  <!-- UV led beacon {-->
+  <xacro:if value="$(arg enable_uv_leds_beacon)">
+    <xacro:uvled_beacon
+      height="$(arg uvled_beacon_height)"
+      f="$(arg uvled_beacon_f)"
       namespace="${namespace}"
       parent_link="base_link"/>
   </xacro:if>

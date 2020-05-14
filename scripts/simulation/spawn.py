@@ -171,6 +171,12 @@ def spawn():
         '--led-frequencies', nargs=2, type=int, default=(6,15),
         help='Specify UV LEDs frequencies (default: (6,15))')
     parser.add_argument(
+        '--enable-uv-beacon', action = 'store_true',
+        help='Add UV LED beacon on the top of the vehicle (default: false)')
+    parser.add_argument(
+        '--beacon-frequency', nargs=1, type=int, default=[30],
+        help='The frequency of blinking of the UV Beacon')
+    parser.add_argument(
         '--enable-uv-camera', action = 'store_true',
         help='Add UV camera on the vehicle (default: false)')
     parser.add_argument(
