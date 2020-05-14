@@ -205,7 +205,7 @@ def spawn_model(
         enable_uv_leds=False,
         uvled_fr_l=6,
         uvled_fr_r=15,
-        enable_uv_beacon=False,
+        enable_uv_leds_beacon=False,
         uvled_beacon_f=30,
         enable_uv_camera=False, 
         uvcam_calib_file="~/calib_results.txt",
@@ -272,9 +272,8 @@ def spawn_model(
     kwargs['mappings']['uvled_fr_l'] = uvled_fr_l
     kwargs['mappings']['uvled_fr_r'] = uvled_fr_r
 
-    kwargs['mappings']['enable_uv_leds_beacon'] = "true" if enable_uv_beacon else "false"
+    kwargs['mappings']['enable_uv_leds_beacon'] = "true" if enable_uv_leds_beacon else "false"
     kwargs['mappings']['uvled_beacon_f'] = uvled_beacon_f
-    kwargs['mappings']['uvled_beacon_height'] = "0.15"
 
     kwargs['mappings']['enable_uv_camera'] = "true" if enable_uv_camera else "false"
     kwargs['mappings']['uvcam_calib_file'] = uvcam_calib_file
