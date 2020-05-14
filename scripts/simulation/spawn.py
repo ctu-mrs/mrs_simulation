@@ -241,6 +241,7 @@ def spawn():
     ouster_model = args.ouster_model[0].upper()
 
     uvled_fr = args.led_frequencies
+    uvled_beacon_fr = args.beacon_frequency
     uvcam_calib = args.uv_camera_calibration_file
 
     if args.enable_uv_camera:
@@ -319,6 +320,8 @@ def spawn():
             enable_uv_leds = args.enable_uv_leds,
             uvled_fr_l = "{}".format(uvled_fr[0]),
             uvled_fr_r = "{}".format(uvled_fr[1]),
+            enable_uv_beacon = args.enable_uv_beacon,
+            uvled_beacon_f = "{}".format(uvled_beacon_fr[0]),
             enable_uv_camera = args.enable_uv_camera,
             uvcam_calib_file = uvcam_calib[0].strip(),
             debug=args.debug)
