@@ -219,7 +219,7 @@ def spawn_model(
 
     model_pathname, model_xml = get_model_xacro_file(vehicle_type)
 
-    if enable_uv_camera or enable_uv_leds or enable_uv_beacon:
+    if enable_uv_camera or enable_uv_leds or enable_uv_leds_beacon:
         check_for_uvdar_package()
 
     kwargs = {
