@@ -171,6 +171,12 @@ def spawn():
         '--led-frequencies', nargs=2, type=int, default=(6,15),
         help='Specify UV LEDs frequencies (default: (6,15))')
     parser.add_argument(
+        '--enable-uv-leds-beacon', action = 'store_true',
+        help='Add UV LED beacon on the top of the vehicle (default: false)')
+    parser.add_argument(
+        '--beacon-frequency', nargs=1, type=int, default=[30],
+        help='The frequency of blinking of the UV Beacon')
+    parser.add_argument(
         '--enable-uv-camera', action = 'store_true',
         help='Add UV camera on the vehicle (default: false)')
     parser.add_argument(
@@ -235,6 +241,7 @@ def spawn():
     ouster_model = args.ouster_model[0].upper()
 
     uvled_fr = args.led_frequencies
+    uvled_beacon_fr = args.beacon_frequency
     uvcam_calib = args.uv_camera_calibration_file
 
     if args.enable_uv_camera:
@@ -313,6 +320,8 @@ def spawn():
             enable_uv_leds = args.enable_uv_leds,
             uvled_fr_l = "{}".format(uvled_fr[0]),
             uvled_fr_r = "{}".format(uvled_fr[1]),
+            enable_uv_leds_beacon = args.enable_uv_leds_beacon,
+            uvled_beacon_f = "{}".format(uvled_beacon_fr[0]),
             enable_uv_camera = args.enable_uv_camera,
             uvcam_calib_file = uvcam_calib[0].strip(),
             debug=args.debug)

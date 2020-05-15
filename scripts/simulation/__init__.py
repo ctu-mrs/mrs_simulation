@@ -146,6 +146,21 @@ def get_model_xacro_file(vehicle_type):
 
     return model_pathname, model_xml 
 
+def check_for_uvdar_package():
+
+    uvdar_pkg = "uvdar_gazebo_plugin"
+
+    try:
+        model_pkg_path = rospack.get_path(uvdar_pkg)
+    except rospkg.common.ResourceNotFound, e:
+         print_error("===================================================================================")
+         print_error("   Package \'%s\' was not found. " % uvdar_pkg)
+         print_error("   Note: This package is specific to the UVDAR project.")
+         print_error("===================================================================================")
+         sys.exit(3)
+
+    return
+
 def spawn_model(
         mav_sys_id, vehicle_type, tcp_port, udp_port, pose,
         ros_master_uri=None,
@@ -190,6 +205,8 @@ def spawn_model(
         enable_uv_leds=False,
         uvled_fr_l=6,
         uvled_fr_r=15,
+        enable_uv_leds_beacon=False,
+        uvled_beacon_f=30,
         enable_uv_camera=False, 
         uvcam_calib_file="~/calib_results.txt",
         debug=False
@@ -201,6 +218,9 @@ def spawn_model(
         os.environ[ROS_MASTER_URI] = ros_master_uri
 
     model_pathname, model_xml = get_model_xacro_file(vehicle_type)
+
+    if enable_uv_camera or enable_uv_leds or enable_uv_leds_beacon:
+        check_for_uvdar_package()
 
     kwargs = {
         'mappings': {
@@ -251,6 +271,10 @@ def spawn_model(
     kwargs['mappings']['enable_uv_leds'] = "true" if enable_uv_leds else "false"
     kwargs['mappings']['uvled_fr_l'] = uvled_fr_l
     kwargs['mappings']['uvled_fr_r'] = uvled_fr_r
+
+    kwargs['mappings']['enable_uv_leds_beacon'] = "true" if enable_uv_leds_beacon else "false"
+    kwargs['mappings']['uvled_beacon_f'] = uvled_beacon_f
+
     kwargs['mappings']['enable_uv_camera'] = "true" if enable_uv_camera else "false"
     kwargs['mappings']['uvcam_calib_file'] = uvcam_calib_file
 
