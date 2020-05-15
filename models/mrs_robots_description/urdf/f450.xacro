@@ -1200,7 +1200,7 @@
 
   <xacro:if value="$(arg enable_uv_leds_beacon)">
     <xacro:uvled_beacon
-      height="$(arg uvled_beacon_height)"
+      height="0.15"
       f="$(arg uvled_beacon_f)"
       namespace="${namespace}"
       parent_link="base_link"/>
