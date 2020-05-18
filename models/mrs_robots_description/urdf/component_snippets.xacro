@@ -1798,7 +1798,7 @@ limitations under the License.
             <far>300</far>
           </clip>
         </camera>
-        <plugin name="thermal_camera_controller" filename="libmrs_gazebo_ros_thermal_camera.so">
+        <plugin name="thermal_camera_controller" filename="libMRSGazeboThermalCameraPlugin.so">
           <alwaysOn>true</alwaysOn>
           <cameraName>${camera_suffix}</cameraName>
           <updateRate>${frame_rate}</updateRate>
