@@ -180,7 +180,7 @@ def spawn():
         '--enable-uv-camera', action = 'store_true',
         help='Add UV camera on the vehicle (default: false)')
     parser.add_argument(
-        '--uv-camera-calibration-file', nargs=1, type=str, default=("~/calib_results.txt"),
+        '--uv-camera-calibration-file', nargs=1, type=str, default=("~/.ros/calib_results.txt"),
         help='Specify UV camera calibration different than default one')
     mbzirc_group = parser.add_mutually_exclusive_group()
     mbzirc_group.add_argument(
@@ -245,7 +245,7 @@ def spawn():
     uvcam_calib = args.uv_camera_calibration_file
 
     if args.enable_uv_camera:
-        print("Calibration file parameter is %s" %uvcam_calib)
+        print("UV camera calibration file is set to %s" %args.uv_camera_calibration_file)
     
     launch_snippet = ''
 

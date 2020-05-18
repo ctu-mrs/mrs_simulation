@@ -161,6 +161,22 @@ def check_for_uvdar_package():
 
     return
 
+def check_for_mrs_gazebo_extras_package():
+
+    pkg_name = "mrs_gazebo_extras_resources"
+
+    try:
+        model_pkg_path = rospack.get_path(pkg_name)
+    except rospkg.common.ResourceNotFound, e:
+         print_error("===================================================================================")
+         print_error("   Package \'%s\' was not found. " % pkg_name)
+         print_error("   Note: This package is not part of the basic simulation, because it depends on packages inside of the MRS System")
+         print_error("         However if you want to use it, the package is available at \"https://github.com/ctu-mrs/mrs_gazebo_extras_resources\".")
+         print_error("===================================================================================")
+         sys.exit(3)
+
+    return
+
 def spawn_model(
         mav_sys_id, vehicle_type, tcp_port, udp_port, pose,
         ros_master_uri=None,
@@ -221,6 +237,9 @@ def spawn_model(
 
     if enable_uv_camera or enable_uv_leds or enable_uv_leds_beacon:
         check_for_uvdar_package()
+
+    if enable_thermal_camera:
+        check_for_mrs_gazebo_extras_package()
 
     kwargs = {
         'mappings': {
