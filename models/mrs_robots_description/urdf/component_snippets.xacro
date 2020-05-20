@@ -2171,7 +2171,11 @@ limitations under the License.
       <material>Gazebo/${color}</material>
     </gazebo>
     <gazebo>
-      <plugin name="gazebo_timepix" filename="libgazebo_timepix.so" />
+      <plugin name="gazebo_timepix" filename="libgazebo_timepix.so" >
+        <exposition_time>0.1</exposition_time>  <!-- [s] -->
+        <material>si</material>                 <!-- string -->
+        <size>0.0003 0.01408 0.01408</size>     <!-- [m m m] -->
+      </plugin>
     </gazebo>
   </xacro:macro>
   <!--}-->
@@ -2195,7 +2199,7 @@ limitations under the License.
       <material>Gazebo/${color}</material>
     </gazebo>
     <gazebo>
-      <plugin name="water_gun_plugin" filename="libwater_gun_plugin.so">
+      <plugin name="water_gun_plugin" filename="libMRSGazeboWaterGunPlugin.so">
         <muzzle_velocity>${muzzle_velocity}</muzzle_velocity>
         <offset_x>${offset_x}</offset_x>
         <offset_y>${offset_y}</offset_y>
@@ -2341,7 +2345,7 @@ limitations under the License.
       <material>Gazebo/${color}</material>
     </gazebo>
     <gazebo>
-      <plugin name="parachute_plugin" filename="libparachute_plugin.so">
+      <plugin name="parachute_plugin" filename="libMRSGazeboParachutePlugin.so">
         <air_density>1.225</air_density>
         <drag_coeff>500</drag_coeff>
         <cross_section>0.25</cross_section> <!-- [m^2] -->
