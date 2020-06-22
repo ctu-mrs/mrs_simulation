@@ -1426,6 +1426,7 @@ limitations under the License.
           <topicName>${topic_lidar}</topicName>
           <min_range>0.1</min_range>
           <max_range>${max_range}</max_range>
+          <ordered>true</ordered>
           <gaussianNoise>${noise}</gaussianNoise>
 
             <!-- IMU parameters -->
