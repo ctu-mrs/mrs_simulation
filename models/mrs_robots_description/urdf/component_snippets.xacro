@@ -1162,6 +1162,7 @@ limitations under the License.
   <xacro:macro name="velodyne_macro" params="namespace sensor_name x y z yaw pitch roll rot_freq lasers max_range noise vfov_angle enable_gpu_ray">
 
     <xacro:property name="topic_lidar" value="/${namespace}/${sensor_name}/scan" />
+    <xacro:property name="topic_diag" value="/${namespace}/${sensor_name}/diag" />
     <xacro:property name="frame_sensor" value="${namespace}/${sensor_name}_sensor" />
     <xacro:property name="frame_lidar" value="${namespace}/${sensor_name}" />
     <xacro:property name="parent_link" value="base_link" />
@@ -1270,6 +1271,7 @@ limitations under the License.
           <lidar_pitch>0</lidar_pitch>
           <lidar_yaw>0</lidar_yaw>
           <topicName>${topic_lidar}</topicName>
+          <topicDiagName>${topic_diag}</topicDiagName>
           <lidarFrameName>${frame_lidar}</lidarFrameName>
           <min_range>0.1</min_range>
           <max_range>${max_range}</max_range>
@@ -1307,6 +1309,7 @@ limitations under the License.
       <!-- topics -->
     <xacro:property name="topic_lidar" value="/${namespace}/${sensor_name}_cloud_node/points" />
     <xacro:property name="topic_imu" value="/${namespace}/${sensor_name}_cloud_node/imu" />
+    <xacro:property name="topic_diag" value="/${namespace}/${sensor_name}_cloud_node/diag" />
 
       <!-- tf from sensor to lidar -->
     <xacro:property name="lidar_x" value="0" />
@@ -1424,6 +1427,7 @@ limitations under the License.
           <lidar_pitch>${lidar_pitch}</lidar_pitch>
           <lidar_yaw>${lidar_yaw}</lidar_yaw>
           <topicName>${topic_lidar}</topicName>
+          <topicDiagName>${topic_diag}</topicDiagName>
           <min_range>0.1</min_range>
           <max_range>${max_range}</max_range>
           <ordered>true</ordered>
