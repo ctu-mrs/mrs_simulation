@@ -214,7 +214,6 @@ def spawn_model(
         enable_light=False,
         enable_servo_camera=False,
         wall_challenge=False,
-        fire_challenge=False,
         fire_challenge_blanket=False,
         gps_indoor_jamming = False,
 
@@ -277,13 +276,12 @@ def spawn_model(
     kwargs['mappings']['ouster_model'] = ouster_model
     kwargs['mappings']['use_gpu_ray'] = "true" if use_gpu_ray else "false"
     kwargs['mappings']['enable_ball_holder'] = "true" if enable_ball_holder else "false"
-    kwargs['mappings']['enable_water_gun'] = "true" if enable_water_gun and not fire_challenge else "false"
+    kwargs['mappings']['enable_water_gun'] = "true" if enable_water_gun else "false"
     kwargs['mappings']['enable_parachute'] = "true" if enable_parachute else "false"
     kwargs['mappings']['enable_light'] = "true" if enable_light else "false"
     kwargs['mappings']['enable_servo_camera'] = "true" if enable_servo_camera else "false"
     kwargs['mappings']['enable_thermal_camera'] = "true" if enable_thermal_camera else "false"
     kwargs['mappings']['wall_challenge'] = "true" if wall_challenge else "false"
-    kwargs['mappings']['fire_challenge'] = "true" if fire_challenge else "false"
     kwargs['mappings']['fire_challenge_blanket'] = "true" if fire_challenge_blanket else "false"
     kwargs['mappings']['gps_indoor_jamming'] = "true" if gps_indoor_jamming else "false"
 

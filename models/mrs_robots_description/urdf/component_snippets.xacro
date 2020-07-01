@@ -1827,7 +1827,7 @@ limitations under the License.
         </plugin>
       </sensor>
     </gazebo>
-    <gazebo reference="${namespace}/thermal_camera_link">
+    <gazebo reference="${namespace}/${camera_frame_name}/thermal_camera_link">
       <material>Gazebo/${color}</material>
     </gazebo>
   </xacro:macro>
@@ -2186,22 +2186,41 @@ limitations under the License.
   <!--}-->
 
   <!-- Macro to add a water gun {-->
-  <xacro:macro name="water_gun_macro" params="namespace name parent muzzle_velocity particle_capacity spread color spawning_reservoir offset_x offset_y offset_z size_x size_y size_z *origin">
-    <joint name="${name}_joint" type="fixed">
+  <xacro:macro name="water_gun_macro" params="namespace name parent muzzle_velocity particle_capacity spread spawning_reservoir offset_x offset_y offset_z size_x size_y size_z *origin">
+    <joint name="${name}_body_joint" type="fixed">
       <xacro:insert_block name="origin" />
       <parent link="${parent}" />
-      <child link="${name}_link" />
+      <child link="${name}_body_link" />
     </joint>
-    <link name="${name}_link">
+    <joint name="${name}_bag_joint" type="fixed">
+      <parent link="${name}_body_link" />
+      <child link="${name}_bag_link" />
+    </joint>
+    <joint name="${name}_nozzle_joint" type="fixed">
+      <origin xyz="${offset_x - 0.08/2} ${offset_y} ${offset_z - 0.006/2}" rpy="0 ${rad90} 0" />
+      <parent link="${parent}" />
+      <child link="${name}_nozzle_link" />
+    </joint>
+    <link name="${name}_body_link"/>
+    <link name="${name}_bag_link">
       <visual>
-        <origin xyz="${offset_x - size_x} ${offset_y} ${offset_z}" rpy="0 0 0" />
         <geometry>
           <box size="${size_x} ${size_y} ${size_z}" />
         </geometry>
       </visual>
     </link>
-    <gazebo reference="${name}_link">
-      <material>Gazebo/${color}</material>
+    <gazebo reference="${name}_bag_link">
+      <material>Gazebo/Blue</material>
+    </gazebo>
+    <link name="${name}_nozzle_link">
+      <visual>
+        <geometry>
+          <cylinder length="0.08" radius="0.006" />
+        </geometry>
+      </visual>
+    </link>
+    <gazebo reference="${name}_nozzle_link">
+      <material>Gazebo/DarkGrey</material>
     </gazebo>
     <gazebo>
       <plugin name="water_gun_plugin" filename="libMRSGazeboWaterGunPlugin.so">

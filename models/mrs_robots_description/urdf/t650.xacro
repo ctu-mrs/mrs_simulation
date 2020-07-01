@@ -873,15 +873,15 @@
       hfov="0.575959"
       image_width="32"
       image_height="32"
-      x="0.13"
-      y="0"
-      z="-0.085"
+      x="0.15"
+      y="0.06"
+      z="-0.025"
       roll="0"
       pitch="-${rad30}"
       yaw="0"
       parent_frame_name="${namespace}/fcu"
       sensor_base_frame_name="${namespace}/thermal/top"
-      color="Yellow">
+      color="DarkGrey">
     </xacro:thermal_camera_macro>
     <!-- middle -->
     <xacro:thermal_camera_macro
@@ -894,15 +894,15 @@
       hfov="0.575959"
       image_width="32"
       image_height="32"
-      x="0.13"
-      y="0"
-      z="-0.085"
+      x="0.16"
+      y="0.06"
+      z="-0.055"
       roll="0"
       pitch="0"
       yaw="0"
       parent_frame_name="${namespace}/fcu"
       sensor_base_frame_name="${namespace}/thermal/middle"
-      color="Yellow">
+      color="DarkGrey">
     </xacro:thermal_camera_macro>
     <!-- bottom -->
     <xacro:thermal_camera_macro
@@ -915,15 +915,15 @@
       hfov="0.575959"
       image_width="32"
       image_height="32"
-      x="0.13"
-      y="0"
+      x="0.15"
+      y="0.06"
       z="-0.085"
       roll="0"
       pitch="${rad30}"
       yaw="0"
       parent_frame_name="${namespace}/fcu"
       sensor_base_frame_name="${namespace}/thermal/bottom"
-      color="Yellow">
+      color="DarkGrey">
     </xacro:thermal_camera_macro>
   </xacro:if>
   <!--}-->
@@ -1016,20 +1016,19 @@
 <xacro:if value="$(arg enable_water_gun)">
   <xacro:water_gun_macro
     namespace="${namespace}"
-    name="water_gun_macro"
+    name="water_gun"
     parent="base_link"
-    color="Red"
-    muzzle_velocity="10.0"
+    muzzle_velocity="15.0"
     particle_capacity="30"
     spread="1.0"
     spawning_reservoir="the_void"
-    offset_x="0.2"
+    offset_x="0.21"
     offset_y="0.0"
-    offset_z="-0.1"
+    offset_z="-0.085"
     size_x="0.2"
-    size_y="0.05"
-    size_z="0.05">
-  <origin xyz="0 0 0" rpy="0 0 0" />
+    size_y="0.08"
+    size_z="0.03">
+  <origin xyz="0 0 -0.11" rpy="0 0 0" />
 </xacro:water_gun_macro>
   </xacro:if>
   <!--}-->
@@ -1299,154 +1298,6 @@
       yaw="-2.5665787"
       >
     </xacro:realsense_macro>
-    <!--}-->
-
-  </xacro:if>
-  <!--}-->
-
-  <!-- Fire challenge {-->
-  <xacro:if value="$(arg fire_challenge)">
-
-    <!-- Garmin {-->
-    <xacro:garmin_macro
-      namespace="${namespace}"
-      parent_link="base_link"
-      orientation=""
-      x="0.177"
-      y="0.0735"
-      z="-0.07"
-      roll="0"
-      pitch="1.57079632679"
-      yaw="0"
-      >
-    </xacro:garmin_macro>
-    <!--}-->
-
-    <!-- Garmin up {-->
-    <xacro:garmin_macro
-      namespace="${namespace}"
-      parent_link="base_link"
-      orientation="_up"
-      x="0.0"
-      y="-0.08"
-      z="0.01"
-      roll="0"
-      pitch="-1.57079632679"
-      yaw="0"
-      >
-    </xacro:garmin_macro>
-    <!--}--> 
-
-    <!-- Rplidar {-->
-    <xacro:rplidar_macro
-      namespace="${namespace}"
-      x="0.0"
-      y="0.0"
-      z="0.205"
-      roll="0"
-      pitch="0"
-      yaw="0"
-      >
-    </xacro:rplidar_macro>
-    <!--}-->
-
-    <!-- Realsense front {-->
-    <xacro:realsense_macro
-      namespace="${namespace}"
-      parent_link="base_link"
-      camera_suffix="realsense_front"
-      parent_frame_name="${namespace}/fcu"
-      enable_realistic_realsense="$(arg use_realistic_realsense)"
-      x="0.184"
-      y="0"
-      z="-0.04"
-      roll="0"
-      pitch="0"
-      yaw="0">
-    </xacro:realsense_macro>
-    <!--}-->
-
-    <!-- Thermal camera {-->
-    <xacro:thermal_camera_macro
-      namespace="${namespace}"
-      camera_frame_name="thermal/top_optical"
-      camera_topic_name="/${namespace}/thermal/top"
-      parent_link="base_link"
-      camera_suffix="thermal/top"
-      frame_rate="14.0"
-      hfov="0.575959"
-      image_width="32"
-      image_height="32"
-      x="0.13"
-      y="0.055"
-      z="-0.085"
-      roll="0"
-      pitch="-0.523598776"
-      yaw="0"
-      parent_frame_name="${namespace}/fcu"
-      sensor_base_frame_name="${namespace}/thermal/top"
-      color="Yellow">
-    </xacro:thermal_camera_macro>
-    <xacro:thermal_camera_macro
-      namespace="${namespace}"
-      camera_frame_name="thermal/middle_optical"
-      camera_topic_name="/${namespace}/thermal/middle"
-      parent_link="base_link"
-      camera_suffix="thermal/middle"
-      frame_rate="14.0"
-      hfov="0.575959"
-      image_width="32"
-      image_height="32"
-      x="0.13"
-      y="0.055"
-      z="-0.085"
-      roll="0"
-      pitch="0"
-      yaw="0"
-      parent_frame_name="${namespace}/fcu"
-      sensor_base_frame_name="${namespace}/thermal/middle"
-      color="Yellow">
-    </xacro:thermal_camera_macro>
-    <xacro:thermal_camera_macro
-      namespace="${namespace}"
-      camera_frame_name="thermal/bottom_optical"
-      camera_topic_name="/${namespace}/thermal/bottom"
-      parent_link="base_link"
-      camera_suffix="thermal/bottom"
-      frame_rate="14.0"
-      hfov="0.575959"
-      image_width="32"
-      image_height="32"
-      x="0.13"
-      y="0.055"
-      z="-0.085"
-      roll="0"
-      pitch="0.523598776"
-      yaw="0"
-      parent_frame_name="${namespace}/fcu"
-      sensor_base_frame_name="${namespace}/thermal/bottom"
-      color="Yellow">
-    </xacro:thermal_camera_macro>
-    <!--}-->
-
-    <!-- Water gun {-->
-    <xacro:water_gun_macro
-      namespace="${namespace}"
-      name="water_gun_macro"
-      parent="base_link"
-      color="Red"
-      muzzle_velocity="10.0"
-      particle_capacity="30"
-      spread="1.0"
-      spawning_reservoir="the_void"
-      offset_x="0.2"
-      offset_y="0.0"
-      offset_z="-0.1"
-      size_x="0.2"
-      size_y="0.05"
-      size_z="0.05">
-      <origin xyz="0 0 0" rpy="0 -0.1 0" />
-    </xacro:water_gun_macro>
     <!--}-->
 
   </xacro:if>

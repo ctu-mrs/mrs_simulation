@@ -228,6 +228,14 @@ def spawn():
     if args.wall_challenge or args.fire_challenge or args.fire_challenge_blanket:
         vehicle_type='t650'
 
+    if args.fire_challenge:
+        args.enable_rangefinder = True
+        args.enable_rangefinder_up = True
+        args.enable_rplidar = True
+        args.enable_realsense_front = True
+        args.enable_thermal_camera = True
+        args.enable_water_gun = True
+
     if args.available_sensors:
         _, model_xml = get_model_xacro_file(vehicle_type)
         for setting in detect_available_arguments_in_xacro(model_xml):
@@ -314,7 +322,6 @@ def spawn():
             enable_water_gun = args.enable_water_gun,
             enable_parachute = args.enable_parachute,
             wall_challenge = args.wall_challenge,
-            fire_challenge = args.fire_challenge,
             fire_challenge_blanket = args.fire_challenge_blanket,
             gps_indoor_jamming = args.gps_indoor_jamming,
             enable_uv_leds = args.enable_uv_leds,
