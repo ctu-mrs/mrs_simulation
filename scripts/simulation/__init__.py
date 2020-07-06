@@ -12,6 +12,7 @@ import re
 import sys
 import tempfile
 import csv
+import yaml
 import re
 
 from em import Interpreter
@@ -88,14 +89,26 @@ def get_vehicle_pose_from_file(fname, uav_id):
         print("File '%s' does not exist" %fname, file=sys.stderr)
         sys.exit(0)
 
-    array_string = list(csv.reader(open(fname)))
-    for row in array_string:
-        if (len(row)!=5):
-            print("Incorrect data in file '%s'! Data should be in format [id, x, y, z, heading] (example: int, float, float, float, float)" %fname)
-            sys.exit(1)
-        print(row)
-        if int(row[0]) == uav_id:
-            return [uav_id], [[float(row[i]) for i in range(1,len(row))]]
+    if fname.endswith('.txt'):
+        array_string = list(csv.reader(open(fname)))
+        for row in array_string:
+            if (len(row)!=5):
+                print("Incorrect data in file '%s'! Data should be in format [id, x, y, z, heading] (example: int, float, float, float, float)" %fname)
+                sys.exit(1)
+            print(row)
+            if int(row[0]) == uav_id:
+                return [uav_id], [[float(row[i]) for i in range(1,len(row))]]
+    elif fname.endswith('.yaml'):
+        dict_vehicle_info = yaml.safe_load(open(fname, 'r'))
+        for item in dict_vehicle_info:
+            if (len(dict_vehicle_info[item])!=5):
+                print("Incorrect data in file '%s'! Data should be in format id, x, y, z, heading (example: int, float, float, float, float)" %fname)
+                sys.exit(1)
+            if int(dict_vehicle_info[item]['id']) == uav_id:
+                print(dict_vehicle_info[item])
+                return [uav_id], [[dict_vehicle_info[item]['x'], dict_vehicle_info[item]['y'], dict_vehicle_info[item]['z'], dict_vehicle_info[item]['heading']]]
+    else:
+        print("Incorrect file format, must be either .txt or .yaml")
 
     # ids = [int(array_string[i][0]) for i in range(0,len(array_string))]
     # array = [[float(array_string[j][i]) for i in range(1,len(array_string[j]))] for j in range(0,len(array_string))]
