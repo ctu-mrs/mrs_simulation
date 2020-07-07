@@ -8,10 +8,10 @@ distro=`lsb_release -r | awk '{ print $2 }'`
 
 echo "Starting install preparation"
 
-openssl aes-256-cbc -K $encrypted_f2b1af48ae35_key -iv $encrypted_f2b1af48ae35_iv -in ./.ci/deploy_key_github.enc -out ./.ci/deploy_key_github -d
-eval "$(ssh-agent -s)"
-chmod 600 ./.ci/deploy_key_github
-ssh-add ./.ci/deploy_key_github
+# openssl aes-256-cbc -K $encrypted_f2b1af48ae35_key -iv $encrypted_f2b1af48ae35_iv -in ./.ci/deploy_key_github.enc -out ./.ci/deploy_key_github -d
+# eval "$(ssh-agent -s)"
+# chmod 600 ./.ci/deploy_key_github
+# ssh-add ./.ci/deploy_key_github
 
 sudo apt-get update -qq
 sudo apt-mark hold openssh-server
