@@ -62,7 +62,7 @@ def spawn():
         help='Despawn when killed (default: false)')
     parser.add_argument(
         '--file',
-        help='Load positions and ids from file (format: [id, x, y, z, heading])')
+        help='Load positions and ids from .txt file with format: [id, x, y, z, heading] or .yaml file with format: [uav_name: \newline - id: (int) \newline - x: (float) \newline - y: (float) \newline - z: (float) \newline - heading: (float)]')
     bluefox_down_group = parser.add_mutually_exclusive_group()
     bluefox_down_group.add_argument(
         '--enable-bluefox-camera', action ='store_true',
