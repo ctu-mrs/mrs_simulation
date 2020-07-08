@@ -102,7 +102,7 @@ def get_vehicle_pose_from_file(fname, uav_id):
         dict_vehicle_info = yaml.safe_load(open(fname, 'r'))
         for item in dict_vehicle_info:
             if (len(dict_vehicle_info[item])!=5):
-                print("Incorrect data in file '%s'! Data should be in format id, x, y, z, heading (example: int, float, float, float, float)" %fname)
+                print("Incorrect data in file '%s'! Data should be in format \n uav_name: \n\t id: (int) \n\t x: (float) \n\t y: (float) \n\t z: (float) \n\t heading: (float) " %fname)
                 sys.exit(1)
             if int(dict_vehicle_info[item]['id']) == uav_id:
                 print(dict_vehicle_info[item])

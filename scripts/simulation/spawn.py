@@ -25,7 +25,7 @@ def spawn():
     parser = argparse.ArgumentParser(description = 'Spawn vehicles into gazebo simulation.', 
                                      epilog = """Not all sensors have to be available for selected type of uav.
                                      Please check possible settings for the selected type of UAV by calling command: spawn --$UAV_TYPE --available_sensors""",
-                                     formatter_class=lambda prog: argparse.HelpFormatter(prog,max_help_position=27, width= 100))
+                                     formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument(
         'vehicle_id', nargs='*', metavar='VEHICLE_ID', type=vehicle_id_type,
         default=(1,),
@@ -62,7 +62,7 @@ def spawn():
         help='Despawn when killed (default: false)')
     parser.add_argument(
         '--file',
-        help='Load positions and ids from file (format: [id, x, y, z, heading])')
+        help='Load positions and ids from .txt file with format: [id, x, y, z, heading] \n or .yaml file with format:\n uav_name: \n\t id: (int) \n\t x: (float) \n\t y: (float) \n\t z: (float) \n\t heading: (float)')
     bluefox_down_group = parser.add_mutually_exclusive_group()
     bluefox_down_group.add_argument(
         '--enable-bluefox-camera', action ='store_true',
