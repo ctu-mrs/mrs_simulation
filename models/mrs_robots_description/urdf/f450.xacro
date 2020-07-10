@@ -804,6 +804,32 @@
 
   <!-- ========================= camera sensors ========================= -->
 
+  <!-- Fisheye camera placements{-->
+
+  <!-- classic {-->
+  <xacro:if value="$(arg enable_fisheye_camera)">
+    <xacro:fisheye_camera_macro
+      namespace="${namespace}"
+      parent_link="base_link"
+      camera_suffix="fisheye_camera"
+      frame_rate="45"
+      noise="0.000"
+      parent_frame_name="${namespace}/fcu"
+      camera_frame_name="${namespace}/fisheye_camera_optical"
+      sensor_base_frame_name="${namespace}/fisheye_camera"
+      x="0.05"
+      y="0"
+      z="-${arm_height + 0.055}"
+      roll="0"
+      pitch="${rad90}"
+      yaw="0.0"
+      >
+  </xacro:fisheye_camera_macro>
+</xacro:if>
+<!--}-->
+
+  <!--} Fisheye camera placements -->
+
   <!-- Bluefox placements{-->
 
   <!-- reverse {-->
