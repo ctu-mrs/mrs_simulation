@@ -71,6 +71,9 @@ def spawn():
         '--enable-bluefox-camera-reverse', action ='store_true',
         help='Add rotated bluefox camera into vehicle [752x480 50hz] (default: false)')
     parser.add_argument(
+        '--enable-fisheye-camera', action ='store_true',
+        help='Add fisheye camera (default: false)')
+    parser.add_argument(
         '--enable-whycon-box', action ='store_true',
         help='Add whycon box for relative localization (default: false)')
     parser.add_argument(
@@ -297,6 +300,7 @@ def spawn():
             enable_whycon_box = args.enable_whycon_box,
             enable_bluefox_camera = args.enable_bluefox_camera,
             enable_bluefox_camera_reverse = args.enable_bluefox_camera_reverse,
+            enable_fisheye_camera = args.enable_fisheye_camera,
             enable_magnetic_gripper = args.enable_gripper,
             enable_scanse_sweep = args.enable_scanse,
             enable_pendulum = args.enable_pendulum,
