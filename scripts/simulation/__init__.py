@@ -169,6 +169,7 @@ def check_for_uvdar_package():
          print_error("===================================================================================")
          print_error("   Package \'%s\' was not found. " % uvdar_pkg)
          print_error("   Note: This package is specific to the UVDAR project.")
+         print_error("         However if you want to use it, the package is available at \"https://github.com/ctu-mrs/uvdar_gazebo_plugin\".")
          print_error("===================================================================================")
          sys.exit(3)
 
