@@ -824,9 +824,9 @@
       pitch="${rad90}"
       yaw="0.0"
       >
-  </xacro:fisheye_camera_macro>
-</xacro:if>
-<!--}-->
+    </xacro:fisheye_camera_macro>
+  </xacro:if>
+  <!--}-->
 
   <!--} Fisheye camera placements -->
 
