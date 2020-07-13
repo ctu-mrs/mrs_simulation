@@ -98,6 +98,9 @@ def spawn():
     realsense_group.add_argument(
         '--enable-realsense-front', action = 'store_true',
         help='Add Intel Realsense D435 depth camera to the vehicle [1280x720 30hz], pointed forward placed on the front holder between the legs (default: false)')
+    realsense_group.add_argument(
+        '--enable-realsense-up', action = 'store_true',
+        help='Add Intel Realsense D435 depth camera to the vehicle [1280x720 30hz], pointed upwards (default: false)')
     parser.add_argument(
         '--use-realistic-realsense', action = 'store_true',
         help='Enable a more realistic simulation of the Realsense D435 dept image (default: false, only takes effect if some Realsense is enabled)')
@@ -301,6 +304,7 @@ def spawn():
             enable_realsense_down = args.enable_realsense_down,
             enable_realsense_top = args.enable_realsense_top,
             enable_realsense_front = args.enable_realsense_front,
+            enable_realsense_up = args.enable_realsense_up,
             use_realistic_realsense = args.use_realistic_realsense,
             enable_whycon_box = args.enable_whycon_box,
             enable_bluefox_camera = args.enable_bluefox_camera,

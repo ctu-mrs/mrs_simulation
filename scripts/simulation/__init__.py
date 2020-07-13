@@ -206,6 +206,7 @@ def spawn_model(
         enable_realsense_down=False,
         enable_realsense_top=False,
         enable_realsense_front=False,
+        enable_realsense_up=False,
         use_realistic_realsense=False,
         enable_whycon_box=False,
         enable_bluefox_camera=False,
@@ -273,6 +274,7 @@ def spawn_model(
     kwargs['mappings']['enable_realsense_down'] = "true" if enable_realsense_down else "false"
     kwargs['mappings']['enable_realsense_top'] = "true" if enable_realsense_top else "false"
     kwargs['mappings']['enable_realsense_front'] = "true" if enable_realsense_front else "false"
+    kwargs['mappings']['enable_realsense_up'] = "true" if enable_realsense_up else "false"
     kwargs['mappings']['use_realistic_realsense'] = "true" if use_realistic_realsense else "false"
     kwargs['mappings']['enable_rangefinder'] = "true" if enable_rangefinder else "false"
     kwargs['mappings']['enable_teraranger'] = "true" if enable_teraranger else "false"

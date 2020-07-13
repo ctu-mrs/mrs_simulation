@@ -997,6 +997,25 @@
     </xacro:realsense_macro>
   </xacro:if>
   <!--}-->
+  
+  <!-- up {-->
+  <xacro:if value="$(arg enable_realsense_up)">
+    <!-- sensor -->
+    <xacro:realsense_macro
+      namespace="${namespace}"
+      parent_link="base_link"
+      camera_suffix="realsense_up"
+      parent_frame_name="${namespace}/fcu"
+      enable_realistic_realsense="$(arg use_realistic_realsense)"
+      x="0.07"
+      y="0"
+      z="0.025"
+      roll="0"
+      pitch="-${rad90}"
+      yaw="0">
+    </xacro:realsense_macro>
+  </xacro:if>
+  <!--}-->
 
   <!--} Realsense placements-->
 
