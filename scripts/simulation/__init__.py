@@ -211,6 +211,7 @@ def spawn_model(
         enable_whycon_box=False,
         enable_bluefox_camera=False,
         enable_bluefox_camera_reverse=False,
+        enable_fisheye_camera=False,
         enable_pendulum=False,
         enable_timepix=False,
         enable_magnetic_gripper=False,
@@ -266,6 +267,7 @@ def spawn_model(
     kwargs['mappings']['enable_ground_truth'] = "true" if enable_ground_truth else "false"
     kwargs['mappings']['enable_bluefox_camera'] = "true" if enable_bluefox_camera else "false"
     kwargs['mappings']['enable_bluefox_camera_reverse'] = "true" if enable_bluefox_camera_reverse else "false"
+    kwargs['mappings']['enable_fisheye_camera'] = "true" if enable_fisheye_camera else "false"
     kwargs['mappings']['enable_mobius_camera_down'] = "true" if enable_mobius_camera_down else "false"
     kwargs['mappings']['enable_mobius_camera_front'] = "true" if enable_mobius_camera_front else "false"
     kwargs['mappings']['enable_mobius_camera_back_left'] = "true" if enable_mobius_camera_back_left else "false"

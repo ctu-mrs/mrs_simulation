@@ -904,6 +904,86 @@ limitations under the License.
   </xacro:macro>
   <!--}-->
 
+  <!-- Macro to add the fisheye_camera_plugin {-->
+  <xacro:macro name="fisheye_macro"
+    params="namespace parent_link camera_suffix camera_frame_name sensor_base_frame_name frame_rate parent_frame_name
+    horizontal_fov image_width image_height min_distance max_distance lens_type lens_c1 lens_c2 lens_f lens_fun lens_scale lens_cutoff_angle lens_texture_size x y z roll pitch yaw
+   noise_mean noise_stddev *visual">
+
+    <link name="${namespace}/camera_${camera_suffix}_link">
+      <xacro:insert_block name="visual" />
+    </link>
+
+    <joint name="${namespace}/camera_${camera_suffix}_joint" type="fixed">
+      <origin xyz="${x} ${y} ${z}" rpy="${roll} ${pitch} ${yaw}"/>
+      <parent link="${parent_link}" />
+      <child link="${namespace}/camera_${camera_suffix}_link" />
+    </joint>
+
+    <gazebo reference="${namespace}/camera_${camera_suffix}_link">
+      <sensor type="wideanglecamera" name="${namespace}_camera_${camera_suffix}">
+        <update_rate>${frame_rate}</update_rate>
+        <camera name="head">
+          <horizontal_fov>${horizontal_fov}</horizontal_fov>
+          <image>
+            <width>${image_width}</width>
+            <height>${image_height}</height>
+          </image>
+          <clip>
+            <near>${min_distance}</near>
+            <far>${max_distance}</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <!-- Noise is sampled independently per pixel on each frame.
+            That pixel's noise value is added to each of its color
+            channels, which at that point lie in the range [0,1]. -->
+            <mean>${noise_mean}</mean>
+            <stddev>${noise_stddev}</stddev>
+          </noise>
+          <lens>
+            <type>${lens_type}</type>
+            <custom_function>
+              <c1>${lens_c1}</c1>
+              <c2>${lens_c2}</c2>
+              <f>${lens_f}</f>
+              <fun>${lens_fun}</fun>
+            </custom_function>
+            <scale_to_hfov>${lens_scale}</scale_to_hfov>
+            <cutoff_angle>${lens_cutoff_angle}</cutoff_angle>
+            <env_texture_size>${lens_texture_size}</env_texture_size>
+          </lens>
+        </camera>
+        <plugin name="${namespace}_camera_${camera_suffix}_controller" filename="libMRSGazeboCameraPlugin.so">
+          <alwaysOn>true</alwaysOn>
+          <updateRate>${frame_rate}</updateRate>
+          <cameraName>${camera_suffix}</cameraName>
+          <imageTopicName>image_raw</imageTopicName>
+          <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+          <frameName>/${camera_frame_name}</frameName>
+          <hackBaseline>0.0</hackBaseline>
+          <distortionK1>0.0</distortionK1>
+          <distortionK2>0.0</distortionK2>
+          <distortionK3>0.0</distortionK3>
+          <distortionT1>0.0</distortionT1>
+          <distortionT2>0.0</distortionT2>
+          <parentFrameName>${parent_frame_name}</parentFrameName>
+          <sensorBaseFrameName>${sensor_base_frame_name}</sensorBaseFrameName>
+          <x>${x}</x>
+          <y>${y}</y>
+          <z>${z}</z>
+          <roll>${roll}</roll>
+          <pitch>${pitch}</pitch>
+          <yaw>${yaw}</yaw>
+        </plugin>
+      </sensor>
+    </gazebo>
+    <gazebo reference="${namespace}/camera_${camera_suffix}_link">
+      <material>Gazebo/DarkGrey</material>
+    </gazebo>
+  </xacro:macro>
+  <!--}-->
+
   <!--}-->
 
   <!-- ================================================================== -->
@@ -1732,6 +1812,50 @@ limitations under the License.
         </geometry>
       </visual>
     </xacro:camera_macro>
+  </xacro:macro>
+  <!--}-->
+
+  <!-- Macro to add a Fisheye camera {-->
+  <xacro:macro name="fisheye_camera_macro"
+    params="namespace parent_link camera_suffix frame_rate noise x y z roll pitch yaw camera_frame_name sensor_base_frame_name parent_frame_name">
+    <xacro:fisheye_macro
+      namespace="${namespace}"
+      parent_link="${parent_link}"
+      camera_suffix="${camera_suffix}"
+      camera_frame_name="${camera_frame_name}"
+      sensor_base_frame_name="${sensor_base_frame_name}"
+      frame_rate="${frame_rate}"
+      horizontal_fov="${rad180}"
+      image_width="752"
+      image_height="480"
+      lens_type="custom"
+      lens_c1="1.05"
+      lens_c2="4"
+      lens_f="1.0"
+      lens_fun="tan"
+      lens_scale="true"
+      lens_cutoff_angle="${rad90}"
+      lens_texture_size="512"
+      min_distance="0.02"
+      max_distance="40"
+      noise_mean="0.0"
+      noise_stddev="${noise}"
+      parent_frame_name="${parent_frame_name}"
+      x="${x}"
+      y="${y}"
+      z="${z}"
+      yaw="${yaw}"
+      pitch="${pitch}"
+      roll="${roll}"
+      >
+      <visual>
+        <origin xyz="0 0 0" rpy="${rad90} 0 0" />
+        <geometry>
+          <mesh filename="package://mrs_robots_description/meshes/sensors/bluefox.dae"
+            scale="1 1 1" />
+        </geometry>
+      </visual>
+    </xacro:fisheye_macro>
   </xacro:macro>
   <!--}-->
 
