@@ -66,13 +66,13 @@ def spawn():
     bluefox_down_group = parser.add_mutually_exclusive_group()
     bluefox_down_group.add_argument(
         '--enable-bluefox-camera', action ='store_true',
-        help='Add bluefox camera into vehicle [752x480 50hz] (default: false)')
+        help='Add bluefox camera to the vehicle [752x480 50hz] (default: false)')
     bluefox_down_group.add_argument(
         '--enable-bluefox-camera-reverse', action ='store_true',
-        help='Add rotated bluefox camera into vehicle [752x480 50hz] (default: false)')
+        help='Add bluefox camera to the vehicle [752x480 50hz], rotated by 180 deg (default: false)')
     parser.add_argument(
         '--enable-fisheye-camera', action ='store_true',
-        help='Add fisheye camera (default: false)')
+        help='Add fisheye camera to the vehicle [752x480 180deg 45hz] (default: false)')
     parser.add_argument(
         '--enable-whycon-box', action ='store_true',
         help='Add whycon box for relative localization (default: false)')
@@ -103,16 +103,16 @@ def spawn():
         help='Add Intel Realsense D435 depth camera to the vehicle [1280x720 30hz], pointed forward placed on the front holder between the legs (default: false)')
     parser.add_argument(
         '--use-realistic-realsense', action = 'store_true',
-        help='Enable a more realistic simulation of the Realsense D435 dept image (default: false, only takes effect if some Realsense is enabled)')
+        help='Enable a more realistic simulation of the Realsense D435 depth image (default: false, only takes effect if some Realsense is enabled)')
     parser.add_argument(
         '--enable-rangefinder', action = 'store_true',
-        help='Add rangefinder into vehicle (default: false)')
+        help='Add rangefinder to the vehicle (default: false)')
     parser.add_argument(
         '--enable-teraranger', action = 'store_true',
-        help='Add teraranger rangefinder into vehicle (default: false)')
+        help='Add teraranger rangefinder to the vehicle (default: false)')
     parser.add_argument(
         '--enable-rangefinder-up', action = 'store_true',
-        help='Add rangefinder measuring upwards onto vehicle (default: false)')
+        help='Add rangefinder measuring upwards to the vehicle (default: false)')
     parser.add_argument(
         '--enable-gripper', action = 'store_true',
         help='Add magnetic gripper (default: false)')
