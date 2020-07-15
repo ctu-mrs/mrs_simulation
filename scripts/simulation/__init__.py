@@ -89,11 +89,11 @@ def get_vehicle_pose_from_file(fname, uav_id):
         print("File '%s' does not exist" %fname, file=sys.stderr)
         sys.exit(0)
 
-    if fname.endswith('.txt'):
+    if fname.endswith('.csv'):
         array_string = list(csv.reader(open(fname)))
         for row in array_string:
             if (len(row)!=5):
-                print("Incorrect data in file '%s'! Data should be in format [id, x, y, z, heading] (example: int, float, float, float, float)" %fname)
+                print("Incorrect data in file '%s'! Data in '*.csv' file type should be in format [id, x, y, z, heading] (example: int, float, float, float, float)" %fname)
                 sys.exit(1)
             print(row)
             if int(row[0]) == uav_id:
@@ -102,13 +102,13 @@ def get_vehicle_pose_from_file(fname, uav_id):
         dict_vehicle_info = yaml.safe_load(open(fname, 'r'))
         for item in dict_vehicle_info:
             if (len(dict_vehicle_info[item])!=5):
-                print("Incorrect data in file '%s'! Data should be in format \n uav_name: \n\t id: (int) \n\t x: (float) \n\t y: (float) \n\t z: (float) \n\t heading: (float) " %fname)
+                print("Incorrect data in file '%s'! Data  in '*.yaml' file type should be in format \n uav_name: \n\t id: (int) \n\t x: (float) \n\t y: (float) \n\t z: (float) \n\t heading: (float) " %fname)
                 sys.exit(1)
             if int(dict_vehicle_info[item]['id']) == uav_id:
                 print(dict_vehicle_info[item])
                 return [uav_id], [[dict_vehicle_info[item]['x'], dict_vehicle_info[item]['y'], dict_vehicle_info[item]['z'], dict_vehicle_info[item]['heading']]]
     else:
-        print("Incorrect file format, must be either .txt or .yaml")
+        print("Incorrect file format, must be either '*.csv' or '*.yaml'")
 
     # ids = [int(array_string[i][0]) for i in range(0,len(array_string))]
     # array = [[float(array_string[j][i]) for i in range(1,len(array_string[j]))] for j in range(0,len(array_string))]
