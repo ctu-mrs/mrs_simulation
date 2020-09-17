@@ -138,7 +138,7 @@ def spawn():
     parser.add_argument(
         '--ouster-model', nargs=1, type=str, 
         default=('OS1-16'), 
-        choices =['OS0-32', 'OS0-64', 'OS0-128', 'OS1-16', 'OS1-32', 'OS1-64', 'OS1-128', 'OS2-32', 'OS2-64', 'OS2-128'], 
+        choices =['OS0-32', 'OS0-64', 'OS0-128', 'OS1-16', 'OS1-32G1', 'OS1-32', 'OS1-64', 'OS1-128', 'OS2-32', 'OS2-64', 'OS2-128'], 
         help='Choose the Ouster model (default: %(default)s)')
     parser.add_argument(
         '--use-gpu-ray', action = 'store_true',
