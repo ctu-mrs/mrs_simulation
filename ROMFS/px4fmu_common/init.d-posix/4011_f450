@@ -10,5 +10,4 @@
 sh /etc/init.d/rc.mc_defaults
 
 set MAV_TYPE 2
-
 set MIXER quad_x
