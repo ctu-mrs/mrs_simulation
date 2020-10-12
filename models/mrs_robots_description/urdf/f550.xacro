@@ -1358,6 +1358,19 @@
       <origin xyz="0.223 0 -0.089" rpy="${rad90} 0 -${rad90}" />
     </xacro:visual_macro>
   </xacro:if>
+
+  <!-- Realsense up mount {-->
+  <xacro:if value="$(arg enable_realsense_up)">
+    <xacro:visual_macro
+      robot_namespace="${namespace}"
+      name="realsense_front_mount"
+      mesh_file="${realsense_front_down_mount_mesh}"
+      mesh_scale="${mesh_scale_milimeters}"
+      parent="base_link"
+      color="DarkGrey">
+      <origin xyz="0.223 0 -0.089" rpy="${rad90} 0 -${rad90}" />
+    </xacro:visual_macro>
+  </xacro:if>
   <!--}-->
 
   <!-- UVDAR mount {-->
