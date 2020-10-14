@@ -661,6 +661,13 @@
       <xacro:property name="vfov_angle" value="33.2" />
       <xacro:property name="range" value="120" />
     </xacro:if>
+    <!-- OS1-32 Generation 1 -->
+    <xacro:if value="${ouster_model == 'OS1-32G1'}">
+      <xacro:property name="sensor_name" value="os1" />
+      <xacro:property name="lasers" value="32" />
+      <xacro:property name="vfov_angle" value="33.2" />
+      <xacro:property name="range" value="120" />
+    </xacro:if>
 
     <!-- OS0 {-->
     <!-- OS0-32 -->
