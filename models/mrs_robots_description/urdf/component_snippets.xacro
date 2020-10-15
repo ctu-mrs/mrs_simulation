@@ -439,40 +439,39 @@ limitations under the License.
             gps_z_random_walk gps_xy_noise_density gps_z_noise_density
             update_rate gps_vxy_noise_density gps_vz_noise_density parent_link">
     <gazebo>
-      <model name="${gps_name}">
-        <link name="link">
-          <pose>${pos_x} ${pos_y} ${pos_z} 0 0 0</pose>
-          <inertial>
-            <pose>0 0 0 0 0 0</pose>
-            <mass>0.01</mass>
-            <inertia>
-              <ixx>2.1733e-6</ixx>
-              <ixy>0</ixy>
-              <ixz>0</ixz>
-              <iyy>2.1733e-6</iyy>
-              <iyz>0</iyz>
-              <izz>1.8e-7</izz>
-            </inertia>
-          </inertial>
-          <sensor name="gps" type="gps">
-            <pose>0 0 0 0 0 0</pose>
-            <plugin name="gps_plugin" filename="libgazebo_gps_plugin.so">
-              <robotNamespace>${namespace}</robotNamespace>
-              <gpsNoise>${gps_noise}</gpsNoise>
-              <gpsXYRandomWalk>${gps_xy_random_walk}</gpsXYRandomWalk>
-              <gpsZRandomWalk>${gps_z_random_walk}</gpsZRandomWalk>
-              <gpsXYNoiseDensity>${gps_xy_noise_density}</gpsXYNoiseDensity>
-              <gpsZNoiseDensity>${gps_z_noise_density}</gpsZNoiseDensity>
-              <gpsVXYNoiseDensity>${gps_vxy_noise_density}</gpsVXYNoiseDensity>
-              <gpsVZNoiseDensity>${gps_vz_noise_density}</gpsVZNoiseDensity>
-              <update_rate>${update_rate}</update_rate>
-            </plugin>
-          </sensor>
-        </link>
-      </model>
+      <link name="${gps_name}_link">
+        <pose>${pos_x} ${pos_y} ${pos_z} 0 0 0</pose>
+        <inertial>
+          <pose>0 0 0 0 0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>2.1733e-6</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>2.1733e-6</iyy>
+            <iyz>0</iyz>
+            <izz>1.8e-7</izz>
+          </inertia>
+        </inertial>
+        <sensor name="gps" type="gps">
+          <pose>0 0 0 0 0 0</pose>
+          <plugin name="gps_plugin" filename="libgazebo_gps_plugin.so">
+            <robotNamespace>${namespace}</robotNamespace>
+            <gpsNoise>${gps_noise}</gpsNoise>
+            <gpsXYRandomWalk>${gps_xy_random_walk}</gpsXYRandomWalk>
+            <gpsZRandomWalk>${gps_z_random_walk}</gpsZRandomWalk>
+            <gpsXYNoiseDensity>${gps_xy_noise_density}</gpsXYNoiseDensity>
+            <gpsZNoiseDensity>${gps_z_noise_density}</gpsZNoiseDensity>
+            <gpsVXYNoiseDensity>${gps_vxy_noise_density}</gpsVXYNoiseDensity>
+            <gpsVZNoiseDensity>${gps_vz_noise_density}</gpsVZNoiseDensity>
+            <update_rate>${update_rate}</update_rate>
+            <topic>${gps_name}</topic>
+          </plugin>
+        </sensor>
+      </link>
       <joint name="${gps_name}_joint" type="fixed">
         <parent>${parent_link}</parent>
-        <child>${gps_name}::link</child>
+        <child>${gps_name}_link</child>
       </joint>
     </gazebo>
   </xacro:macro>

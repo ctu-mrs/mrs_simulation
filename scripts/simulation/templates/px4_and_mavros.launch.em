@@ -6,7 +6,7 @@
     <arg name="est" default="ekf2"/>
     <arg name="vehicle" default="@(vehicle_type)"/>
     <arg name="ID" default="@(mav_sys_id)"/>
-    <arg name="interactive" default="false"/>
+    <arg name="interactive" default="true"/>
 
     <!-- MAVROS parameters -->
     <arg name="fcu_url" value="udp://:@(ros_interface_port4)@@localhost:@(ros_interface_port3)" />
