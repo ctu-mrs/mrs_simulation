@@ -478,7 +478,7 @@
     gps_vxy_noise_density="0.2"
     gps_vz_noise_density="0.4"
     update_rate="10"
-    namespace="uav1"
+    namespace="${namespace}"
     parent_link="base_link">
   </xacro:gps_macro>
   <!--}-->
