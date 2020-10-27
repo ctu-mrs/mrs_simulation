@@ -104,9 +104,11 @@ then
 	param reset_nostart RC* COM_FLTMODE* LND_FLIGHT_T_* TC_* CAL_ACC* CAL_GYRO* COM_FLIGHT_UUID
 fi
 
+# setting MAV_ID
+param set MAV_SYS_ID $((px4_instance))
+
 # setting correctly ports
 vehicle_base_port=$((14000 + px4_instance * 4))
-
 simulator_tcp_port=$((4560 + px4_instance))
 udp_gcs_port_local=$((vehicle_base_port + 1))
 udp_offboard_port_local=$((vehicle_base_port + 2))
