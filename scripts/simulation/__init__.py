@@ -240,6 +240,7 @@ def spawn_model(
         uvled_beacon_f=30,
         enable_uv_camera=False, 
         uvcam_calib_file="~/calib_results.txt",
+        uvcam_occlusions=False,
         debug=False
     ):
     x, y, z, yaw = pose
@@ -312,6 +313,7 @@ def spawn_model(
 
     kwargs['mappings']['enable_uv_camera'] = "true" if enable_uv_camera else "false"
     kwargs['mappings']['uvcam_calib_file'] = uvcam_calib_file
+    kwargs['mappings']['uvcam_occlusions'] = "true" if uvcam_occlusions else "false"
 
     # ros commandline arguments
     kwargs['mappings']['mrs_robots_description_dir'] = model_pathname
