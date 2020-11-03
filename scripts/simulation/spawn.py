@@ -268,9 +268,9 @@ def spawn():
 
     # spawn vehicles
     if n_vehicles == 1:
-        print("Spawning vehicle!")
+        print("[MrsSimulation]: Spawning vehicle!")
     else:
-        print("Spawning %i vehicles!" %n_vehicles)
+        print("[MrsSimulation]: Spawning %i vehicles!" %n_vehicles)
 
     for i in range(0,n_vehicles):
 
