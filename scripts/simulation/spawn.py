@@ -188,6 +188,9 @@ def spawn():
     parser.add_argument(
         '--uv-camera-calibration-file', nargs=1, type=str, default=("~/.ros/calib_results.txt"),
         help='Specify UV camera calibration different than default one')
+    parser.add_argument(
+        '--use-uv-occlusions', action = 'store_true',
+        help='Enable occlusions for UVDAR simulation - heavy on computation (default: false)')
     mbzirc_group = parser.add_mutually_exclusive_group()
     mbzirc_group.add_argument(
         '--wall-challenge', action = 'store_true',
@@ -339,6 +342,7 @@ def spawn():
             uvled_beacon_f = "{}".format(uvled_beacon_fr[0]),
             enable_uv_camera = args.enable_uv_camera,
             uvcam_calib_file = uvcam_calib[0].strip(),
+            uvcam_occlusions = args.use_uv_occlusions,
             debug=args.debug)
 
         if args.generate_launch_file or args.run:

@@ -1992,7 +1992,7 @@ limitations under the License.
 
   <!-- Macro to add a UV Camera {-->
   <xacro:macro name="uvcam_macro"
-    params="calibration_file frame_rate number namespace parent_link camera_publish_topic *origin">
+    params="calibration_file occlusions frame_rate number namespace parent_link camera_publish_topic *origin">
     <link name="${namespace}_uvcam_${number}_link">
       <gravity>0</gravity>
       <visual>
@@ -2014,7 +2014,7 @@ limitations under the License.
         <plugin name='${namespace}_uvcam_${number}' filename="libuvdar_cam.so">
           <alwaysOn>false</alwaysOn>
           <updateRate>${frame_rate}</updateRate>
-          <occlusion>false</occlusion>
+          <occlusion>${occlusions}</occlusion>
           <framerate>${frame_rate}</framerate>
           <calibration_file>${calibration_file}</calibration_file>
           <number>${number}</number>
