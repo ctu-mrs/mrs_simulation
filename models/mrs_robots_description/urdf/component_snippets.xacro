@@ -2281,6 +2281,508 @@ limitations under the License.
   </xacro:macro>
   <!--}-->
 
+  <!-- Macro to add a coop gripper {-->
+  <xacro:macro name="coop_gripper" params="parent">
+
+	  <joint name="manipulator_joint" type="fixed">
+	    <parent link="${parent}"/>
+	    <child link="top"/>
+	    <origin xyz="0.0 0.0 -0.12" rpy="0.0 0.0 0.0"/>
+    </joint>
+    
+    <link name="top">
+        <inertial>
+            <mass value="0.05" />
+            <inertia ixx="0.0002" ixy="0.0" ixz="0.0" iyy="0.0002" iyz="0.0" izz="0.0002"/>
+        </inertial>
+        <visual>
+            <geometry>
+                <cylinder length="0.005" radius="0.055"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder length="0.005" radius="0.055"/>
+            </geometry>
+        </collision>
+
+    </link>
+
+    <link name="top_bearing_1">
+        <inertial>
+            <mass value="0.05" />
+            <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001"/>
+        </inertial>
+        <visual>
+            <geometry>
+                <sphere radius="0.005"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <sphere radius="0.005"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="tb1_joint" type="revolute">
+        <parent link="top"/>
+        <child link="top_bearing_1"/>
+        <axis xyz="1 0 0"/>
+	<dynamics damping="0.1" friction="0.001"/>
+        <limit upper="0.7853" lower="-0.7853" effort="1" velocity="0.1" />
+        <origin xyz="0.0 0.0 0.016" rpy="0.0 0.0 0.0"/>
+    </joint>
+
+    <link name="top_bearing_2">
+        <inertial>
+            <mass value="0.05" />
+            <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001"/>
+        </inertial>
+        <visual>
+            <geometry>
+                <sphere radius="0.005"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <sphere radius="0.005"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="tb2_joint" type="revolute">
+        <parent link="top_bearing_1"/>
+        <child link="top_bearing_2"/>
+        <axis xyz="0 1 0"/>
+	<dynamics damping="0.1" friction="0.001"/>
+        <limit upper="0.7853" lower="-0.7853" effort="1" velocity="0.1" />
+        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+    </joint>
+
+    <link name="rod">
+        <inertial>
+            <mass value="0.05" />
+            <inertia ixx="0.0002" ixy="0.0" ixz="0.0" iyy="0.0002" iyz="0.0" izz="0.0002"/>
+        </inertial>
+        <visual>
+            <geometry>
+                <cylinder radius="0.005" length="0.08" />
+            </geometry>
+            <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0" />
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder radius="0.005" length="0.08" />
+            </geometry>
+            <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0" />
+        </collision>
+    </link>
+
+    <joint name="top_rod_joint" type="fixed">
+        <parent link="top_bearing_2"/>
+        <child link="rod"/>
+        <origin xyz="0.0 0.0 -0.04" rpy="0.0 0.0 0.0"/>
+    </joint>
+
+    <link name="bot">
+        <inertial>
+            <mass value="0.05" />
+            <inertia ixx="0.0002" ixy="0.0" ixz="0.0" iyy="0.0002" iyz="0.0" izz="0.0002"/>
+        </inertial>
+        <visual>
+            <geometry>
+                <cylinder length="0.005" radius="0.055"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder length="0.005" radius="0.055"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="bot_joint" type="fixed">
+        <parent link="rod"/>
+        <child link="bot"/>
+        <origin xyz="0.0 0.0 -0.04" rpy="0.0 0.0 0.0"/>
+    </joint>
+
+    <link name="mag1">
+        <inertial>
+            <mass value="0.05" />
+            <inertia ixx="0.0002" ixy="0.0" ixz="0.0" iyy="0.0002" iyz="0.0" izz="0.0002"/>
+        </inertial>
+        <visual>
+            <geometry>
+                <cylinder length="0.02" radius="0.02"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder length="0.02" radius="0.02"/>
+            </geometry>
+        </collision>
+    </link>
+
+   <joint name="mag1_joint" type="fixed">
+        <parent link="bot"/>
+        <child link="mag1"/>
+        <origin xyz="0.035 0.0 -0.01" rpy="0.0 0.0 0.0"/>
+    </joint>
+
+    <link name="mag2">
+        <inertial>
+            <mass value="0.05" />
+            <inertia ixx="0.0002" ixy="0.0" ixz="0.0" iyy="0.0002" iyz="0.0" izz="0.0002"/>
+        </inertial>
+        <visual>
+            <geometry>
+                <cylinder length="0.02" radius="0.02"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder length="0.02" radius="0.02"/>
+            </geometry>
+        </collision>
+    </link>
+
+   <joint name="mag2_joint" type="fixed">
+        <parent link="bot"/>
+        <child link="mag2"/>
+        <origin xyz="-0.035 0.0 -0.01" rpy="0.0 0.0 0.0"/>
+    </joint>
+
+  </xacro:macro>
+  <!--}-->
+  
+  <!-- Macro to add a MRS manipulator {-->
+  <xacro:macro name="mrs_manipulator" params="parent">
+
+    <joint name="manipulator_joint" type="fixed">
+      <parent link="${parent}" />
+      <child link="base1" />
+      <origin xyz="-0.011 0.0 -0.095" rpy="3.1415 0.0 1.5708"/>
+    </joint>
+    
+    <!--                           FIRST LINK                                 -->
+    <!--                           FIRST LINK                                 -->
+    <!--                           FIRST LINK                                 -->
+    
+    <link name="base1">
+        <inertial>
+            <mass value="0.025" />
+            <inertia ixx="0.00000312" ixy="0.0" ixz="0.0" iyy="0.00000912" iyz="0.0" izz="0.00000512"/>
+        </inertial>
+        <collision>
+            <geometry>
+                <box size="0.05 0.04 0.004" />
+            </geometry>
+        </collision>
+        <visual>
+            <geometry>
+                <box size="0.05 0.04 0.004" />
+            </geometry>
+        </visual>
+    </link>
+    
+    <link name="base2">
+        <inertial>
+            <mass value="0.025" />
+            <inertia ixx="0.00000212" ixy="0.0" ixz="0.0" iyy="0.00001112" iyz="0.0" izz="0.00001212"/>
+        </inertial>
+        <collision>
+            <geometry>
+                <box size="0.071 0.015 0.027" />
+            </geometry>
+        </collision>
+        <visual>
+            <geometry>
+                <box size="0.071 0.015 0.027" />
+            </geometry>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+        </visual>
+    </link>
+    
+    <joint name="base1_to_base2" type="fixed">
+        <parent link="base1"/>
+        <child link="base2"/>
+        <origin xyz="0.0 0.0275 0.0115" rpy="0.0 0.0 0.0"/>
+    </joint>
+    
+    <link name="base3">
+        <inertial>
+            <mass value="0.025" />
+            <inertia ixx="0.00000512" ixy="0.0" ixz="0.0" iyy="0.00000512" iyz="0.0" izz="0.00000312"/>
+        </inertial>
+        <collision>
+            <geometry>
+                <box size="0.03 0.04 0.026" />
+            </geometry>
+        </collision>
+        <visual>
+            <geometry>
+                <box size="0.03 0.04 0.026" />
+            </geometry>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+        </visual>
+    </link>
+    
+    <joint name="base1_to_base3" type="fixed">
+        <parent link="base1"/>
+        <child link="base3"/>
+        <origin xyz="0.0 0.0 0.015" rpy="0.0 0.0 0.0"/>
+    </joint>
+    
+    <link name="rotor1">
+        <inertial>
+            <mass value="0.005" />
+            <inertia ixx="0.00000012" ixy="0.0" ixz="0.0" iyy="0.00000012" iyz="0.0" izz="0.00000012"/>
+        </inertial>
+        <collision>
+            <geometry>
+                <cylinder radius="0.009" length="0.003" />
+            </geometry>
+        </collision>
+        <visual>
+            <geometry>
+                <cylinder radius="0.009" length="0.003" />
+            </geometry>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+        </visual>
+    </link>
+    
+    <joint name="base1_to_rotor1" type="fixed">
+        <parent link="base1"/>
+        <child link="rotor1"/>
+        <origin xyz="0.0 0.011 0.0295" rpy="0.0 0.0 0.0"/>
+    </joint>
+
+    <link name="second_link1">
+        <inertial>
+            <mass value="0.07" />
+            <inertia ixx="0.00002112" ixy="0.0" ixz="0.0" iyy="0.00002012" iyz="0.0" izz="0.00001212"/>
+        </inertial>
+        
+        <collision>
+            <geometry>
+                <box size="0.031 0.05 0.032" />
+            </geometry>
+        </collision>
+        <visual>
+            <geometry>
+                <box size="0.031 0.05 0.032" />
+            </geometry>
+            <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.006 0.0" />
+        </visual>
+    </link>
+    
+    <joint name="first_joint" type="revolute">
+        <parent link="base1"/>
+        <child link="second_link1"/>
+        <axis xyz="0 0 1"/>
+        <limit upper="3.14" lower="-3.14" effort="100" velocity="1.0" />
+        <origin xyz="0.0 0.011 0.047" rpy="0.0 0.0 0.0"/>
+    </joint>
+    
+    <!--                           SECOND LINK                                 -->
+    <!--                           SECOND LINK                                 -->
+    <!--                           SECOND LINK                                 -->
+    
+    <link name="second_link2">
+        <inertial>
+            <mass value="0.005" />
+            <inertia ixx="0.00000012" ixy="0.0" ixz="0.0" iyy="0.00000012" iyz="0.0" izz="0.00000012"/>
+        </inertial>
+        <visual>
+            <geometry>
+                <box size="0.009 0.02 0.016" />
+            </geometry>
+            <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0" />
+        </visual>
+    </link>
+    
+    <joint name="second_link1_to_second_link2" type="fixed">
+        <parent link="second_link1"/>
+        <child link="second_link2"/>
+        <origin xyz="0.012 0.0 0.024" rpy="0.0 0.0 0.0"/>
+    </joint>
+    
+    <link name="second_link3">
+        <inertial>
+            <mass value="0.005" />
+            <inertia ixx="0.00000012" ixy="0.0" ixz="0.0" iyy="0.00000012" iyz="0.0" izz="0.00000012"/>
+        </inertial>
+        <visual>
+            <geometry>
+                <box size="0.009 0.02 0.016" />
+            </geometry>
+            <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0" />
+        </visual>
+    </link>
+    
+    <joint name="second_link1_to_second_link3" type="fixed">
+        <parent link="second_link1"/>
+        <child link="second_link3"/>
+        <origin xyz="-0.012 0.0 0.024" rpy="0.0 0.0 0.0"/>
+    </joint>
+    
+    <link name="third_link1">
+        <inertial>
+            <mass value="0.005" />
+            <inertia ixx="0.00000012" ixy="0.0" ixz="0.0" iyy="0.00000012" iyz="0.0" izz="0.00000012"/>
+        </inertial>
+        <visual>
+            <geometry>
+                <sphere radius="0.0075"/>
+            </geometry>
+            <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0" />
+        </visual>
+    </link>
+    
+    <joint name="second_joint" type="revolute">
+        <parent link="second_link1"/>
+        <child link="third_link1"/>
+        <axis xyz="1 0 0"/>
+        <limit upper="0.0" lower="-1.57" effort="1" velocity="1.0" />
+        <origin xyz="0.0 0.0 0.025" rpy="0.0 0.0 0.0"/>
+    </joint>
+    
+                              THIRD LINK                                
+                              THIRD LINK                                
+                              THIRD LINK                                
+    
+    <link name="third_link2">
+        <inertial>
+            <mass value="0.025" />
+            <inertia ixx="0.00004712" ixy="0.0" ixz="0.0" iyy="0.00004712" iyz="0.0" izz="0.00000112"/>
+        </inertial>
+        <visual>
+            <geometry>
+                <cylinder radius="0.0075" length="0.1" />
+            </geometry>
+            <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0" />
+        </visual>
+    </link>
+    
+    <joint name="third_link1_to_third_link2" type="fixed">
+        <parent link="third_link1"/>
+        <child link="third_link2"/>
+        <origin xyz="0.0 0.0 0.05" rpy="0.0 0.0 0.0"/>
+    </joint>
+
+
+    <link name="third_link3">
+        <inertial>
+            <mass value="0.005" />
+            <inertia ixx="0.0000002" ixy="0.0" ixz="0.0" iyy="0.0000002" iyz="0.0" izz="0.0000002"/>
+        </inertial>
+        
+        <visual>
+            <geometry>
+                <sphere radius="0.01"/>
+            </geometry>
+            <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0" />
+        </visual>
+    </link>
+    
+    <joint name="third_link2_to_third_link3" type="fixed">
+        <parent link="third_link2"/>
+        <child link="third_link3"/>
+        <origin xyz="0.0 0.0 0.05" rpy="0.0 0.0 0.0"/>
+    </joint>
+    
+    <link name="third_link4">
+        <inertial>
+            <mass value="0.01" />
+            <inertia ixx="0.00000112" ixy="0.0" ixz="0.0" iyy="0.00000112" iyz="0.0" izz="0.00000012"/>
+        </inertial>
+        <visual>
+            <geometry>
+                <cylinder radius="0.0025" length="0.04" />
+            </geometry>
+            <origin rpy="0.0 1.57057 0.0" xyz="0.0 0.0 0.0" />
+        </visual>
+    </link>
+    
+    <joint name="third_link1_to_third_link4" type="fixed">
+        <parent link="third_link1"/>
+        <child link="third_link4"/>
+        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+    </joint>
+
+
+
+    <gazebo reference="third_link1">
+        <material>Gazebo/Red</material>
+    </gazebo>
+
+    <gazebo reference="third_link2">
+        <material>Gazebo/Red</material>
+    </gazebo>
+    
+    <gazebo reference="third_link3">
+        <material>Gazebo/Blue</material>
+    </gazebo>
+
+    <gazebo reference="third_link4">
+        <material>Gazebo/Red</material>
+    </gazebo>
+   
+    <gazebo reference="second_link1">
+        <material>Gazebo/Green</material>
+    </gazebo>
+    <gazebo reference="second_link2">
+        <material>Gazebo/Green</material>
+    </gazebo>
+    <gazebo reference="second_link3">
+        <material>Gazebo/Green</material>
+    </gazebo>
+
+    <gazebo reference="base1">
+        <material>Gazebo/Grey</material>
+    </gazebo>
+    <gazebo reference="base2">
+        <material>Gazebo/Grey</material>
+    </gazebo>
+    <gazebo reference="base3">
+        <material>Gazebo/Grey</material>
+    </gazebo>
+    <gazebo reference="rotor1">
+        <material>Gazebo/Grey</material>
+    </gazebo>
+
+    <gazebo>
+        <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+            <robotNamespace>/mrs_manipulator</robotNamespace>
+        </plugin>
+    </gazebo>
+    
+    <transmission name="first_joint">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="motor1">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+        <joint name="first_joint">
+          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
+    
+    <transmission name="second_joint">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="motor2">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+        <joint name="second_joint">
+          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
+    
+
+  </xacro:macro>
+  <!--}-->
+
   <!-- Macro to add a Timepix detector {-->
   <xacro:macro name="timepix_macro" params="namespace name parent color *origin">
     <joint name="${name}_joint" type="fixed">

@@ -1019,6 +1019,22 @@
   </xacro:if>
   <!--}-->
 
+  <!-- Coop gripper {-->
+  <xacro:if value="$(arg enable_coop_gripper)">
+    <xacro:coop_gripper
+      parent="base_link">
+    </xacro:coop_gripper>
+  </xacro:if>
+  <!--}-->
+  
+  <!-- MRS manipulator {-->
+  <xacro:if value="$(arg enable_mrs_manipulator)">
+    <xacro:mrs_manipulator
+      parent="base_link">
+    </xacro:mrs_manipulator>
+  </xacro:if>
+  <!--}-->
+
   <!-- Timepix {-->
   <xacro:if value="$(arg enable_timepix)">
     <xacro:timepix_macro

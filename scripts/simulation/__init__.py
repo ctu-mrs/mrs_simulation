@@ -216,6 +216,8 @@ def spawn_model(
         enable_pendulum=False,
         enable_timepix=False,
         enable_magnetic_gripper=False,
+        enable_coop_gripper=False,
+        enable_mrs_manipulator=False,
         enable_scanse_sweep=False,
         enable_rplidar=False,
         enable_teraranger_tower_evo=False,
@@ -284,6 +286,8 @@ def spawn_model(
     kwargs['mappings']['enable_rangefinder_up'] = "true" if enable_rangefinder_up else "false"
     kwargs['mappings']['enable_whycon_box'] = "true" if enable_whycon_box else "false"
     kwargs['mappings']['enable_magnetic_gripper'] = "true" if enable_magnetic_gripper else "false"
+    kwargs['mappings']['enable_coop_gripper'] = "true" if enable_coop_gripper else "false"
+    kwargs['mappings']['enable_mrs_manipulator'] = "true" if enable_mrs_manipulator else "false"
     kwargs['mappings']['enable_scanse_sweep'] = "true" if enable_scanse_sweep else "false"
     kwargs['mappings']['enable_rplidar'] = "true" if enable_rplidar else "false"
     kwargs['mappings']['enable_teraranger_tower_evo'] = "true" if enable_teraranger_tower_evo else "false"

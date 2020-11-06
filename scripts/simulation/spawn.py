@@ -119,6 +119,12 @@ def spawn():
     parser.add_argument(
         '--enable-gripper', action = 'store_true',
         help='Add magnetic gripper (default: false)')
+    parser.add_argument(
+        '--enable-coop-gripper', action = 'store_true',
+        help='Add coop gripper (default: false)')
+    parser.add_argument(
+        '--enable-mrs-manipulator', action = 'store_true',
+        help='Add mrs_manipulator (default: false)')
     lidar_group = parser.add_mutually_exclusive_group()
     lidar_group.add_argument(
         '--enable-scanse', action = 'store_true',
@@ -314,6 +320,8 @@ def spawn():
             enable_bluefox_camera_reverse = args.enable_bluefox_camera_reverse,
             enable_fisheye_camera = args.enable_fisheye_camera,
             enable_magnetic_gripper = args.enable_gripper,
+            enable_coop_gripper = args.enable_coop_gripper,
+            enable_mrs_manipulator = args.enable_mrs_manipulator,
             enable_scanse_sweep = args.enable_scanse,
             enable_pendulum = args.enable_pendulum,
             enable_rplidar = args.enable_rplidar,
