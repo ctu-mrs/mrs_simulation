@@ -144,7 +144,7 @@ def spawn():
     parser.add_argument(
         '--ouster-model', nargs=1, type=str, 
         default=('OS1-16'), 
-        choices =['OS0-32', 'OS0-64', 'OS0-128', 'OS1-16', 'OS1-32', 'OS1-64', 'OS1-128', 'OS2-32', 'OS2-64', 'OS2-128'], 
+        choices =['OS0-32', 'OS0-64', 'OS0-128', 'OS1-16', 'OS1-32G1', 'OS1-32', 'OS1-64', 'OS1-128', 'OS2-32', 'OS2-64', 'OS2-128'], 
         help='Choose the Ouster model (default: %(default)s)')
     parser.add_argument(
         '--use-gpu-ray', action = 'store_true',
@@ -194,6 +194,9 @@ def spawn():
     parser.add_argument(
         '--uv-camera-calibration-file', nargs=1, type=str, default=("~/.ros/calib_results.txt"),
         help='Specify UV camera calibration different than default one')
+    parser.add_argument(
+        '--use-uv-occlusions', action = 'store_true',
+        help='Enable occlusions for UVDAR simulation - heavy on computation (default: false)')
     mbzirc_group = parser.add_mutually_exclusive_group()
     mbzirc_group.add_argument(
         '--wall-challenge', action = 'store_true',
@@ -271,9 +274,9 @@ def spawn():
 
     # spawn vehicles
     if n_vehicles == 1:
-        print("Spawning vehicle!")
+        print("[MrsSimulation]: Spawning vehicle!")
     else:
-        print("Spawning %i vehicles!" %n_vehicles)
+        print("[MrsSimulation]: Spawning %i vehicles!" %n_vehicles)
 
     for i in range(0,n_vehicles):
 
@@ -347,6 +350,7 @@ def spawn():
             uvled_beacon_f = "{}".format(uvled_beacon_fr[0]),
             enable_uv_camera = args.enable_uv_camera,
             uvcam_calib_file = uvcam_calib[0].strip(),
+            uvcam_occlusions = args.use_uv_occlusions,
             debug=args.debug)
 
         if args.generate_launch_file or args.run:
