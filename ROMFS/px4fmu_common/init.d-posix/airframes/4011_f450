@@ -7,7 +7,7 @@
 # @maintainer Petr Stibinger <stibipet@fel.cvut.cz>
 #
 
-sh /etc/init.d/rc.mc_defaults
+. ${R}etc/init.d/rc.mc_defaults
 
 set MAV_TYPE 2
 set MIXER quad_x
