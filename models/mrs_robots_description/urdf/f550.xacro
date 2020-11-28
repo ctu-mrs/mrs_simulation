@@ -530,6 +530,7 @@
   <xacro:mavlink_interface_macro
     namespace="${namespace}"
     imu_sub_topic="/imu"
+    gps_sub_topic="/gps"
     mag_sub_topic="/mag"
     baro_sub_topic="/baro"
     mavlink_addr="$(arg mavlink_addr)"
@@ -554,28 +555,25 @@
   <!--}-->
 
   <!-- GPS {-->
-  <xacro:gps_macro
-    gps_name="gps0"
-    pos_x="0.0"
-    pos_y="0.0"
-    pos_z="0.0"
-    gps_noise="true"
-    gps_xy_random_walk="2.0"
-    gps_z_random_walk="4.0"
-    gps_xy_noise_density="2.0e-4"
-    gps_z_noise_density="4.0e-4"
-    gps_vxy_noise_density="0.2"
-    gps_vz_noise_density="0.4"
-    update_rate="10"
+  <xacro:gps_plugin_macro
     namespace="${namespace}"
-    parent_link="base_link">
-  </xacro:gps_macro>
+    gps_noise="true"
+    gps_indoor_jamming="$(arg gps_indoor_jamming)">
+    >
+  </xacro:gps_plugin_macro>
+
+  <xacro:if value="$(arg gps_indoor_jamming)">
+    <xacro:gps_satelites_blocking_macro
+      namespace="${namespace}"
+      parent_link="base_link">
+    </xacro:gps_satelites_blocking_macro>
+  </xacro:if>
   <!--}-->
 
   <!-- Magnetometer {-->
   <xacro:magnetometer_plugin_macro
     namespace="${namespace}"
-    pub_rate="100"
+    pub_rate="20"
     noise_density="0.0004"
     random_walk="0.0000064"
     bias_correlation_time="600"
@@ -587,9 +585,8 @@
   <!-- Barometer {-->
   <xacro:barometer_plugin_macro
     namespace="${namespace}"
-    pub_rate="50"
+    pub_rate="10"
     baro_topic="/baro"
-    baro_drift_pa_per_sec="0"
     >
   </xacro:barometer_plugin_macro>
   <!--}-->
@@ -601,11 +598,11 @@
     parent_link="base_link"
     imu_topic="/imu"
     mass_imu_sensor="0.015"
-    gyroscope_noise_density="0.00018665"
-    gyroscope_random_walk="0.000038785"
+    gyroscope_noise_density="0.0003394"
+    gyroscopoe_random_walk="0.000038785"
     gyroscope_bias_correlation_time="1000.0"
     gyroscope_turn_on_bias_sigma="0.0087"
-    accelerometer_noise_density="0.00186"
+    accelerometer_noise_density="0.004"
     accelerometer_random_walk="0.006"
     accelerometer_bias_correlation_time="300.0"
     accelerometer_turn_on_bias_sigma="0.1960"
@@ -1119,7 +1116,8 @@
       number="1"          
       frame_rate="80"     
       camera_publish_topic="/${namespace}/uvdar_bluefox_left/image_raw"
-      calibration_file="$(arg uvcam_calib_file)">
+      calibration_file="$(arg uvcam_calib_file)"
+      occlusions="$(arg uvcam_occlusions)">
     <origin xyz="0.037 0.1175 0.05" rpy="0 0 ${rad70}" />
     </xacro:uvcam_macro>  
 
@@ -1129,7 +1127,8 @@
       number="2"          
       frame_rate="80"     
       camera_publish_topic="/${namespace}/uvdar_bluefox_right/image_raw"
-      calibration_file="$(arg uvcam_calib_file)">
+      calibration_file="$(arg uvcam_calib_file)"
+      occlusions="$(arg uvcam_occlusions)">
     <origin xyz="0.037 -0.1175 0.05" rpy="0 0 -${rad70}" />
     </xacro:uvcam_macro>  
 
@@ -1361,7 +1360,6 @@
       <origin xyz="0.223 0 -0.089" rpy="${rad90} 0 -${rad90}" />
     </xacro:visual_macro>
   </xacro:if>
-
   <!--}-->
 
   <!-- UVDAR mount {-->
