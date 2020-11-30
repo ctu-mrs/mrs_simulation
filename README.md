@@ -1,4 +1,7 @@
-# MRS simulation [![Build Status](https://github.com/ctu-mrs/mrs_simulation/workflows/CI/badge.svg)](https://github.com/ctu-mrs/mrs_simulation/actions)
+# MRS simulation
+ 
+| Build status | [![Build Status](https://github.com/ctu-mrs/mrs_simulation/workflows/Melodic/badge.svg)](https://github.com/ctu-mrs/mrs_simulation/actions) | [![Build Status](https://github.com/ctu-mrs/mrs_simulation/workflows/Noetic/badge.svg)](https://github.com/ctu-mrs/mrs_simulation/actions) |
+|--------------|---------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
  
 ## Overview
 Support for spawning vehicles into Gazebo simulation, where user can select from multiple UAV platforms. 
