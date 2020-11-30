@@ -45,7 +45,8 @@ else:
     import xacro
 
 VEHICLE_BASE_PORT = 14000
-VEHICLE_TCP_BASE_PORT = 4560
+MAVLINK_BASE_TCP_PORT = 4560
+MAVLINK_BASE_UDP_PORT = 14560
 
 def print_error(string):
     FAIL = '\033[91m'
@@ -65,6 +66,13 @@ def print_ok(string):
 def get_vehicle_base_port(mav_sys_id):
     return VEHICLE_BASE_PORT + mav_sys_id * 4
 
+def get_all_vehicle_ports(mav_sys_id):
+    ports={}
+    ports['udp_offboard_port_remote'] = VEHICLE_BASE_PORT + 4 * mav_sys_id + 2
+    ports['udp_offboard_port_local'] = VEHICLE_BASE_PORT + 4 * mav_sys_id + 1
+    ports['mavlink_tcp_port'] = MAVLINK_BASE_TCP_PORT + mav_sys_id
+    ports['mavlink_udp_port'] = MAVLINK_BASE_UDP_PORT + mav_sys_id
+    return ports
 
 def get_vehicle_pose(mav_sys_id):
     inteam_id = mav_sys_id % 100
@@ -80,8 +88,8 @@ def get_vehicle_pose(mav_sys_id):
         if( inteam_id % 2 == 1 ):
             x -= 4
 
-    yaw = 0
-    return (x, y, z, yaw)
+    heading = 0
+    return {'x' : x, 'y' : y, 'z' : z, 'heading' : heading}
 
 
 def get_vehicle_pose_from_file(fname, uav_id):
@@ -97,7 +105,7 @@ def get_vehicle_pose_from_file(fname, uav_id):
                 sys.exit(1)
             print(row)
             if int(row[0]) == uav_id:
-                return [uav_id], [[float(row[i]) for i in range(1,len(row))]]
+                return {'x' : row[1], 'y' : row[2], 'z' : row[3], 'heading' : row[4]}
     elif fname.endswith('.yaml'):
         dict_vehicle_info = yaml.safe_load(open(fname, 'r'))
         for item in dict_vehicle_info:
@@ -106,7 +114,7 @@ def get_vehicle_pose_from_file(fname, uav_id):
                 sys.exit(1)
             if int(dict_vehicle_info[item]['id']) == uav_id:
                 print(dict_vehicle_info[item])
-                return [uav_id], [[dict_vehicle_info[item]['x'], dict_vehicle_info[item]['y'], dict_vehicle_info[item]['z'], dict_vehicle_info[item]['heading']]]
+                return {'x' : dict_vehicle_info[item]['x'], 'y' : dict_vehicle_info[item]['y'], 'z' : dict_vehicle_info[item]['z'], 'heading' : dict_vehicle_info[item]['heading']}
     else:
         print("Incorrect file format, must be either '*.csv' or '*.yaml'")
 
@@ -192,7 +200,7 @@ def check_for_mrs_gazebo_extras_package():
     return
 
 def spawn_model(
-        mav_sys_id, vehicle_type, tcp_port, udp_port, pose,
+        mav_sys_id, vehicle_type, mavlink_tcp_port, mavlink_udp_port, pose,
         ros_master_uri=None,
         mavlink_address=None,
         enable_rangefinder=False,
@@ -243,7 +251,6 @@ def spawn_model(
         uvcam_occlusions=False,
         debug=False
     ):
-    x, y, z, yaw = pose
 
     if ros_master_uri:
         original_uri = os.environ[ROS_MASTER_URI]
@@ -259,8 +266,8 @@ def spawn_model(
 
     kwargs = {
         'mappings': {
-            'mavlink_udp_port': str(udp_port),
-            'mavlink_tcp_port': str(tcp_port),
+            'mavlink_udp_port': str(mavlink_udp_port),
+            'mavlink_tcp_port': str(mavlink_tcp_port),
         },
     }
     
@@ -340,13 +347,13 @@ def spawn_model(
     req.model_name = unique_name
     req.model_xml = model_xml
     req.robot_namespace = unique_name
-    req.initial_pose.position.x = x
-    req.initial_pose.position.y = y
-    req.initial_pose.position.z = z
+    req.initial_pose.position.x = pose['x']
+    req.initial_pose.position.y = pose['y']
+    req.initial_pose.position.z = pose['z']
     req.initial_pose.orientation.x = 0.0
     req.initial_pose.orientation.y = 0.0
-    req.initial_pose.orientation.z = math.sin(yaw / 2.0)
-    req.initial_pose.orientation.w = math.cos(yaw / 2.0)
+    req.initial_pose.orientation.z = math.sin(pose['heading'] / 2.0)
+    req.initial_pose.orientation.w = math.cos(pose['heading'] / 2.0)
     req.reference_frame = ''
 
     try:
@@ -406,21 +413,19 @@ def parse_xacro(template_xml, **kwargs):
 def generate_launch_file(
     mav_sys_id, vehicle_type, baseport, config_path
 ):
-    launch_snippet = get_launch_snippet(
-        mav_sys_id, vehicle_type, baseport, config_path)
+    launch_snippet = get_launch_snippet(mav_sys_id, vehicle_type)
     return write_launch_file(launch_snippet)
 
 
-def get_launch_snippet(
-    mav_sys_id, vehicle_type, vehicle_base_port
-):
-    data = {
-        'ros_interface_port3': vehicle_base_port + 2,
-        'ros_interface_port4': vehicle_base_port + 3,
-        'vehicle_type': vehicle_type,
-        'mav_sys_id': mav_sys_id,
-    }
-    return empy('px4_and_mavros.launch.em', data)
+def get_launch_snippet(mav_sys_id, vehicle_type):
+    ports = get_all_vehicle_ports(mav_sys_id)
+    spawn_pose = get_vehicle_pose(mav_sys_id)
+    data = {}
+    data.update(ports)
+    data.update(spawn_pose)
+    data['vehicle_type'] = vehicle_type
+    data['mav_sys_id'] = mav_sys_id
+    return empy('parametrized_spawn.em', data)
 
 
 def write_launch_file(launch_snippet):
@@ -480,4 +485,3 @@ def delete_model(mav_sys_id, vehicle_type, ros_master_uri=None):
     else:
         print_error(resp.status_message)
         return 1
-
