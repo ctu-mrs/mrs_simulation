@@ -337,6 +337,7 @@ def spawn_model(
          sys.exit(1)
 
 
+    # #{
     model_xml = parse_xacro(model_xml, **kwargs)
 
     if debug:
@@ -376,6 +377,7 @@ def spawn_model(
     else:
         print_error(resp.status_message)
         return 1
+    # #}
 
 def detect_available_arguments_in_xacro(template_xml):
     # find all expression that match "$(arg enable...."
@@ -401,7 +403,6 @@ def detect_unused_arguments_in_xacro(template_xml, vehicle_type, mappings=None, 
                     all_arguments_available = False
     return all_arguments_available
 
-
 def parse_xacro(template_xml, **kwargs):
     doc = xacro.parse(template_xml)
     xacro.process_doc(doc, **kwargs)
@@ -420,11 +421,9 @@ def generate_launch_file(
 def get_launch_snippet(mav_sys_id, vehicle_type):
     ports = get_all_vehicle_ports(mav_sys_id)
     spawn_pose = get_vehicle_pose(mav_sys_id)
-    data = {}
+    data = {'vehicle_type' : vehicle_type, 'mav_sys_id' : mav_sys_id}
     data.update(ports)
     data.update(spawn_pose)
-    data['vehicle_type'] = vehicle_type
-    data['mav_sys_id'] = mav_sys_id
     return empy('parametrized_spawn.em', data)
 
 
