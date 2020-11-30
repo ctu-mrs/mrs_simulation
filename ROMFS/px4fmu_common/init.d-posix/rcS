@@ -16,7 +16,7 @@ AIRFRAMES_DIR="$SCRIPT_DIR/airframes"
 # shellcheck disable=SC2154
 if [ "$replay_mode" = "ekf2" ]
 then
-	sh etc/init.d-posix/rc.replay
+	. ${R}etc/init.d-posix/rc.replay
 	exit 0
 fi
 
@@ -102,7 +102,8 @@ then
 	set AUTOCNF yes
 
 	# Wipe out params except RC*, flight modes, total flight time, accel cal, gyro cal, next flight UUID
-	param reset_nostart RC* COM_FLTMODE* LND_FLIGHT_T_* TC_* CAL_ACC* CAL_GYRO* COM_FLIGHT_UUID
+	# param reset_nostart RC* COM_FLTMODE* LND_FLIGHT_T_* TC_* CAL_ACC* CAL_GYRO* COM_FLIGHT_UUID
+	param reset_nostart SYS_AUTOSTART SYS_AUTOCONFIG RC* COM_FLTMODE* LND_FLIGHT_T_* TC_* CAL_ACC* CAL_GYRO* COM_FLIGHT_UUID
 fi
 
 # multi-instance setup
@@ -215,7 +216,7 @@ if [ ! -e "$autostart_file" ]; then
 	exit 1
 fi
 
-sh "$autostart_file"
+. "$autostart_file"
 
 #
 # If autoconfig parameter was set, reset it and save parameters.
@@ -254,28 +255,37 @@ fi
 # Note: rc.vehicle_setup is the entry point for rc.interface,
 #       rc.fw_apps, rc.mc_apps, rc.rover_apps, and rc.vtol_apps.
 #
-sh etc/init.d/rc.vehicle_setup
+. ${R}etc/init.d/rc.vehicle_setup
 
 # GCS link
-mavlink start -x -u $udp_gcs_port_local -r 4000000
-mavlink stream -r 50 -s POSITION_TARGET_LOCAL_NED -u $udp_gcs_port_local
-mavlink stream -r 50 -s LOCAL_POSITION_NED -u $udp_gcs_port_local
-mavlink stream -r 50 -s GLOBAL_POSITION_INT -u $udp_gcs_port_local
-mavlink stream -r 50 -s ATTITUDE -u $udp_gcs_port_local
-mavlink stream -r 50 -s ATTITUDE_QUATERNION -u $udp_gcs_port_local
-mavlink stream -r 50 -s ATTITUDE_TARGET -u $udp_gcs_port_local
-mavlink stream -r 50 -s SERVO_OUTPUT_RAW_0 -u $udp_gcs_port_local
-mavlink stream -r 20 -s RC_CHANNELS -u $udp_gcs_port_local
-mavlink stream -r 10 -s OPTICAL_FLOW_RAD -u $udp_gcs_port_local
+# mavlink start -x -u $udp_gcs_port_local -r 4000000
+# mavlink stream -r 50 -s POSITION_TARGET_LOCAL_NED -u $udp_gcs_port_local
+# mavlink stream -r 50 -s LOCAL_POSITION_NED -u $udp_gcs_port_local
+# mavlink stream -r 50 -s GLOBAL_POSITION_INT -u $udp_gcs_port_local
+# mavlink stream -r 50 -s ATTITUDE -u $udp_gcs_port_local
+# mavlink stream -r 50 -s ATTITUDE_QUATERNION -u $udp_gcs_port_local
+# mavlink stream -r 50 -s ATTITUDE_TARGET -u $udp_gcs_port_local
+# mavlink stream -r 50 -s SERVO_OUTPUT_RAW_0 -u $udp_gcs_port_local
+# mavlink stream -r 20 -s RC_CHANNELS -u $udp_gcs_port_local
+# mavlink stream -r 10 -s OPTICAL_FLOW_RAD -u $udp_gcs_port_local
 
 # API/Offboard link
 mavlink start -x -u $udp_offboard_port_local -r 4000000 -m onboard -o $udp_offboard_port_remote
+mavlink stream -r 100 -s ATTITUDE -u $udp_offboard_port_local
+mavlink stream -r 100 -s ATTITUDE_QUATERNION -u $udp_offboard_port_local # /mavros/imu/data
+mavlink stream -r 100 -s ATTITUDE_TARGET -u $udp_offboard_port_local
+mavlink stream -r 100 -s HIGHRES_IMU -u $udp_offboard_port_local # /mavros/imu/data_raw
+mavlink stream -r 100 -s LOCAL_POSITION_NED -u $udp_offboard_port_local
+mavlink stream -r 100 -s GLOBAL_POSITION_INT -u $udp_offboard_port_local
+mavlink stream -r 10 -s RC_CHANNELS -u $udp_offboard_port_local
+mavlink stream -r 10 -s SYS_STATUS -u $udp_offboard_port_local
+mavlink stream -r 100 -s HEARTBEAT -u $udp_offboard_port_local
 
 # Onboard link to camera
-mavlink start -x -u $udp_onboard_payload_port_local -r 4000 -f -m onboard -o $udp_onboard_payload_port_remote
+# mavlink start -x -u $udp_onboard_payload_port_local -r 4000 -f -m onboard -o $udp_onboard_payload_port_remote
 
 # execute autostart post script if any
-[ -e "$autostart_file".post ] && sh "$autostart_file".post
+[ -e "$autostart_file".post ] && . "$autostart_file".post
 
 # Run script to start logging
 if param compare SYS_MC_EST_GROUP 2
@@ -284,7 +294,7 @@ then
 else
 	set LOGGER_ARGS "-p vehicle_attitude"
 fi
-sh etc/init.d/rc.logging
+. ${R}etc/init.d/rc.logging
 
 mavlink boot_complete
 replay trystart
