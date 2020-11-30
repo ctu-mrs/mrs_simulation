@@ -12,8 +12,8 @@
 
     <!-- Mavlink and Gazebo communication ports -->
     <!-- This has to match the rcS file!! -->
-    <arg name="port1" value="$(eval 14540 + arg('ID'))"/>
-    <arg name="port2" value="$(eval 14580 + arg('ID'))"/>
+    <arg name="udp_offboard_port_remote" value="$(eval 14000 + (4 * arg('ID')) + 2)"/>
+    <arg name="udp_offboard_port_local" value="$(eval 14000 + (4 * arg('ID')) + 1)"/>
     <arg name="mavlink_tcp_port" value="$(eval 4560 + arg('ID'))"/>
     <arg name="mavlink_udp_port" value="$(eval 14560 + arg('ID'))"/>
 
@@ -22,7 +22,7 @@
     <env name="PX4_ESTIMATOR" value="$(arg est)" />
 
     <!-- MAVROS and vehicle configs -->
-    <arg name="fcu_url" value="udp://:$(arg port1)@localhost:$(arg port2)"/>
+    <arg name="fcu_url" value="udp://:$(arg udp_offboard_port_remote)@localhost:$(arg udp_offboard_port_local)"/>
     <arg name="x" value="$(eval 2 * arg('ID'))"/>
     <arg name="y" value="0"/>
     <arg name="z" value="0"/>
@@ -37,7 +37,7 @@
     </node>
 
     <!-- spawn vehicle -->
-    <arg name="cmd" default="$(find xacro)/xacro $(find px4)/Tools/sitl_gazebo/models/rotors_description/urdf/$(arg vehicle)_base.xacro rotors_description_dir:=$(find px4)/Tools/sitl_gazebo/models/rotors_description mavlink_udp_port:=$(arg mavlink_udp_port) mavlink_tcp_port:=$(arg mavlink_tcp_port) --inorder"/>
+    <arg name="cmd" default="$(find xacro)/xacro $(find px4)/Tools/sitl_gazebo/models/rotors_description/urdf/$(arg vehicle)_base.xacro rotors_description_dir:=$(find px4)/Tools/sitl_gazebo/models/rotors_description mavlink_tcp_port:=$(arg mavlink_tcp_port) --inorder"/>
     <param command="$(arg cmd)" name="rotors_description"/>
     <node name="$(arg vehicle)_$(arg ID)_spawn" output="screen" pkg="gazebo_ros" type="spawn_model" args="-urdf -param rotors_description -model $(arg vehicle)_$(arg ID) -package_to_model -x $(arg x) -y $(arg y) -z $(arg z) -R $(arg R) -P $(arg P) -Y $(arg Y)"/>
 
