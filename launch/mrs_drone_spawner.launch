@@ -1,0 +1,9 @@
+<launch>
+
+  <node name="mrs_drone_spawner" pkg="mrs_simulation" type="mrs_drone_spawner.py" output="screen">
+
+    <rosparam file="$(find mrs_simulation)/config/model_params.yaml" command="load"/>
+
+  </node>
+
+</launch>
