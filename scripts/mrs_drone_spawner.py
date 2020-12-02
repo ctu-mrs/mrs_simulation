@@ -223,8 +223,7 @@ class MrsDroneSpawner:
             fd, path = tempfile.mkstemp(prefix='simulation_', suffix='.yaml')
             with os.fdopen(fd, 'w') as f:
                 for pname, pvalue in params_dict.items():
-                    if 'enable' in pname or 'use' in pname:
-                        f.write(str(pname) + ': ' + str(pvalue).lower() + '\n')
+                    f.write(str(pname) + ': ' + str(pvalue).lower() + '\n')
             uav_args_sequence.append('model_params_file:=' + path)
 
 
