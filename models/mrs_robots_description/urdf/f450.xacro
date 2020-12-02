@@ -684,7 +684,7 @@
       vfov_angle="${vfov_angle}"
       max_range="${range}"
       noise="0.01"
-      enable_gpu_ray="$(arg use_gpu_ray)"
+      enable_gpu_ray="${optionals['use_gpu_ray']}"
       >
     </xacro:velodyne_macro>
   </xacro:if>
@@ -692,7 +692,7 @@
 
   <!-- Ouster {-->
   <xacro:if value="${optionals['enable_ouster']}">
-  <xacro:property name="ouster_model" value="$(arg ouster_model)" />
+    <xacro:property name="ouster_model" value="${optionals['ouster_model']}" />
 
     <!-- OS1-16 Generation 1 (default) -->
     <xacro:property name="sensor_name" value="os1" />
@@ -801,7 +801,7 @@
     vfov_angle="${vfov_angle}"
     max_range="${range}"
     noise="0.03"
-    enable_gpu_ray="$(arg use_gpu_ray)"
+    enable_gpu_ray="${optionals['use_gpu_ray']}"
     >
   </xacro:ouster_macro>
   </xacro:if>
@@ -896,7 +896,7 @@
       parent_link="base_link"
       camera_suffix="realsense_down"
       parent_frame_name="${namespace}/fcu"
-      enable_realistic_realsense="$(arg use_realistic_realsense)"
+      enable_realistic_realsense="${optionals['use_realistic_realsense']}"
       x="0.153"
       y="0"
       z="-0.103"
@@ -915,7 +915,7 @@
       parent_link="base_link"
       camera_suffix="realsense_front_pitched"
       parent_frame_name="${namespace}/fcu"
-      enable_realistic_realsense="$(arg use_realistic_realsense)"
+      enable_realistic_realsense="${optionals['use_realistic_realsense']}"
       x="0.16"
       y="0"
       z="-0.089"
@@ -934,7 +934,7 @@
       parent_link="base_link"
       camera_suffix="realsense_front"
       parent_frame_name="${namespace}/fcu"
-      enable_realistic_realsense="$(arg use_realistic_realsense)"
+      enable_realistic_realsense="${optionals['use_realistic_realsense']}"
       x="0.155"
       y="0"
       z="-0.089"
@@ -953,7 +953,7 @@
       parent_link="base_link"
       camera_suffix="realsense_up"
       parent_frame_name="${namespace}/fcu"
-      enable_realistic_realsense="$(arg use_realistic_realsense)"
+      enable_realistic_realsense="${optionals['use_realistic_realsense']}"
       x="0.07"
       y="0"
       z="0.025"
@@ -1063,8 +1063,8 @@
       number="1"          
       frame_rate="80"     
       camera_publish_topic="/${namespace}/uvdar_bluefox_left/image_raw"
-      calibration_file="$(arg uvcam_calib_file)"
-      occlusions="$(arg uvcam_occlusions)">
+      calibration_file="${optionals['uvcam_calib_file']}"
+      occlusions="${optionals['uvcam_occlusions']}">
     <origin xyz="0.037 0.1175 0.05" rpy="0 0 ${rad70}" />
     </xacro:uvcam_macro>  
 
@@ -1074,8 +1074,8 @@
       number="2"          
       frame_rate="80"     
       camera_publish_topic="/${namespace}/uvdar_bluefox_right/image_raw"
-      calibration_file="$(arg uvcam_calib_file)"
-      occlusions="$(arg uvcam_occlusions)">
+      calibration_file="${optionals['uvcam_calib_file']}"
+      occlusions="${optionals['uvcam_occlusions']}">
     <origin xyz="0.037 -0.1175 0.05" rpy="0 0 -${rad70}" />
     </xacro:uvcam_macro>  
 
@@ -1207,8 +1207,8 @@
 
   <xacro:if value="${optionals['enable_uv_leds']}">
     <xacro:uvled_quadrotor
-      f1="$(arg uvled_fr_l)"
-      f2="$(arg uvled_fr_r)"
+      f1="${optionals['uvled_fr_l']}"
+      f2="${optionals['uvled_fr_r']}"
       namespace="${namespace}"
       parent_link="base_link"/>
   </xacro:if>
@@ -1254,7 +1254,7 @@
   <xacro:if value="${optionals['enable_uv_leds_beacon']}">
     <xacro:uvled_beacon
       height="0.15"
-      f="$(arg uvled_beacon_f)"
+      f="${optionals['uvled_beacon_f']}"
       namespace="${namespace}"
       parent_link="base_link"/>
   </xacro:if>

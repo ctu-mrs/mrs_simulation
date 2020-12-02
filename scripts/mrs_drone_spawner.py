@@ -8,15 +8,20 @@ import rospkg
 import copy
 import tempfile
 import signal
+import time
 
 from mrs_msgs.srv import String as StringSrv
 from mrs_msgs.srv import StringResponse as StringSrvResponse
+from std_srvs.srv import Empty
+from gazebo_msgs.srv import DeleteModel
 
 VEHICLE_BASE_PORT = 14000
 MAVLINK_TCP_BASE_PORT = 4560
 MAVLINK_UDP_BASE_PORT = 14560
+LAUNCH_BASE_PORT = 14900
 DEFAULT_VEHICLE_TYPE = 't650'
 VEHICLE_TYPES = ['f450', 'f550', 't650', 'eaglemk2']
+SPAWNING_DELAY_SECONDS = 6
 
 # #{
 def print_error(string):
@@ -50,7 +55,7 @@ class MrsDroneSpawner:
     def __init__(self):
         rospy.init_node('mrs_drone_spawner', anonymous=True)
         self.model_params = rospy.get_param('~model_params')
-        self.assigned_ids = []
+        self.assigned_ids = {} # id: process_handle
 
         rospack = rospkg.RosPack()
         pkg_path = rospack.get_path('mrs_simulation')
@@ -61,13 +66,15 @@ class MrsDroneSpawner:
             print('\t\t' + str(param) + ': ' + str(value))
 
         print('Launchfile: ' + self.path_to_launch_file)
-        s = rospy.Service('spawn', StringSrv, self.callback_spawn_drone)
+        spawn_server = rospy.Service('~spawn', StringSrv, self.callback_spawn)
+        delete_server = rospy.Service('~delete', StringSrv, self.callback_delete)
+        self.delete_gazebo_proxy = rospy.ServiceProxy('gazebo/delete_model', DeleteModel)
         rospy.spin()
 
     # #{ assign_free_id
     def assign_free_id(self):
         for i in range(0,251):
-            if i not in self.assigned_ids:
+            if i not in self.assigned_ids.keys():
                 return i
         raise Exception('Cannot assign a free ID to the vehicle!')
     # #}
@@ -98,16 +105,13 @@ class MrsDroneSpawner:
                 rwarn('Cannot spawn uav' + str(ID) + ', ID out of range <0, 250>!')
                 continue
 
-            if ID in self.assigned_ids:
+            if ID in self.assigned_ids.keys():
                 rwarn('Cannot spawn uav' + str(ID) + ', ID already assigned!')
                 continue
             ids.append(ID)
 
         if len(ids) < 1:
             raise Exception('No valid ID provided')
-
-        for i in ids:
-            self.assigned_ids.append(i)
 
         return ids
     # #}
@@ -163,6 +167,7 @@ class MrsDroneSpawner:
         ports['udp_offboard_port_local'] = VEHICLE_BASE_PORT + (4 * ID) + 1
         ports['mavlink_tcp_port'] = MAVLINK_TCP_BASE_PORT + ID
         ports['mavlink_udp_port'] = MAVLINK_UDP_BASE_PORT + ID
+        ports['fcu_url'] = 'udp://:' + str(ports['udp_offboard_port_remote']) + '@localhost:' + str(ports['udp_offboard_port_local'])
         return ports
     # #}
 
@@ -179,6 +184,8 @@ class MrsDroneSpawner:
             rerr(str(e.args[0]))
             raise Exception('Cannot spawn vehicle. Reason: ' + str(e.args[0]))
 
+        for ID in uav_ids:
+            self.assigned_ids[ID] = None
 
         rinfo('Spawning ' + str(len(uav_ids)) + ' vehicles of type \'' + vehicle_type + '\'')
 
@@ -209,7 +216,7 @@ class MrsDroneSpawner:
             # setup vehicle spawn pose
             uav_args_sequence.append('x:=' + str(ID))
             uav_args_sequence.append('y:=' + str(0))
-            uav_args_sequence.append('z:=' + str(0))
+            uav_args_sequence.append('z:=' + str(0.4))
             uav_args_sequence.append('heading:=' + str(0))
 
             # generate a yaml file for the custom model config
@@ -227,8 +234,8 @@ class MrsDroneSpawner:
         return args_sequences
     # #}
 
-    # #{ callback_spawn_drone
-    def callback_spawn_drone(self, req):
+    # #{ callback_spawn
+    def callback_spawn(self, req):
         params_dict = None
         try:
             params_dict = self.parse_input_params(req.value)
@@ -251,6 +258,7 @@ class MrsDroneSpawner:
 
         successful_spawns = 0
         unsuccessful_spawns = 0
+        launched = []
         # iterate to get sequences for individual UAVs
         for i, uav_roslaunch_args in enumerate(roslaunch_args):
             ID = params_dict['uav_ids'][i]
@@ -260,15 +268,15 @@ class MrsDroneSpawner:
             rospy.loginfo('Service called, generated uuid:' + str(uuid))
             roslaunch_sequence = [(self.path_to_launch_file, uav_roslaunch_args)]
             launch = roslaunch.parent.ROSLaunchParent(uuid, roslaunch_sequence)
-
             try:
                 launch.start()
             except:
                 rerr('Error occured while spawning uav' + str(ID) + '!')
-                self.assigned_ids.remove(ID)
+                del self.assigned_ids[ID]
                 unsuccessful_spawns += 1
                 continue
-
+            self.assigned_ids[ID] = launch
+            time.sleep(SPAWNING_DELAY_SECONDS)
             successful_spawns += 1
 
         res = StringSrvResponse()
@@ -278,11 +286,63 @@ class MrsDroneSpawner:
         return res
         # #}
 
+    # #{ kill_plugins
+    def kill_plugins(self, ID):
+        if ID not in self.assigned_ids.keys():
+            rerr('Cannot kill plugins of \'uav' + str(ID) + '\'. Vehicle not found')
+            return False
+
+        rinfo('Killing plugins of \'uav' + str(ID) + '\'...')
+        try:
+            result = self.assigned_ids[ID].shutdown()
+        except:
+            rerr('Cannot kill plugins of \'uav' + str(ID) + '\'')
+            return False
+        rinfo('Plugins for \'uav' + str(ID) + '\' killed')
+        return True
+    # #}
+
+    # #{ delete_model
+    def delete_model(self, ID):
+        delete_result = self.delete_gazebo_proxy('uav' + str(ID))
+        if not delete_result.success:
+            rerr('Cannot delete model \'uav' + str(ID) + '\'. Reason: ' + str(delete_result.status_message))
+        else:
+            rinfo('Model \'uav' + str(ID) + '\' deleted')
+        return delete_result.success
+    # #}
+
+    # #{ callback_delete
+    def callback_delete(self, req):
+        params_list = req.value.split()
+        num_errors = 0
+        ids_to_delete = []
+        for p in params_list:
+            if p.isnumeric():
+                ids_to_delete.append(int(p))
+            else:
+                res = StringSrvResponse()
+                res.success = False
+                res.message = 'Invalid vehicle ID: ' + str(p)
+                return res
+
+        successfully_deleted = 0
+        rinfo('Will delete these vehicles: ' + str(ids_to_delete))
+        for ID in ids_to_delete:
+            plugins_killed = self.kill_plugins(ID)
+            model_deleted = self.delete_model(ID)
+            if plugins_killed and model_deleted:
+                successfully_deleted += 1
+                del self.assigned_ids[ID]
+        
+        res = StringSrvResponse()
+        res.success = successfully_deleted == len(ids_to_delete)
+        res.message = str('Deleted ' + str(successfully_deleted) + ' vehicles')
+        return res
+    # #}
+
     def dummy_function(self):
         pass
-
-    def signal_handler(self, sig, frame):
-
 
 if __name__ == '__main__':
     try:
