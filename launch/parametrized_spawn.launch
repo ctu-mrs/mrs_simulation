@@ -48,7 +48,7 @@
       mavlink_tcp_port:=$(arg mavlink_tcp_port)
       model_params_file:=$(arg model_params_file)"/>
     <param name="robot_description" command="$(arg cmd)"/>
-    <node name="$(arg vehicle)_$(arg ID)_spawn" output="screen" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model $(arg vehicle)_$(arg ID) -package_to_model -x $(arg x) -y $(arg y) -z $(arg z) -R $(arg roll) -P $(arg pitch) -Y $(arg heading)"/>
+    <node name="$(arg vehicle)_$(arg ID)_spawn" output="screen" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model uav$(arg ID) -package_to_model -x $(arg x) -y $(arg y) -z $(arg z) -R $(arg roll) -P $(arg pitch) -Y $(arg heading)"/>
 
     <!-- MAVROS -->
     <include file="$(find mavros)/launch/px4.launch">

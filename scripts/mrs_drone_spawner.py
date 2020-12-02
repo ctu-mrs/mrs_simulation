@@ -7,6 +7,7 @@ import roslaunch
 import rospkg
 import copy
 import tempfile
+import signal
 
 from mrs_msgs.srv import String as StringSrv
 from mrs_msgs.srv import StringResponse as StringSrvResponse
@@ -15,23 +16,33 @@ VEHICLE_BASE_PORT = 14000
 MAVLINK_TCP_BASE_PORT = 4560
 MAVLINK_UDP_BASE_PORT = 14560
 DEFAULT_VEHICLE_TYPE = 't650'
+VEHICLE_TYPES = ['f450', 'f550', 't650', 'eaglemk2']
 
 # #{
 def print_error(string):
     FAIL = '\033[91m'
     ENDC = '\033[0m'
-    print(FAIL + string + ENDC) 
+    print(FAIL + string + ENDC)
 
 def print_info(string):
     BOLD = '\033[1m'
     ENDC = '\033[0m'
-    print(BOLD + string + ENDC) 
+    print(BOLD + string + ENDC)
 
 def print_ok(string):
     OKGREEN = '\033[92m'
     ENDC = '\033[0m'
-    print(OKGREEN + string + ENDC) 
+    print(OKGREEN + string + ENDC)
 # #}
+
+def rinfo(message):
+    rospy.loginfo('[DroneSpawner]: ' + message)
+
+def rwarn(message):
+    rospy.logwarn('[DroneSpawner]: ' + message)
+
+def rerr(message):
+    rospy.logerr('[DroneSpawner]: ' + message)
 
 
 class MrsDroneSpawner:
@@ -39,154 +50,239 @@ class MrsDroneSpawner:
     def __init__(self):
         rospy.init_node('mrs_drone_spawner', anonymous=True)
         self.model_params = rospy.get_param('~model_params')
+        self.assigned_ids = []
 
         rospack = rospkg.RosPack()
         pkg_path = rospack.get_path('mrs_simulation')
         self.path_to_launch_file = pkg_path + os.sep + 'launch' + os.sep + 'parametrized_spawn.launch'
 
-        rospy.loginfo('[DroneSpawner]: Loaded the following params:')
+        rinfo('Loaded the following params:')
         for param, value in self.model_params.items():
             print('\t\t' + str(param) + ': ' + str(value))
-        
+
         print('Launchfile: ' + self.path_to_launch_file)
         s = rospy.Service('spawn', StringSrv, self.callback_spawn_drone)
         rospy.spin()
- 
-    def get_id(self, params_list):
+
+    # #{ assign_free_id
+    def assign_free_id(self):
+        for i in range(0,251):
+            if i not in self.assigned_ids:
+                return i
+        raise Exception('Cannot assign a free ID to the vehicle!')
+    # #}
+
+    # #{ get_ids
+    def get_ids(self, params_list):
+        requested_ids = []
+
+        # read params until non-numbers start comming
         for p in params_list:
             if p.isnumeric():
-                return int(p)
+                requested_ids.append(int(p))
+            else:
+                break
 
+        if len(requested_ids) < 1:
+            free_id = self.assign_free_id()
+            requested_ids.append(free_id)
+            rwarn('Vehicle ID not specified. Number ' + str(free_id) + ' assigned automatically.')
+            return requested_ids
+
+        rinfo('Requested vehicle IDs: ' + str(requested_ids))
+
+        ids = []
+        # remove all IDs that are already assigned or out of range
+        for ID in requested_ids:
+            if ID > 249:
+                rwarn('Cannot spawn uav' + str(ID) + ', ID out of range <0, 250>!')
+                continue
+
+            if ID in self.assigned_ids:
+                rwarn('Cannot spawn uav' + str(ID) + ', ID already assigned!')
+                continue
+            ids.append(ID)
+
+        if len(ids) < 1:
+            raise Exception('No valid ID provided')
+
+        for i in ids:
+            self.assigned_ids.append(i)
+
+        return ids
+    # #}
+
+    # #{ get_vehicle_type
+    def get_vehicle_type(self, params_list):
+        vehicle_type = DEFAULT_VEHICLE_TYPE
+        for p in params_list:
+            for v in VEHICLE_TYPES:
+                if v in p:
+                    vehicle_type = v
+                    break
+        return vehicle_type
+    # #}
+
+    # #{ get_params_dict
+    def get_params_dict(self, params_list):
+        params_dict = copy.deepcopy(self.model_params)
+        custom_params = {}
+        for i, p in enumerate(params_list):
+            if '--' in p:
+                param_name = p[2:]
+                param_name = param_name.replace('-', '_')
+                if param_name not in self.model_params.keys() and param_name not in VEHICLE_TYPES:
+                    raise Exception('Param \'' + str(param_name) + '\' not recognized!')
+                children = []
+                for j in range(i+1, len(params_list)):
+                    if '--' not in params_list[j]:
+                        children.append(params_list[j])
+                    else:
+                        break
+                if len(children) < 1:
+                    custom_params[param_name] = True
+                else:
+                    custom_params[param_name] = children
+        if len(custom_params.keys()) > 0:
+            rinfo('Customized params:')
+            for pname, pval in custom_params.items():
+                print('\t' + str(pname) + ': ' + str(pval))
+            params_dict.update(custom_params)
+        return params_dict
+    # #}
+
+    # #{ get_comm_ports
     def get_comm_ports(self, ID):
+        '''
+        NOTE
+        ports have to match with values assigned in
+        mrs_simulation/ROMFS/px4fmu_common/init.d-posix/rcS
+        '''
         ports = {}
         ports['udp_offboard_port_remote'] = VEHICLE_BASE_PORT + (4 * ID) + 2
         ports['udp_offboard_port_local'] = VEHICLE_BASE_PORT + (4 * ID) + 1
         ports['mavlink_tcp_port'] = MAVLINK_TCP_BASE_PORT + ID
         ports['mavlink_udp_port'] = MAVLINK_UDP_BASE_PORT + ID
         return ports
+    # #}
 
-    def parse_params_sequence(self, data):
-        sequence_elements = data.split()
-        custom_model_params = copy.deepcopy(self.model_params)
-        
-        if '--f450' in sequence_elements:
-            custom_model_params['vehicle_type'] = 'f450' 
-        elif '--f550' in sequence_elements:
-            custom_model_params['vehicle_type'] = 'f550' 
-        elif '--eaglemk2' in sequence_elements:
-            custom_model_params['vehicle_type'] = 'eaglemk2' 
-        else:
-            custom_model_params['vehicle_type'] = DEFAULT_VEHICLE_TYPE 
+    # #{ parse_input_params
+    def parse_input_params(self, data):
+        params_list = data.split()
 
-        for i, element in enumerate(sequence_elements):
+        try:
+            uav_ids = self.get_ids(params_list)
+            vehicle_type = self.get_vehicle_type(params_list)
+            params_dict = self.get_params_dict(params_list)
+        except Exception as e:
+            rerr('Exception raised while parsing user input:')
+            rerr(str(e.args[0]))
+            raise Exception('Cannot spawn vehicle. Reason: ' + str(e.args[0]))
 
-            # # TODO:
-            # NEW --run no longer necessary (will be automatic)
-            # NEW --delete no longer necessary:
-            #   1) can be called manually through service
-            #   2) will be called automatically if this node is killed
 
-            # update parsing procedure:
-            # loop through sequence until '--' is found
-            # everything without '--' should be id number
-            # if no id number is provided, assign one (internally remember used isd)
-            # DO NOT ALLOW creation of uav with already existing id
+        rinfo('Spawning ' + str(len(uav_ids)) + ' vehicles of type \'' + vehicle_type + '\'')
 
-            if '--' in element:
-                param_name = element[2:]
-                param_name = param_name.replace('-', '_')
-                if param_name not in custom_model_params.keys():
-                    rospy.logwarn('Spawn param \'' + str(element) + '\' not recognized. Check mrs_simulation/config/model_params.yaml')
-                children = []
-                for j in range(i+1, len(sequence_elements)):
-                    if '--' not in sequence_elements[j]:
-                        children.append(sequence_elements)
-                    else:
-                        break
-                if len(children) >= 1:
-                    custom_model_params[param_name] = children
-                else:
-                    custom_model_params[param_name] = True
-            elif element.isnumeric() and 'id' not in custom_model_params.keys():
-                custom_model_params['id'] = int(element)
+        params_dict['uav_ids'] = uav_ids
+        params_dict['vehicle_type'] = vehicle_type
+        return params_dict
+    # #}
 
-        print('PARAMS:')
-        for pname, pvalue in custom_model_params.items():
-            print(str(pname) + ': ' +  str(pvalue))
-        return custom_model_params 
-
+    # #{ generate_launch_args
     def generate_launch_args(self, params_dict):
-        args_sequence = []
-        
-        # get vehicle ID number
-        args_sequence.append('ID:=' + str(params_dict['id']))
 
-        # get vehicle type
-        args_sequence.append('vehicle:=' + params_dict['vehicle_type'])
+        args_sequences = []
 
-        # setup communication ports
-        comm_ports = self.get_comm_ports(params_dict['id'])
-        for name,value in comm_ports.items():
-            args_sequence.append(str(name) + ':=' + str(value))
+        for n in range(len(params_dict['uav_ids'])):
+            uav_args_sequence = []
+            ID = params_dict['uav_ids'][n]
+            # get vehicle ID number
+            uav_args_sequence.append('ID:=' + str(ID))
 
-        # setup vehicle spawn pose
-        args_sequence.append('x:=' + str(2 * params_dict['id']))
-        args_sequence.append('y:=' + str(0))
-        args_sequence.append('z:=' + str(0))
-        args_sequence.append('heading:=' + str(0))
+            # get vehicle type
+            uav_args_sequence.append('vehicle:=' + params_dict['vehicle_type'])
 
-        # generate a yaml file for the custom model config
-        fd, path = tempfile.mkstemp(prefix='simulation_', suffix='.yaml')
-        with os.fdopen(fd, 'w') as f:
-            for pname, pvalue in params_dict.items():
-                if 'enable' in pname or 'use' in pname:
-                    f.write(str(pname) + ': ' + str(pvalue).lower() + '\n')
-        args_sequence.append('model_params_file:=' + path)
+            # setup communication ports
+            comm_ports = self.get_comm_ports(ID)
+            for name,value in comm_ports.items():
+                uav_args_sequence.append(str(name) + ':=' + str(value))
 
+            # setup vehicle spawn pose
+            uav_args_sequence.append('x:=' + str(ID))
+            uav_args_sequence.append('y:=' + str(0))
+            uav_args_sequence.append('z:=' + str(0))
+            uav_args_sequence.append('heading:=' + str(0))
 
-        # active_params = copy.deepcopy(self.model_params)
-
-        # for p in params_list:
-        #     if p[0:2] != '--' and p.isnumeric():
-        #         active_params['ID'] = p
-        #     if p[2:8] == 'enable' or p[2:6] == 'use':
-        #         active_params[p] = True
-
-        # for pname, value in active_params.items():
-        #     if value in (True,False):
-        #         args_sequence.append(str(pname) + ':=' + str(value).lower())
-        #     else:
-        #         args_sequence.append(str(pname) + ':=' + str(value))
-
-        print('ARGS_SEQUENCE:')
-        print(args_sequence)
-        return args_sequence
+            # generate a yaml file for the custom model config
+            fd, path = tempfile.mkstemp(prefix='simulation_', suffix='.yaml')
+            with os.fdopen(fd, 'w') as f:
+                for pname, pvalue in params_dict.items():
+                    if 'enable' in pname or 'use' in pname:
+                        f.write(str(pname) + ': ' + str(pvalue).lower() + '\n')
+            uav_args_sequence.append('model_params_file:=' + path)
 
 
+            print('UAV' + str(ID) + ' ARGS_SEQUENCE:')
+            print(uav_args_sequence)
+            args_sequences.append(uav_args_sequence)
+        return args_sequences
+    # #}
+
+    # #{ callback_spawn_drone
     def callback_spawn_drone(self, req):
+        params_dict = None
+        try:
+            params_dict = self.parse_input_params(req.value)
+        except Exception as e:
+            res = StringSrvResponse()
+            res.success = False
+            res.message = str(e.args[0])
+            return res
+
+        if params_dict is None:
+            res = StringSrvResponse()
+            res.success = False
+            res.message = str('Cannot process input parameters')
+            return res
+
+        roslaunch_args = self.generate_launch_args(params_dict)
+
         orig_signal_handler = roslaunch.pmon._init_signal_handlers
         roslaunch.pmon._init_signal_handlers = self.dummy_function
-        params = self.parse_params_sequence(req.value)
 
-        roslaunch_args = self.generate_launch_args(params)
-        uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
-        rospy.loginfo('Service called, generated uuid:' + str(uuid))
+        successful_spawns = 0
+        unsuccessful_spawns = 0
+        # iterate to get sequences for individual UAVs
+        for i, uav_roslaunch_args in enumerate(roslaunch_args):
+            ID = params_dict['uav_ids'][i]
+            rinfo('Spawning uav' + str(ID) + '...')
+            uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
+            roslaunch.configure_logging(uuid)
+            rospy.loginfo('Service called, generated uuid:' + str(uuid))
+            roslaunch_sequence = [(self.path_to_launch_file, uav_roslaunch_args)]
+            launch = roslaunch.parent.ROSLaunchParent(uuid, roslaunch_sequence)
 
-        id_str = 'ID:=' + req.value
-        id_str = str(id_str)
-        print(id_str)
+            try:
+                launch.start()
+            except:
+                rerr('Error occured while spawning uav' + str(ID) + '!')
+                self.assigned_ids.remove(ID)
+                unsuccessful_spawns += 1
+                continue
 
-        roslaunch_sequence = [(self.path_to_launch_file, roslaunch_args)]
-        launch = roslaunch.parent.ROSLaunchParent(uuid, roslaunch_sequence)
-        launch.start()
+            successful_spawns += 1
+
         res = StringSrvResponse()
-        res.success = True
-        res.message = 'Success'
+        res.success = unsuccessful_spawns == 0
+        res.message = 'Spawned ' + str(successful_spawns) + ' vehicles'
         roslaunch.pmon._init_signal_handlers = orig_signal_handler
         return res
+        # #}
 
     def dummy_function(self):
         pass
+
+    def signal_handler(self, sig, frame):
+
 
 if __name__ == '__main__':
     try:
