@@ -59,13 +59,14 @@ class MrsDroneSpawner:
 
         rospack = rospkg.RosPack()
         pkg_path = rospack.get_path('mrs_simulation')
-        self.path_to_launch_file = pkg_path + os.sep + 'launch' + os.sep + 'parametrized_spawn.launch'
+        self.path_to_launch_file_firmware = pkg_path + os.sep + 'launch' + os.sep + 'run_simulation_firmware.launch'
+        self.path_to_launch_file_spawn_model = pkg_path + os.sep + 'launch' + os.sep + 'spawn_simulation_model.launch'
+        self.path_to_launch_file_mavros = pkg_path + os.sep + 'launch' + os.sep + 'run_simulation_mavros.launch'
 
         # rinfo('Loaded the following params:')
         # for param, value in self.default_model_config.items():
         #     print('\t\t' + str(param) + ': ' + str(value))
 
-        print('Launchfile: ' + self.path_to_launch_file)
         spawn_server = rospy.Service('~spawn', StringSrv, self.callback_spawn)
         delete_server = rospy.Service('~delete', StringSrv, self.callback_delete)
         self.delete_gazebo_proxy = rospy.ServiceProxy('gazebo/delete_model', DeleteModel)
@@ -179,6 +180,7 @@ class MrsDroneSpawner:
             uav_ids = self.get_ids(params_list)
             vehicle_type = self.get_vehicle_type(params_list)
             params_dict = self.get_params_dict(params_list)
+
         except Exception as e:
             rerr('Exception raised while parsing user input:')
             rerr(str(e.args[0]))
@@ -233,6 +235,51 @@ class MrsDroneSpawner:
         return args_sequences
     # #}
 
+    # #{ launch_firmware
+    def launch_firmware(self, ID, uav_roslaunch_args):
+        rinfo('Running firmware for uav' + str(ID) + '...')
+        uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
+        roslaunch.configure_logging(uuid)
+        roslaunch_sequence = [(self.path_to_launch_file_firmware, uav_roslaunch_args)]
+        launch = roslaunch.parent.ROSLaunchParent(uuid, roslaunch_sequence)
+        try:
+            launch.start()
+        except:
+            rerr('Error occured while starting firmware for uav' + str(ID) + '!')
+            raise Exception('Cannot spawn uav' + str(ID))
+        return launch
+    # #}
+    
+    # #{ spawn_gazebo_model
+    def spawn_simulation_model(self, ID, uav_roslaunch_args):
+        rinfo('Spawning Gazebo model for uav' + str(ID) + '...')
+        uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
+        roslaunch.configure_logging(uuid)
+        roslaunch_sequence = [(self.path_to_launch_file_spawn_model, uav_roslaunch_args)]
+        launch = roslaunch.parent.ROSLaunchParent(uuid, roslaunch_sequence)
+        try:
+            launch.start()
+        except:
+            rerr('Error occured while spawning Gazebo model for uav' + str(ID) + '!')
+            raise Exception('Cannot spawn uav' + str(ID))
+        return launch
+    # #}
+
+    # #{ launch_mavros 
+    def launch_mavros(self, ID, uav_roslaunch_args):
+        rinfo('Running mavros for uav' + str(ID) + '...')
+        uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
+        roslaunch.configure_logging(uuid)
+        roslaunch_sequence = [(self.path_to_launch_file_mavros, uav_roslaunch_args)]
+        launch = roslaunch.parent.ROSLaunchParent(uuid, roslaunch_sequence)
+        try:
+            launch.start()
+        except:
+            rerr('Error occured while launching mavros for uav' + str(ID) + '!')
+            raise Exception('Cannot spawn uav' + str(ID))
+        return launch
+    # #}
+
     # #{ callback_spawn
     def callback_spawn(self, req):
         params_dict = None
@@ -257,25 +304,27 @@ class MrsDroneSpawner:
 
         successful_spawns = 0
         unsuccessful_spawns = 0
-        launched = []
         # iterate to get sequences for individual UAVs
         for i, uav_roslaunch_args in enumerate(roslaunch_args):
+            launched_processes = []
             ID = params_dict['uav_ids'][i]
-            rinfo('Spawning uav' + str(ID) + '...')
-            uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
-            roslaunch.configure_logging(uuid)
-            rospy.loginfo('Service called, generated uuid:' + str(uuid))
-            roslaunch_sequence = [(self.path_to_launch_file, uav_roslaunch_args)]
-            launch = roslaunch.parent.ROSLaunchParent(uuid, roslaunch_sequence)
             try:
-                launch.start()
-            except:
-                rerr('Error occured while spawning uav' + str(ID) + '!')
-                del self.assigned_ids[ID]
+                firmware_process = self.launch_firmware(ID, uav_roslaunch_args)
+                launched_processes.append(firmware_process)
+                gz_spawning_process = self.spawn_simulation_model(ID, uav_roslaunch_args)
+                launched_processes.append(gz_spawning_process)
+                mavros_process = self.launch_mavros(ID, uav_roslaunch_args)
+                launched_processes.append(mavros_process)
+
+            except Exception as e:
                 unsuccessful_spawns += 1
+                del self.assigned_ids[ID]
+                rerr(str(e.args[0]))
                 continue
-            self.assigned_ids[ID] = launch
-            time.sleep(SPAWNING_DELAY_SECONDS)
+            
+            self.assigned_ids[ID] = launched_processes
+            if len(roslaunch_args) > 1 and i < len(roslaunch_args) - 1:
+                time.sleep(SPAWNING_DELAY_SECONDS)
             successful_spawns += 1
 
         res = StringSrvResponse()
@@ -293,7 +342,8 @@ class MrsDroneSpawner:
 
         rinfo('Killing plugins of \'uav' + str(ID) + '\'...')
         try:
-            result = self.assigned_ids[ID].shutdown()
+            for process in self.assigned_ids[ID]:
+                process.shutdown()
         except:
             rerr('Cannot kill plugins of \'uav' + str(ID) + '\'')
             return False
