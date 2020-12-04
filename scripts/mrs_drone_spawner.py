@@ -54,16 +54,16 @@ class MrsDroneSpawner:
 
     def __init__(self):
         rospy.init_node('mrs_drone_spawner', anonymous=True)
-        self.model_params = rospy.get_param('~model_params')
+        self.default_model_config = rospy.get_param('~default_model_config')
         self.assigned_ids = {} # id: process_handle
 
         rospack = rospkg.RosPack()
         pkg_path = rospack.get_path('mrs_simulation')
         self.path_to_launch_file = pkg_path + os.sep + 'launch' + os.sep + 'parametrized_spawn.launch'
 
-        rinfo('Loaded the following params:')
-        for param, value in self.model_params.items():
-            print('\t\t' + str(param) + ': ' + str(value))
+        # rinfo('Loaded the following params:')
+        # for param, value in self.default_model_config.items():
+        #     print('\t\t' + str(param) + ': ' + str(value))
 
         print('Launchfile: ' + self.path_to_launch_file)
         spawn_server = rospy.Service('~spawn', StringSrv, self.callback_spawn)
@@ -129,13 +129,13 @@ class MrsDroneSpawner:
 
     # #{ get_params_dict
     def get_params_dict(self, params_list):
-        params_dict = copy.deepcopy(self.model_params)
+        params_dict = copy.deepcopy(self.default_model_config)
         custom_params = {}
         for i, p in enumerate(params_list):
             if '--' in p:
                 param_name = p[2:]
                 param_name = param_name.replace('-', '_')
-                if param_name not in self.model_params.keys() and param_name not in VEHICLE_TYPES:
+                if param_name not in self.default_model_config.keys() and param_name not in VEHICLE_TYPES:
                     raise Exception('Param \'' + str(param_name) + '\' not recognized!')
                 children = []
                 for j in range(i+1, len(params_list)):
@@ -220,11 +220,11 @@ class MrsDroneSpawner:
             uav_args_sequence.append('heading:=' + str(0))
 
             # generate a yaml file for the custom model config
-            fd, path = tempfile.mkstemp(prefix='simulation_', suffix='.yaml')
+            fd, path = tempfile.mkstemp(prefix='simulation_', suffix='_uav' + str(ID) + '.yaml')
             with os.fdopen(fd, 'w') as f:
                 for pname, pvalue in params_dict.items():
                     f.write(str(pname) + ': ' + str(pvalue).lower() + '\n')
-            uav_args_sequence.append('model_params_file:=' + path)
+            uav_args_sequence.append('model_config_file:=' + path)
 
 
             print('UAV' + str(ID) + ' ARGS_SEQUENCE:')

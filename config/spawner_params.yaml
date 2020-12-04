@@ -1,4 +1,4 @@
-model_params: {
+default_model_config: {
   enable_rangefinder: False,
   enable_teraranger: False,
   enable_rangefinder_up: False,

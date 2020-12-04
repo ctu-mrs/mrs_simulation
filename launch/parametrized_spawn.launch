@@ -5,7 +5,7 @@
   <!-- <arg name="ID" default="1"/> -->
   <arg name="ID"/>
   <arg name="vehicle"/>
-  <arg name="model_params_file"/>
+  <arg name="model_config_file"/>
   <arg name="udp_offboard_port_remote"/>
   <arg name="udp_offboard_port_local"/>
   <arg name="mavlink_tcp_port"/>
@@ -39,7 +39,7 @@
       namespace:=uav$(arg ID)
       mavlink_udp_port:=$(arg mavlink_udp_port)
       mavlink_tcp_port:=$(arg mavlink_tcp_port)
-      model_params_file:=$(arg model_params_file)"/>
+      model_config_file:=$(arg model_config_file)"/>
     <param name="robot_description" command="$(arg cmd)"/>
     <node name="uav$(arg ID)_spawn" output="screen" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model uav$(arg ID) -package_to_model -x $(arg x) -y $(arg y) -z $(arg z) -R $(arg roll) -P $(arg pitch) -Y $(arg heading)"/>
 
