@@ -50,7 +50,7 @@
   <xacro:property name="rotor_offset" value="0.021" /> <!-- [m] -->
   <xacro:property name="propeller_offset" value="0.01" /> <!-- [m] -->
   <xacro:property name="arm_length" value="0.3" /> <!-- [m] -->
-  <xacro:property name="leg_height" value="0.24" /> 
+  <xacro:property name="leg_height" value="0.24" /> <!-- [m] -->
   <!-- <xacro:property name="leg_height" value="0.15" /> -->
   <xacro:property name="leg_offset_r" value="0.05" /> <!-- [m] -->
   <xacro:property name="leg_radius" value="0.012" /> <!-- [m] -->
@@ -238,7 +238,7 @@
       </geometry>
     </collision>
   </xacro:leg_macro>
-  
+
   <xacro:leg_macro
     robot_namespace="${namespace}"
     name="front_left_leg"
@@ -363,7 +363,7 @@
     <origin xyz="-${arm_length * sin45} ${arm_length * sin45} ${propeller_offset}" rpy="0 0 0" />
     <xacro:insert_block name="rotor_inertia" />
   </xacro:textured_vertical_rotor>
-  
+
   <xacro:textured_vertical_rotor
     robot_namespace="${namespace}"
     suffix="front_left"
@@ -825,7 +825,7 @@
   <!--} Bluefox placements-->
 
   <!-- Realsense placements {-->
-  
+
   <!-- front {-->
   <xacro:if value="${optionals['enable_realsense_front']}">
     <!-- sensor -->
@@ -844,7 +844,7 @@
     </xacro:realsense_macro>
   </xacro:if>
   <!--}-->
-  
+
   <!-- up {-->
   <xacro:if value="${optionals['enable_realsense_up']}">
     <!-- sensor -->
@@ -888,7 +888,7 @@
     </xacro:mobius_camera_macro>
   </xacro:if>
   <!--}-->
-  
+
   <!--} mobius placements -->
 
   <!-- Thermal camera {-->
@@ -965,22 +965,22 @@
     <xacro:uvcam_macro
       namespace="${namespace}"
       parent_link="base_link"
-      number="1"          
-      frame_rate="80"     
+      number="1"
+      frame_rate="80"
       camera_publish_topic="/${namespace}/uvdar_bluefox_left/image_raw"
       calibration_file="${optionals['uvcam_calib_file']}">
     <origin xyz="0.037 0.1175 0.057" rpy="0 0 ${rad70}" />
-    </xacro:uvcam_macro>  
+    </xacro:uvcam_macro>
 
-    <xacro:uvcam_macro    
+    <xacro:uvcam_macro
       namespace="${namespace}"
       parent_link="base_link"
-      number="2"          
-      frame_rate="80"     
+      number="2"
+      frame_rate="80"
       camera_publish_topic="/${namespace}/uvdar_bluefox_right/image_raw"
       calibration_file="${optionals['uvcam_calib_file']}">
     <origin xyz="0.037 -0.1175 0.057" rpy="0 0 -${rad70}" />
-    </xacro:uvcam_macro>  
+    </xacro:uvcam_macro>
 
   </xacro:if>
   <!--}-->

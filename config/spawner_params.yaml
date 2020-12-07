@@ -44,5 +44,7 @@ default_model_config: {
   enable_uv_camera: False,
   uvcam_calib_file: None,
   uvcam_occlusions: False,
-  debug: False
+  debug: False,
+  pos_file: None,
+  pos: None
 }

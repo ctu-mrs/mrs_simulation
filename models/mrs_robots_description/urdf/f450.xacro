@@ -53,8 +53,8 @@
   <xacro:property name="board_radius" value="0.065" /> <!-- [m] -->
   <xacro:property name="board_height" value="0.002" /> <!-- [m] -->
   <xacro:property name="holder_offset" value="0.02" /> <!-- [m] -->
-  <xacro:property name="leg_offset_z" value="0.098" /> 
-  <!-- <xacro:property name="leg_offset_z" value="0.133" /> --> 
+  <xacro:property name="leg_offset_z" value="0.098" /> <!-- [m] -->
+  <!-- <xacro:property name="leg_offset_z" value="0.133" /> -->
   <xacro:property name="leg_offset_r" value="0.0072" /> <!-- [m] -->
   <xacro:property name="pixhawk_offset" value="0.0075" /> <!-- [m] -->
 
@@ -88,7 +88,7 @@
   <xacro:property name="prop_mesh_file" value="package://mrs_robots_description/meshes/dji/f450/dji_f450_prop.dae"/>
   <xacro:property name="pixhawk_mesh_file" value="package://mrs_robots_description/meshes/sensors/pixhawk.dae" />
   <xacro:property name="nuc_mesh_file" value="package://mrs_robots_description/meshes/dji/f450/dji_f450_nuc.dae" />
-    
+
   <!-- holders -->
   <xacro:property name="battery_mount_mesh" value="package://mrs_robots_description/meshes/dji/f450/dji_f450_battery_mount.dae" />
   <xacro:property name="bluefox_mount_mesh" value="package://mrs_robots_description/meshes/dji/f450/dji_f450_bluefox_mount.dae" />
@@ -387,7 +387,7 @@
     <xacro:insert_block name="rotor_inertia" />
   </xacro:vertical_rotor>
 
-  <xacro:vertical_rotor 
+  <xacro:vertical_rotor
     robot_namespace="${namespace}"
     suffix="front_left"
     direction="cw"
@@ -409,7 +409,7 @@
     <xacro:insert_block name="rotor_inertia" />
   </xacro:vertical_rotor>
 
-  <xacro:vertical_rotor 
+  <xacro:vertical_rotor
     robot_namespace="${namespace}"
     suffix="back_right"
     direction="cw"
@@ -883,7 +883,7 @@
 </xacro:if>
 <!--}-->
 
-  <!--} Bluefox placements -->
+  <!--} Other camera placements -->
 
   <!-- Realsense placements {-->
 
@@ -1060,24 +1060,24 @@
     <xacro:uvcam_macro
       namespace="${namespace}"
       parent_link="base_link"
-      number="1"          
-      frame_rate="80"     
+      number="1"
+      frame_rate="80"
       camera_publish_topic="/${namespace}/uvdar_bluefox_left/image_raw"
       calibration_file="${optionals['uvcam_calib_file']}"
       occlusions="${optionals['uvcam_occlusions']}">
     <origin xyz="0.037 0.1175 0.05" rpy="0 0 ${rad70}" />
-    </xacro:uvcam_macro>  
+    </xacro:uvcam_macro>
 
-    <xacro:uvcam_macro    
+    <xacro:uvcam_macro
       namespace="${namespace}"
       parent_link="base_link"
-      number="2"          
-      frame_rate="80"     
+      number="2"
+      frame_rate="80"
       camera_publish_topic="/${namespace}/uvdar_bluefox_right/image_raw"
       calibration_file="${optionals['uvcam_calib_file']}"
       occlusions="${optionals['uvcam_occlusions']}">
     <origin xyz="0.037 -0.1175 0.05" rpy="0 0 -${rad70}" />
-    </xacro:uvcam_macro>  
+    </xacro:uvcam_macro>
 
   </xacro:if>
   <!--}-->

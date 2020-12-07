@@ -9,6 +9,8 @@ import copy
 import tempfile
 import signal
 import time
+import yaml
+import csv
 
 from mrs_msgs.srv import String as StringSrv
 from mrs_msgs.srv import StringResponse as StringSrvResponse
@@ -146,8 +148,11 @@ class MrsDroneSpawner:
                         break
                 if len(children) < 1:
                     custom_params[param_name] = True
+                elif len(children) == 1:
+                    custom_params[param_name] = children[0]
                 else:
                     custom_params[param_name] = children
+
         if len(custom_params.keys()) > 0:
             rinfo('Customized params:')
             for pname, pval in custom_params.items():
@@ -172,6 +177,81 @@ class MrsDroneSpawner:
         return ports
     # #}
 
+    # #{ get_spawn_poses_from_ids
+    def get_spawn_poses_from_ids(self, ids):
+        spawn_poses = {}
+        for ID in ids:
+            inteam_id = ID % 100
+            x = 0
+            y = 29.45
+            z = 0.3
+            heading = 0
+
+            if ( inteam_id > 1 ):
+                y -= 8*((inteam_id)//2)
+
+            if( inteam_id % 2 == 0 ):
+                x += 4
+            if( inteam_id % 2 == 1 ):
+                x -= 4
+
+            spawn_poses[ID] = {'x': x, 'y': y, 'z': z, 'heading': heading}
+        return spawn_poses
+    # #}
+
+    # #{ get_spawn_poses_from_args
+    def get_spawn_poses_from_args(self, pose_vec4, uav_ids):
+        spawn_poses = {}
+        x = float(pose_vec4[0])
+        y = float(pose_vec4[1])
+        z = float(pose_vec4[2])
+        heading = float(pose_vec4[3])
+
+        spawn_poses[uav_ids[0]] = {'x': x, 'y': y, 'z': z, 'heading': heading}
+
+        if len(uav_ids) > 1:
+            for i in range(len(uav_ids)):
+                x += 2
+                spawn_poses[uav_ids[i]] = {'x': x, 'y': y, 'z': z, 'heading': heading}
+
+        return spawn_poses
+    # #}
+
+    # #{ get_spawn_poses_from_file
+    def get_spawn_poses_from_file(self, filename, uav_ids):
+        if not os.path.isfile(filename):
+            raise Exception('File \'' + str(filename) + '\' does not exist!')
+
+        spawn_poses = {}
+        if filename.endswith('.csv'):
+            array_string = list(csv.reader(open(filename)))
+            for row in array_string:
+                if (len(row)!=5):
+                    raise Exception('Incorrect data in file \'' + str(filename) +'\'! Data in \'.csv\' file type should be in format [id, x, y, z, heading] (example: int, float, float, float, float)')
+                if int(row[0]) in uav_ids:
+                    spawn_poses[int(row[0])] = {'x' : float(row[1]), 'y' : float(row[2]), 'z' : float(row[3]), 'heading' : float(row[4])}
+                else:
+                    raise Exception('File requires UAV ID \'' + str(row[0]) + '\' which was not assigned by the spawn command!')
+
+        elif filename.endswith('.yaml'):
+            dict_vehicle_info = yaml.safe_load(open(filename, 'r'))
+            for item, data in dict_vehicle_info.items():
+                if (len(data.keys())!=5):
+                    raise Exception('Incorrect data in file \'' + str(filename) + '\'! Data  in \'.yaml\' file type should be in format \n uav_name: \n\t id: (int) \n\t x: (float) \n\t y: (float) \n\t z: (float) \n\t heading: (float)')
+
+                if int(data['id']) in uav_ids:
+                    spawn_poses[data['id']] = {'x' : float(data['x']), 'y' : float(data['y']), 'z' : float(data['z']), 'heading' : float(data['heading'])}
+                else:
+                    raise Exception('File requires UAV ID \'' + str(dict_vehicle_info[item]['id']) + '\' which was not assigned by the spawn command!')
+
+        else:
+            raise Exception('Incorrect file format, must be either \'.csv\' or \'.yaml\'')
+
+        rinfo('Spawn poses returned:')
+        rinfo(str(spawn_poses))
+        return spawn_poses
+    # #}
+
     # #{ parse_input_params
     def parse_input_params(self, data):
         params_list = data.split()
@@ -180,19 +260,24 @@ class MrsDroneSpawner:
             uav_ids = self.get_ids(params_list)
             vehicle_type = self.get_vehicle_type(params_list)
             params_dict = self.get_params_dict(params_list)
+            if params_dict['pos_file'] != 'None':
+                rinfo('Loading spawn poses from file \'' + str(params_dict['pos_file']) + '\'')
+                spawn_poses = self.get_spawn_poses_from_file(params_dict['pos_file'], uav_ids)
+            elif params_dict['pos'] != 'None':
+                rinfo('Using spawn poses provided by user \'' + str(params_dict['pos']) + '\'')
+                spawn_poses = self.get_spawn_poses_from_args(params_dict['pos'], uav_ids)
+            else:
+                rinfo('Assigning default spawn poses')
+                spawn_poses = self.get_spawn_poses_from_ids(uav_ids)
 
         except Exception as e:
             rerr('Exception raised while parsing user input:')
             rerr(str(e.args[0]))
             raise Exception('Cannot spawn vehicle. Reason: ' + str(e.args[0]))
 
-        for ID in uav_ids:
-            self.assigned_ids[ID] = None
-
-        rinfo('Spawning ' + str(len(uav_ids)) + ' vehicles of type \'' + vehicle_type + '\'')
-
         params_dict['uav_ids'] = uav_ids
         params_dict['vehicle_type'] = vehicle_type
+        params_dict['spawn_poses'] = spawn_poses
         return params_dict
     # #}
 
@@ -200,8 +285,9 @@ class MrsDroneSpawner:
     def generate_launch_args(self, params_dict):
 
         args_sequences = []
+        num_uavs = len(params_dict['uav_ids'])
 
-        for n in range(len(params_dict['uav_ids'])):
+        for n in range(num_uavs):
             uav_args_sequence = []
             ID = params_dict['uav_ids'][n]
             # get vehicle ID number
@@ -216,10 +302,10 @@ class MrsDroneSpawner:
                 uav_args_sequence.append(str(name) + ':=' + str(value))
 
             # setup vehicle spawn pose
-            uav_args_sequence.append('x:=' + str(ID))
-            uav_args_sequence.append('y:=' + str(0))
-            uav_args_sequence.append('z:=' + str(0.4))
-            uav_args_sequence.append('heading:=' + str(0))
+            uav_args_sequence.append('x:=' + str(params_dict['spawn_poses'][ID]['x']))
+            uav_args_sequence.append('y:=' + str(params_dict['spawn_poses'][ID]['y']))
+            uav_args_sequence.append('z:=' + str(params_dict['spawn_poses'][ID]['z']))
+            uav_args_sequence.append('heading:=' + str(params_dict['spawn_poses'][ID]['heading']))
 
             # generate a yaml file for the custom model config
             fd, path = tempfile.mkstemp(prefix='simulation_', suffix='_uav' + str(ID) + '.yaml')
@@ -249,7 +335,7 @@ class MrsDroneSpawner:
             raise Exception('Cannot spawn uav' + str(ID))
         return launch
     # #}
-    
+
     # #{ spawn_gazebo_model
     def spawn_simulation_model(self, ID, uav_roslaunch_args):
         rinfo('Spawning Gazebo model for uav' + str(ID) + '...')
@@ -265,7 +351,7 @@ class MrsDroneSpawner:
         return launch
     # #}
 
-    # #{ launch_mavros 
+    # #{ launch_mavros
     def launch_mavros(self, ID, uav_roslaunch_args):
         rinfo('Running mavros for uav' + str(ID) + '...')
         uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
@@ -297,7 +383,25 @@ class MrsDroneSpawner:
             res.message = str('Cannot process input parameters')
             return res
 
-        roslaunch_args = self.generate_launch_args(params_dict)
+        roslaunch_args = None
+        try:
+            roslaunch_args = self.generate_launch_args(params_dict)
+        except Exception as e:
+            res = StringSrvResponse()
+            res.success = False
+            res.message = str(e.args[0])
+            return res
+
+        if roslaunch_args is None:
+            res = StringSrvResponse()
+            res.success = False
+            res.message = str('Cannot generate roslaunch arguments')
+            return res
+
+        for ID in params_dict['uav_ids']:
+            self.assigned_ids[ID] = None
+
+        rinfo('Spawning ' + str(len(params_dict['uav_ids'])) + ' vehicles of type \'' + params_dict['vehicle_type'] + '\'')
 
         orig_signal_handler = roslaunch.pmon._init_signal_handlers
         roslaunch.pmon._init_signal_handlers = self.dummy_function
@@ -321,7 +425,7 @@ class MrsDroneSpawner:
                 del self.assigned_ids[ID]
                 rerr(str(e.args[0]))
                 continue
-            
+
             self.assigned_ids[ID] = launched_processes
             if len(roslaunch_args) > 1 and i < len(roslaunch_args) - 1:
                 time.sleep(SPAWNING_DELAY_SECONDS)
@@ -383,7 +487,7 @@ class MrsDroneSpawner:
             if plugins_killed and model_deleted:
                 successfully_deleted += 1
                 del self.assigned_ids[ID]
-        
+
         res = StringSrvResponse()
         res.success = successfully_deleted == len(ids_to_delete)
         res.message = str('Deleted ' + str(successfully_deleted) + ' vehicles')
