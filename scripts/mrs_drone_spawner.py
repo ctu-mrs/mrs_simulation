@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 
 import rospy
 import os
@@ -16,6 +16,7 @@ from mrs_msgs.srv import String as StringSrv
 from mrs_msgs.srv import StringResponse as StringSrvResponse
 from std_srvs.srv import Empty
 from gazebo_msgs.srv import DeleteModel
+from gazebo_msgs.msg import ModelStates
 
 VEHICLE_BASE_PORT = 14000
 MAVLINK_TCP_BASE_PORT = 4560
@@ -42,6 +43,13 @@ def print_ok(string):
     print(OKGREEN + string + ENDC)
 # #}
 
+def is_number(string):
+    try:
+        num = float(string)
+    except:
+        return False
+    return True
+
 def rinfo(message):
     rospy.loginfo('[DroneSpawner]: ' + message)
 
@@ -55,6 +63,7 @@ def rerr(message):
 class MrsDroneSpawner:
 
     def __init__(self):
+        self.got_gazebo_status = False;
         rospy.init_node('mrs_drone_spawner', anonymous=True)
         self.default_model_config = rospy.get_param('~default_model_config')
         self.assigned_ids = {} # id: process_handle
@@ -65,6 +74,7 @@ class MrsDroneSpawner:
         self.path_to_launch_file_spawn_model = pkg_path + os.sep + 'launch' + os.sep + 'spawn_simulation_model.launch'
         self.path_to_launch_file_mavros = pkg_path + os.sep + 'launch' + os.sep + 'run_simulation_mavros.launch'
 
+        rospy.Subscriber("~gazebo_model_state", ModelStates, self.callbackGazeboModelState, queue_size=1)
         # rinfo('Loaded the following params:')
         # for param, value in self.default_model_config.items():
         #     print('\t\t' + str(param) + ': ' + str(value))
@@ -88,7 +98,7 @@ class MrsDroneSpawner:
 
         # read params until non-numbers start comming
         for p in params_list:
-            if p.isnumeric():
+            if is_number(p):
                 requested_ids.append(int(p))
             else:
                 break
@@ -366,8 +376,19 @@ class MrsDroneSpawner:
         return launch
     # #}
 
+    # #{ callbackGazeboModelState
+    def callbackGazeboModelState(self, msg):
+        self.got_gazebo_status = True
+    # #}
+
     # #{ callback_spawn
     def callback_spawn(self, req):
+        if not self.got_gazebo_status:
+            res = StringSrvResponse()
+            res.success = False
+            res.message = str('Gazebo model state topic not found. Is Gazebo running?')
+            return res
+
         params_dict = None
         try:
             params_dict = self.parse_input_params(req.value)
@@ -436,7 +457,7 @@ class MrsDroneSpawner:
         res.message = 'Spawned ' + str(successful_spawns) + ' vehicles'
         roslaunch.pmon._init_signal_handlers = orig_signal_handler
         return res
-        # #}
+    # #}
 
     # #{ kill_plugins
     def kill_plugins(self, ID):
@@ -471,7 +492,7 @@ class MrsDroneSpawner:
         num_errors = 0
         ids_to_delete = []
         for p in params_list:
-            if p.isnumeric():
+            if is_number(p):
                 ids_to_delete.append(int(p))
             else:
                 res = StringSrvResponse()
