@@ -3,6 +3,7 @@
   <node name="mrs_drone_spawner" pkg="mrs_simulation" type="mrs_drone_spawner.py" output="screen">
 
     <rosparam file="$(find mrs_simulation)/config/spawner_params.yaml" command="load"/>
+    <remap from="~gazebo_model_state" to="/gazebo/model_states" />
 
   </node>
 

@@ -42,4 +42,6 @@
     <node name="gazebo_gui" pkg="gazebo_ros" type="gzclient" respawn="false" output="screen" />
   </group>
 
+  <include file="$(find mrs_simulation)/launch/mrs_drone_spawner.launch" />
+
 </launch>
