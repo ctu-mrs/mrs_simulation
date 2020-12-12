@@ -1115,6 +1115,7 @@
   </xacro:macro>
   <!--}-->
 
+  <!-- TODO: Is this really supposed to use hexarotor macro?? -->
   <xacro:if value="${optionals['enable_uv_leds']}">
     <xacro:uvled_hexarotor
       f1="${optionals['uvled_fr_l']}"

@@ -11,10 +11,11 @@ import signal
 import time
 import yaml
 import csv
+import sys
 
 from mrs_msgs.srv import String as StringSrv
 from mrs_msgs.srv import StringResponse as StringSrvResponse
-from std_srvs.srv import Empty
+from std_srvs.srv import Trigger, TriggerResponse
 from gazebo_msgs.srv import DeleteModel
 from gazebo_msgs.msg import ModelStates
 
@@ -62,27 +63,84 @@ def rerr(message):
 
 class MrsDroneSpawner:
 
-    def __init__(self):
-        self.got_gazebo_status = False;
-        rospy.init_node('mrs_drone_spawner', anonymous=True)
-        self.default_model_config = rospy.get_param('~default_model_config')
-        self.assigned_ids = {} # id: process_handle
+    def __init__(self, show_help=False, verbose=False):
+
+        self.verbose=verbose
 
         rospack = rospkg.RosPack()
         pkg_path = rospack.get_path('mrs_simulation')
+        path_to_launch_file_firmware = pkg_path + os.sep + 'config' + os.sep + 'spawner_params.yaml'
+        self.spawner_params = yaml.safe_load(open(path_to_launch_file_firmware, 'r'))
+
+        if not self.params_integrity_ok():
+            return
+
+        if show_help:
+            self.print_help()
+            return
+
+        # convert spawner_params to default_model_config (to get rid of help strings)
+        self.default_model_config = {}
+        for key, values in self.spawner_params.items():
+            self.default_model_config[key] = values[0]
+
+        self.got_gazebo_model_states = False;
+        self.assigned_ids = {} # {id: process_handle}
         self.path_to_launch_file_firmware = pkg_path + os.sep + 'launch' + os.sep + 'run_simulation_firmware.launch'
         self.path_to_launch_file_spawn_model = pkg_path + os.sep + 'launch' + os.sep + 'spawn_simulation_model.launch'
         self.path_to_launch_file_mavros = pkg_path + os.sep + 'launch' + os.sep + 'run_simulation_mavros.launch'
 
-        rospy.Subscriber("~gazebo_model_state", ModelStates, self.callbackGazeboModelState, queue_size=1)
-        # rinfo('Loaded the following params:')
-        # for param, value in self.default_model_config.items():
-        #     print('\t\t' + str(param) + ': ' + str(value))
+        rospy.init_node('mrs_drone_spawner', anonymous=True)
+        rinfo('Node initialization started. All parameters loaded correctly.')
+        rospy.Subscriber("~gazebo_model_states", ModelStates, self.callback_gazebo_model_states, queue_size=1)
+
+        if self.verbose:
+            rinfo('Loaded the following params:')
+            for param, value in self.spawner_params.items():
+                print('\t\t' + str(param) + ': ' + str(value))
+            print('')
+            rinfo('remove arg \'verbose\' in mrs_drone_spawner.launch to stop listing params on startup')
 
         spawn_server = rospy.Service('~spawn', StringSrv, self.callback_spawn)
         delete_server = rospy.Service('~delete', StringSrv, self.callback_delete)
         self.delete_gazebo_proxy = rospy.ServiceProxy('gazebo/delete_model', DeleteModel)
         rospy.spin()
+
+    # #{ params_integrity_ok
+    def params_integrity_ok(self):
+        for pname, pvals in self.spawner_params.items():
+            if not isinstance(pvals, list):
+                print('Error occured while parsing \'spawner_params.yaml\' at parameter \'' + str(pname) + '\'!')
+                print('Expected: \'parameter: [default_value, help_string, [vehicle_types]]')
+                print('Found: \'' + str(pname) + ': ' + str(pvals) + '\'')
+                return False
+            elif len(pvals) != 3:
+                print('Error occured while parsing \'spawner_params.yaml\' at parameter \'' + str(pname) + '\'!')
+                print('Expected: \'parameter: [default_value, help_string, [vehicle_types]]')
+                print('Found: \'' + str(pname) + ': ' + str(pvals) + '\'')
+                return False
+            else:
+                try:
+                    str(pvals[1])
+                except:
+                    print('Error occured while parsing \'spawner_params.yaml\' at parameter \'' + str(pname) + '\'!')
+                    print('Expected: \'parameter: [default_value, help_string, [vehicle_types]]')
+                    print('Parameter does not have a valid help_string')
+                    return False
+                if not isinstance(pvals[2], list):
+                    print('Error occured while parsing \'spawner_params.yaml\' at parameter \'' + str(pname) + '\'!')
+                    print('Expected: \'parameter: [default_value, help_string, [vehicle_types]]')
+                    print('Found: \'' + str(pvals[2]) + '\' instead of a vehicle_types list')
+                    return False
+                else:
+                    for vehicle_type in pvals[2]:
+                        if vehicle_type not in VEHICLE_TYPES:
+                            print('Error occured while parsing \'spawner_params.yaml\' at parameter \'' + str(pname) + '\'!')
+                            print('Expected: \'parameter: [default_value, help_string, [vehicle_types]]')
+                            print('Unkown vehicle type \'' + str(vehicle_type) + '\'')
+                            return False
+        return True
+    # #}
 
     # #{ assign_free_id
     def assign_free_id(self):
@@ -141,7 +199,7 @@ class MrsDroneSpawner:
     # #}
 
     # #{ get_params_dict
-    def get_params_dict(self, params_list):
+    def get_params_dict(self, params_list, vehicle_type):
         params_dict = copy.deepcopy(self.default_model_config)
         custom_params = {}
         for i, p in enumerate(params_list):
@@ -166,6 +224,13 @@ class MrsDroneSpawner:
         if len(custom_params.keys()) > 0:
             rinfo('Customized params:')
             for pname, pval in custom_params.items():
+                if pname not in VEHICLE_TYPES:
+                # check if the customized param is allowed for the desired vehicle type
+                    allowed_vehicle_types = self.spawner_params[pname][2]
+                # print('For param ' + str(pname) + ' allowed: ' + str(allowed_vehicle_types))
+                    if vehicle_type not in allowed_vehicle_types:
+                        raise Exception('Param \'' + str(pname) + '\' cannot be used with vehicle type \'' + str(vehicle_type) + '\'!')
+
                 print('\t' + str(pname) + ': ' + str(pval))
             params_dict.update(custom_params)
         return params_dict
@@ -269,12 +334,12 @@ class MrsDroneSpawner:
         try:
             uav_ids = self.get_ids(params_list)
             vehicle_type = self.get_vehicle_type(params_list)
-            params_dict = self.get_params_dict(params_list)
+            params_dict = self.get_params_dict(params_list, vehicle_type)
             if params_dict['pos_file'] != 'None':
                 rinfo('Loading spawn poses from file \'' + str(params_dict['pos_file']) + '\'')
                 spawn_poses = self.get_spawn_poses_from_file(params_dict['pos_file'], uav_ids)
             elif params_dict['pos'] != 'None':
-                rinfo('Using spawn poses provided by user \'' + str(params_dict['pos']) + '\'')
+                rinfo('Using spawn poses provided from command line args \'' + str(params_dict['pos']) + '\'')
                 spawn_poses = self.get_spawn_poses_from_args(params_dict['pos'], uav_ids)
             else:
                 rinfo('Assigning default spawn poses')
@@ -376,14 +441,36 @@ class MrsDroneSpawner:
         return launch
     # #}
 
-    # #{ callbackGazeboModelState
-    def callbackGazeboModelState(self, msg):
-        self.got_gazebo_status = True
+    # #{ print_help
+    def print_help(self):
+        BOLDGREEN = '\033[32;1m'
+        BOLD = '\033[1m'
+        ENDC = '\033[0m'
+        print('')
+        print(BOLD + '****************************' + ENDC)
+        print(BOLD + '** MRS DRONE SPAWNER HELP **' + ENDC)
+        print(BOLD + '****************************' + ENDC)
+        print('')
+        print('The mrs_drone_spawner is a ROS node, which allows you to dynamically add new vehicles into your Gazebo simulation\n')
+        print('To spawn a new drone, use:\nrosservice call /mrs_drone_spawner/spawn "...string of arguments..."\n')
+        print('Available arguments:')
+        print(BOLDGREEN + '1 2 3' + ENDC + ' ... : use numbers ' + BOLD + '[0 to 250]' + ENDC + ' to assign IDs to the vehicles. The vehicles will be named \'uav1, uav2, uav3 ... \'')
+        print('  ' + BOLDGREEN + ':' + ENDC + ' using a blank space instead of a number will automatically assign an unused ID to the vehicle')
+        
+        for param, data in self.spawner_params.items():
+            
+            default_value, help_string, vehicle_types = data
+            print(BOLDGREEN + '--' + str(param).replace('_', '-') + ENDC + BOLD + ' (default: ' + str(default_value) + ')' + ENDC + ': ' + str(help_string) )
+    # #}
+
+    # #{ callback_gazebo_model_states
+    def callback_gazebo_model_states(self, msg):
+        self.got_gazebo_model_states = True
     # #}
 
     # #{ callback_spawn
     def callback_spawn(self, req):
-        if not self.got_gazebo_status:
+        if not self.got_gazebo_model_states:
             res = StringSrvResponse()
             res.success = False
             res.message = str('Gazebo model state topic not found. Is Gazebo running?')
@@ -459,33 +546,6 @@ class MrsDroneSpawner:
         return res
     # #}
 
-    # #{ kill_plugins
-    def kill_plugins(self, ID):
-        if ID not in self.assigned_ids.keys():
-            rerr('Cannot kill plugins of \'uav' + str(ID) + '\'. Vehicle not found')
-            return False
-
-        rinfo('Killing plugins of \'uav' + str(ID) + '\'...')
-        try:
-            for process in self.assigned_ids[ID]:
-                process.shutdown()
-        except:
-            rerr('Cannot kill plugins of \'uav' + str(ID) + '\'')
-            return False
-        rinfo('Plugins for \'uav' + str(ID) + '\' killed')
-        return True
-    # #}
-
-    # #{ delete_model
-    def delete_model(self, ID):
-        delete_result = self.delete_gazebo_proxy('uav' + str(ID))
-        if not delete_result.success:
-            rerr('Cannot delete model \'uav' + str(ID) + '\'. Reason: ' + str(delete_result.status_message))
-        else:
-            rinfo('Model \'uav' + str(ID) + '\' deleted')
-        return delete_result.success
-    # #}
-
     # #{ callback_delete
     def callback_delete(self, req):
         params_list = req.value.split()
@@ -515,11 +575,45 @@ class MrsDroneSpawner:
         return res
     # #}
 
+    # #{ kill_plugins
+    def kill_plugins(self, ID):
+        if ID not in self.assigned_ids.keys():
+            rerr('Cannot kill plugins of \'uav' + str(ID) + '\'. Vehicle not found')
+            return False
+
+        rinfo('Killing plugins of \'uav' + str(ID) + '\'...')
+        try:
+            for process in self.assigned_ids[ID]:
+                process.shutdown()
+        except:
+            rerr('Cannot kill plugins of \'uav' + str(ID) + '\'')
+            return False
+        rinfo('Plugins for \'uav' + str(ID) + '\' killed')
+        return True
+    # #}
+
+    # #{ delete_model
+    def delete_model(self, ID):
+        delete_result = self.delete_gazebo_proxy('uav' + str(ID))
+        if not delete_result.success:
+            rerr('Cannot delete model \'uav' + str(ID) + '\'. Reason: ' + str(delete_result.status_message))
+        else:
+            rinfo('Model \'uav' + str(ID) + '\' deleted')
+        return delete_result.success
+    # #}
+
     def dummy_function(self):
         pass
 
 if __name__ == '__main__':
+
+    show_help = True
+    if 'no_help' in sys.argv:
+        show_help = False
+    
+    verbose = 'verbose' in sys.argv
+    
     try:
-        spawner = MrsDroneSpawner()
+        spawner = MrsDroneSpawner(show_help, verbose)
     except rospy.ROSInterruptException:
         pass
