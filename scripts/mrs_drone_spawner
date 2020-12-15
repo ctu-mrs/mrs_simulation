@@ -3,7 +3,7 @@
 set -e
 
 distro=`lsb_release -r | awk '{ print $2 }'`
-script_path="$(rospack find mrs_simulation)/scripts/python_spawn"
+script_path="$(rospack find mrs_simulation)/scripts/mrs_drone_spawner.py"
 
 # select Ubuntu version
 if [ "$distro" = "18.04" ]; then

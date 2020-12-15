@@ -50,7 +50,7 @@ rosservice call /mrs_drone_spawner/spawn "1 --enable-rangefinder"
 To display the manual containing a list of all available arguments, perform a dry-run of the script:
 
 ```bash
-rosrun mrs_simulation mrs_drone_spawner.py
+rosrun mrs_simulation mrs_drone_spawner
 ```
 
 The arguments are also listed in the `mrs_simulation/config/spawner_params.yaml` file. Note that not all sensors are available for all the vehicle types. The config file stores the available configurations in the following format: `parameter: [default_value, help_description, [compatible_vehicles]]`
