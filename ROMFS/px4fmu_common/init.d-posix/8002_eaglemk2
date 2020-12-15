@@ -7,7 +7,7 @@
 # @maintainer Tomas Baca <tomas.baca@fel.cvut.cz>
 #
 
-. ${R}etc/init.d/rc.mc_defaults
+sh /etc/init.d/rc.mc_defaults
 
 set MAV_TYPE 14
 
