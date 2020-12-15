@@ -468,7 +468,6 @@
   <xacro:mavlink_interface_macro
     namespace="${namespace}"
     imu_sub_topic="/imu"
-    gps_sub_topic="/gps"
     mag_sub_topic="/mag"
     baro_sub_topic="/baro"
     mavlink_addr="$(arg mavlink_addr)"
@@ -492,26 +491,29 @@
   </xacro:mavlink_interface_macro>
   <!--}-->
 
-    <!-- GPS {-->
-  <xacro:gps_plugin_macro
-    namespace="${namespace}"
+  <!-- GPS {-->
+  <xacro:gps_macro
+    gps_name="gps0"
+    pos_x="0.0"
+    pos_y="0.0"
+    pos_z="0.0"
     gps_noise="true"
-    gps_indoor_jamming="$(arg gps_indoor_jamming)">
-    >
-  </xacro:gps_plugin_macro>
-
-  <xacro:if value="$(arg gps_indoor_jamming)">
-    <xacro:gps_satelites_blocking_macro
-      namespace="${namespace}"
-      parent_link="base_link">
-    </xacro:gps_satelites_blocking_macro>
-  </xacro:if>
+    gps_xy_random_walk="2.0"
+    gps_z_random_walk="4.0"
+    gps_xy_noise_density="2.0e-4"
+    gps_z_noise_density="4.0e-4"
+    gps_vxy_noise_density="0.2"
+    gps_vz_noise_density="0.4"
+    update_rate="10"
+    namespace="${namespace}"
+    parent_link="base_link">
+  </xacro:gps_macro>
   <!--}-->
 
   <!-- Magnetometer {-->
   <xacro:magnetometer_plugin_macro
     namespace="${namespace}"
-    pub_rate="20"
+    pub_rate="100"
     noise_density="0.0004"
     random_walk="0.0000064"
     bias_correlation_time="600"
@@ -523,8 +525,9 @@
   <!-- Barometer {-->
   <xacro:barometer_plugin_macro
   namespace="${namespace}"
-  pub_rate="10"
+  pub_rate="50"
   baro_topic="/baro"
+  baro_drift_pa_per_sec="0"
   >
   </xacro:barometer_plugin_macro>
   <!--}-->
@@ -536,11 +539,11 @@
     parent_link="base_link"
     imu_topic="/imu"
     mass_imu_sensor="0.015"
-    gyroscope_noise_density="0.0003394"
-    gyroscopoe_random_walk="0.000038785"
+    gyroscope_noise_density="0.00018665"
+    gyroscope_random_walk="0.000038785"
     gyroscope_bias_correlation_time="1000.0"
     gyroscope_turn_on_bias_sigma="0.0087"
-    accelerometer_noise_density="0.004"
+    accelerometer_noise_density="0.00186"
     accelerometer_random_walk="0.006"
     accelerometer_bias_correlation_time="300.0"
     accelerometer_turn_on_bias_sigma="0.1960"
