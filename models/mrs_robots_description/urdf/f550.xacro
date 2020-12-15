@@ -7,6 +7,8 @@
   Is there a reason not to make all properties arguments?
   -->
   <xacro:property name="namespace" value="$(arg namespace)" />
+  <xacro:property name='model_config_file' value="$(arg model_config_file)"/>
+  <xacro:property name="optionals" value="${load_yaml(model_config_file)}" />
 
   <xacro:arg name='name' default='f550' />
   <xacro:arg name='mavlink_addr' default='INADDR_ANY' />
@@ -50,8 +52,8 @@
   <xacro:property name="arm_height" value="0.038" /> <!-- [m] -->
   <xacro:property name="board_radius" value="0.11" /> <!-- [m] -->
   <xacro:property name="board_height" value="0.002" /> <!-- [m] -->
-  <xacro:property name="leg_offset_z" value="0.098" /> 
-  <!-- <xacro:property name="leg_offset_z" value="0.133" /> --> 
+  <xacro:property name="leg_offset_z" value="0.098" />
+  <!-- <xacro:property name="leg_offset_z" value="0.133" /> -->
   <xacro:property name="leg_offset_r" value="0.0072" /> <!-- [m] -->
   <xacro:property name="pixhawk_offset" value="0.0075" /> <!-- [m] -->
 
@@ -530,7 +532,6 @@
   <xacro:mavlink_interface_macro
     namespace="${namespace}"
     imu_sub_topic="/imu"
-    gps_sub_topic="/gps"
     mag_sub_topic="/mag"
     baro_sub_topic="/baro"
     mavlink_addr="$(arg mavlink_addr)"
@@ -555,25 +556,28 @@
   <!--}-->
 
   <!-- GPS {-->
-  <xacro:gps_plugin_macro
-    namespace="${namespace}"
+  <xacro:gps_macro
+    gps_name="gps0"
+    pos_x="0.0"
+    pos_y="0.0"
+    pos_z="0.0"
     gps_noise="true"
-    gps_indoor_jamming="$(arg gps_indoor_jamming)">
-    >
-  </xacro:gps_plugin_macro>
-
-  <xacro:if value="$(arg gps_indoor_jamming)">
-    <xacro:gps_satelites_blocking_macro
-      namespace="${namespace}"
-      parent_link="base_link">
-    </xacro:gps_satelites_blocking_macro>
-  </xacro:if>
+    gps_xy_random_walk="2.0"
+    gps_z_random_walk="4.0"
+    gps_xy_noise_density="2.0e-4"
+    gps_z_noise_density="4.0e-4"
+    gps_vxy_noise_density="0.2"
+    gps_vz_noise_density="0.4"
+    update_rate="10"
+    namespace="${namespace}"
+    parent_link="base_link">
+  </xacro:gps_macro>
   <!--}-->
 
   <!-- Magnetometer {-->
   <xacro:magnetometer_plugin_macro
     namespace="${namespace}"
-    pub_rate="20"
+    pub_rate="100"
     noise_density="0.0004"
     random_walk="0.0000064"
     bias_correlation_time="600"
@@ -585,8 +589,9 @@
   <!-- Barometer {-->
   <xacro:barometer_plugin_macro
     namespace="${namespace}"
-    pub_rate="10"
+    pub_rate="50"
     baro_topic="/baro"
+    baro_drift_pa_per_sec="0"
     >
   </xacro:barometer_plugin_macro>
   <!--}-->
@@ -598,11 +603,11 @@
     parent_link="base_link"
     imu_topic="/imu"
     mass_imu_sensor="0.015"
-    gyroscope_noise_density="0.0003394"
-    gyroscopoe_random_walk="0.000038785"
+    gyroscope_noise_density="0.00018665"
+    gyroscope_random_walk="0.000038785"
     gyroscope_bias_correlation_time="1000.0"
     gyroscope_turn_on_bias_sigma="0.0087"
-    accelerometer_noise_density="0.004"
+    accelerometer_noise_density="0.00186"
     accelerometer_random_walk="0.006"
     accelerometer_bias_correlation_time="300.0"
     accelerometer_turn_on_bias_sigma="0.1960"
@@ -617,7 +622,7 @@
   <!-- ================================================================== -->
 
   <!-- Ground truth {-->
-  <xacro:if value="$(arg enable_ground_truth)">
+  <xacro:if value="${optionals['enable_ground_truth']}">
     <!-- Mount a generic odometry sensor providing ground truth. -->
     <xacro:odometry_plugin_macro
       namespace="${namespace}"
@@ -639,7 +644,7 @@
   <!-- ======================= rangefinder sensors ======================-->
 
   <!-- Garmin {-->
-  <xacro:if value="$(arg enable_rangefinder)">
+  <xacro:if value="${optionals['enable_rangefinder']}">
     <xacro:garmin_macro
       namespace="${namespace}"
       parent_link="base_link"
@@ -656,7 +661,7 @@
   <!--}-->
 
   <!-- Garmin looking up {-->
-  <xacro:if value="$(arg enable_rangefinder_up)">
+  <xacro:if value="${optionals['enable_rangefinder_up']}">
     <xacro:garmin_macro
       namespace="${namespace}"
       parent_link="base_link"
@@ -673,7 +678,7 @@
   <!--}-->
 
   <!-- Teraranger One {-->
-  <xacro:if value="$(arg enable_teraranger)">
+  <xacro:if value="${optionals['enable_teraranger']}">
     <xacro:teraranger_macro
       namespace="${namespace}"
       parent_link="base_link"
@@ -691,7 +696,7 @@
   <!-- ========================== LIDAR sensors ========================= -->
 
   <!-- Scanse Sweep {-->
-  <xacro:if value="$(arg enable_scanse_sweep)">
+  <xacro:if value="${optionals['enable_scanse_sweep']}">
     <xacro:scanse_sweep_macro
       namespace="${namespace}"
       x="0.0"
@@ -706,7 +711,7 @@
   <!--}-->
 
   <!-- Rplidar {-->
-  <xacro:if value="$(arg enable_rplidar)">
+  <xacro:if value="${optionals['enable_rplidar']}">
     <xacro:rplidar_macro
       namespace="${namespace}"
       x="0.0"
@@ -721,7 +726,7 @@
   <!--}-->
 
   <!-- Velodyne  {-->
-  <xacro:if value="$(arg enable_velodyne)">
+  <xacro:if value="${optionals['enable_velodyne']}">
 
     <!-- VLP-16 (default) -->
     <xacro:property name="sensor_name" value="velodyne" />
@@ -743,15 +748,15 @@
       vfov_angle="${vfov_angle}"
       max_range="${range}"
       noise="0.01"
-      enable_gpu_ray="$(arg use_gpu_ray)"
+      enable_gpu_ray="${optionals['use_gpu_ray']}"
       >
     </xacro:velodyne_macro>
   </xacro:if>
   <!--}-->
 
   <!-- Ouster {-->
-  <xacro:if value="$(arg enable_ouster)">
-  <xacro:property name="ouster_model" value="$(arg ouster_model)" />
+  <xacro:if value="${optionals['enable_ouster']}">
+    <xacro:property name="ouster_model" value="${optionals['ouster_model']}" />
 
     <!-- OS1-16 Generation 1 (default) -->
     <xacro:property name="sensor_name" value="os1" />
@@ -860,7 +865,7 @@
     vfov_angle="${vfov_angle}"
     max_range="${range}"
     noise="0.03"
-    enable_gpu_ray="$(arg use_gpu_ray)"
+    enable_gpu_ray="${optionals['use_gpu_ray']}"
     >
   </xacro:ouster_macro>
   </xacro:if>
@@ -871,7 +876,7 @@
   <!-- Bluefox placements{-->
 
   <!-- reverse {-->
-  <xacro:if value="$(arg enable_bluefox_camera_reverse)">
+  <xacro:if value="${optionals['enable_bluefox_camera_reverse']}">
     <xacro:bluefox_camera_macro
       namespace="${namespace}"
       parent_link="base_link"
@@ -894,7 +899,7 @@
   <!--}-->
 
   <!-- classic {-->
-  <xacro:if value="$(arg enable_bluefox_camera)">
+  <xacro:if value="${optionals['enable_bluefox_camera']}">
     <xacro:bluefox_camera_macro
       namespace="${namespace}"
       parent_link="base_link"
@@ -921,14 +926,14 @@
   <!-- Realsense placements {-->
 
   <!-- top {-->
-  <xacro:if value="$(arg enable_realsense_top)">
+  <xacro:if value="${optionals['enable_realsense_top']}">
     <!-- sensor -->
     <xacro:realsense_macro
       namespace="${namespace}"
       parent_link="base_link"
       camera_suffix="realsense_top"
       parent_frame_name="${namespace}/fcu"
-      enable_realistic_realsense="$(arg use_realistic_realsense)"
+      enable_realistic_realsense="${optionals['use_realistic_realsense']}"
       x="0.085"
       y="-0.041"
       z="0.184"
@@ -940,13 +945,13 @@
   <!--}-->
 
   <!-- down {-->
-  <xacro:if value="$(arg enable_realsense_down)">
+  <xacro:if value="${optionals['enable_realsense_down']}">
     <xacro:realsense_macro
       namespace="${namespace}"
       parent_link="base_link"
       camera_suffix="realsense_down"
       parent_frame_name="${namespace}/fcu"
-      enable_realistic_realsense="$(arg use_realistic_realsense)"
+      enable_realistic_realsense="${optionals['use_realistic_realsense']}"
       x="0.22"
       y="0"
       z="-0.1017"
@@ -958,14 +963,14 @@
   <!--}-->
 
   <!-- front pitched {-->
-  <xacro:if value="$(arg enable_realsense_front_pitched)">
+  <xacro:if value="${optionals['enable_realsense_front_pitched']}">
     <!-- sensor -->
     <xacro:realsense_macro
       namespace="${namespace}"
       parent_link="base_link"
       camera_suffix="realsense_front_pitched"
       parent_frame_name="${namespace}/fcu"
-      enable_realistic_realsense="$(arg use_realistic_realsense)"
+      enable_realistic_realsense="${optionals['use_realistic_realsense']}"
       x="0.226"
       y="0"
       z="-0.089"
@@ -980,14 +985,14 @@
   <!--}-->
 
   <!-- front {-->
-  <xacro:if value="$(arg enable_realsense_front)">
+  <xacro:if value="${optionals['enable_realsense_front']}">
     <!-- sensor -->
     <xacro:realsense_macro
       namespace="${namespace}"
       parent_link="base_link"
       camera_suffix="realsense_front"
       parent_frame_name="${namespace}/fcu"
-      enable_realistic_realsense="$(arg use_realistic_realsense)"
+      enable_realistic_realsense="${optionals['use_realistic_realsense']}"
       x="0.223"
       y="0"
       z="-0.089"
@@ -997,16 +1002,16 @@
     </xacro:realsense_macro>
   </xacro:if>
   <!--}-->
-  
+
   <!-- up {-->
-  <xacro:if value="$(arg enable_realsense_up)">
+  <xacro:if value="${optionals['enable_realsense_up']}">
     <!-- sensor -->
     <xacro:realsense_macro
       namespace="${namespace}"
       parent_link="base_link"
       camera_suffix="realsense_up"
       parent_frame_name="${namespace}/fcu"
-      enable_realistic_realsense="$(arg use_realistic_realsense)"
+      enable_realistic_realsense="${optionals['use_realistic_realsense']}"
       x="0.07"
       y="0"
       z="0.025"
@@ -1022,7 +1027,7 @@
   <!-- Mobius placements {-->
 
   <!-- down {-->
-  <xacro:if value="$(arg enable_mobius_camera_down)">
+  <xacro:if value="${optionals['enable_mobius_camera_down']}">
     <xacro:mobius_camera_macro
       namespace="${namespace}"
       parent_link="base_link"
@@ -1043,7 +1048,7 @@
   <!--}-->
 
   <!-- front {-->
-  <xacro:if value="$(arg enable_mobius_camera_front)">
+  <xacro:if value="${optionals['enable_mobius_camera_front']}">
     <xacro:mobius_camera_macro
       namespace="${namespace}"
       parent_link="base_link"
@@ -1064,7 +1069,7 @@
   <!--}-->
 
   <!-- back left {-->
-  <xacro:if value="$(arg enable_mobius_camera_back_left)">
+  <xacro:if value="${optionals['enable_mobius_camera_back_left']}">
     <xacro:mobius_camera_macro
       namespace="${namespace}"
       parent_link="base_link"
@@ -1085,7 +1090,7 @@
   <!--}-->
 
   <!-- back right {-->
-  <xacro:if value="$(arg enable_mobius_camera_back_right)">
+  <xacro:if value="${optionals['enable_mobius_camera_back_right']}">
     <xacro:mobius_camera_macro
       namespace="${namespace}"
       parent_link="base_link"
@@ -1108,35 +1113,35 @@
   <!--} Mobius placements -->
 
   <!-- UV camera {-->
-  <xacro:if value="$(arg enable_uv_camera)">
+  <xacro:if value="${optionals['enable_uv_camera']}">
 
     <xacro:uvcam_macro
       namespace="${namespace}"
       parent_link="base_link"
-      number="1"          
-      frame_rate="80"     
+      number="1"
+      frame_rate="80"
       camera_publish_topic="/${namespace}/uvdar_bluefox_left/image_raw"
-      calibration_file="$(arg uvcam_calib_file)"
-      occlusions="$(arg uvcam_occlusions)">
+      calibration_file="${optionals['uvcam_calib_file']}"
+      occlusions="${optionals['uvcam_occlusions']}">
     <origin xyz="0.037 0.1175 0.05" rpy="0 0 ${rad70}" />
-    </xacro:uvcam_macro>  
+    </xacro:uvcam_macro>
 
-    <xacro:uvcam_macro    
+    <xacro:uvcam_macro
       namespace="${namespace}"
       parent_link="base_link"
-      number="2"          
-      frame_rate="80"     
+      number="2"
+      frame_rate="80"
       camera_publish_topic="/${namespace}/uvdar_bluefox_right/image_raw"
-      calibration_file="$(arg uvcam_calib_file)"
-      occlusions="$(arg uvcam_occlusions)">
+      calibration_file="${optionals['uvcam_calib_file']}"
+      occlusions="${optionals['uvcam_occlusions']}">
     <origin xyz="0.037 -0.1175 0.05" rpy="0 0 -${rad70}" />
-    </xacro:uvcam_macro>  
+    </xacro:uvcam_macro>
 
   </xacro:if>
   <!--}-->
 
   <!-- Servo camera {-->
-  <xacro:if value="$(arg enable_servo_camera)">
+  <xacro:if value="${optionals['enable_servo_camera']}">
     <xacro:servo_camera_macro
       namespace="${namespace}"
       name="servo_camera_macro"
@@ -1157,7 +1162,7 @@
   <!-- ========================== other sensors ========================= -->
 
   <!-- Teraranger Tower Evo {-->
-  <xacro:if value="$(arg enable_teraranger_tower_evo)">
+  <xacro:if value="${optionals['enable_teraranger_tower_evo']}">
     <xacro:teraranger_tower_evo_macro
       namespace="${namespace}"
       parent_link="base_link"
@@ -1170,7 +1175,7 @@
   <!--}-->
 
   <!-- Magnetic gripper {-->
-  <xacro:if value="$(arg enable_magnetic_gripper)">
+  <xacro:if value="${optionals['enable_magnetic_gripper']}">
     <xacro:magnet_gripper_macro
       namespace="${namespace}"
       name="gripper"
@@ -1182,7 +1187,7 @@
   <!--}-->
 
   <!-- Timepix {-->
-  <xacro:if value="$(arg enable_timepix)">
+  <xacro:if value="${optionals['enable_timepix']}">
     <xacro:timepix_macro
       namespace="${namespace}"
       name="timepix"
@@ -1244,17 +1249,17 @@
   </xacro:macro>
   <!--}-->
 
-  <xacro:if value="$(arg enable_uv_leds)">
+  <xacro:if value="${optionals['enable_uv_leds']}">
     <xacro:uvled_hexarotor
-      f1="$(arg uvled_fr_l)"
-      f2="$(arg uvled_fr_r)"
+      f1="${optionals['uvled_fr_l']}"
+      f2="${optionals['uvled_fr_r']}"
       namespace="${namespace}"
       parent_link="base_link"/>
   </xacro:if>
   <!--}-->
 
   <!-- Light {-->
-  <xacro:if value="$(arg enable_light)">
+  <xacro:if value="${optionals['enable_light']}">
     <xacro:light_macro
       namespace="${namespace}"
       name="light_macro"
@@ -1279,7 +1284,7 @@
   <!-- ============================= holders ============================ -->
 
   <!-- Ouster and Velodyne mount {-->
-  <xacro:if value="${('$(arg enable_ouster)' == 'true') or ('$(arg enable_velodyne)' == 'true')}">
+  <xacro:if value="${(optionals['enable_ouster'] == 'true') or (optionals['enable_velodyne'] == 'true')}">
     <xacro:visual_macro
       robot_namespace="${namespace}"
       name="ouster_mount"
@@ -1293,7 +1298,7 @@
   <!--}-->
 
   <!-- Rplidar and scanse mount {-->
-  <xacro:if value="${('$(arg enable_rplidar)' == 'true') or ('$(arg enable_scanse_sweep)' == 'true')}">
+  <xacro:if value="${(optionals['enable_rplidar'] == 'true') or (optionals['enable_scanse_sweep'] == 'true')}">
     <xacro:visual_macro
       robot_namespace="${namespace}"
       name="rplidar_mount"
@@ -1307,7 +1312,7 @@
   <!--}-->
 
   <!-- Realsense top mount {-->
-  <xacro:if value="$(arg enable_realsense_top)">
+  <xacro:if value="${optionals['enable_realsense_top']}">
     <xacro:visual_macro
       robot_namespace="${namespace}"
       name="realsense_top_mount"
@@ -1321,7 +1326,7 @@
   <!--}-->
 
   <!-- Realsense front mount {-->
-  <xacro:if value="$(arg enable_realsense_front)">
+  <xacro:if value="${optionals['enable_realsense_front']}">
     <xacro:visual_macro
       robot_namespace="${namespace}"
       name="realsense_front_mount"
@@ -1335,7 +1340,7 @@
   <!--}-->
 
   <!-- Realsense front pitched mount {-->
-  <xacro:if value="$(arg enable_realsense_front_pitched)">
+  <xacro:if value="${optionals['enable_realsense_front_pitched']}">
     <xacro:visual_macro
       robot_namespace="${namespace}"
       name="realsense_front_pitched_mount"
@@ -1349,7 +1354,7 @@
   <!--}-->
 
   <!-- Realsense down mount {-->
-  <xacro:if value="$(arg enable_realsense_down)">
+  <xacro:if value="${optionals['enable_realsense_down']}">
     <xacro:visual_macro
       robot_namespace="${namespace}"
       name="realsense_front_mount"
@@ -1360,10 +1365,11 @@
       <origin xyz="0.223 0 -0.089" rpy="${rad90} 0 -${rad90}" />
     </xacro:visual_macro>
   </xacro:if>
+
   <!--}-->
 
   <!-- UVDAR mount {-->
-  <xacro:if value="$(arg enable_uv_camera)">
+  <xacro:if value="${optionals['enable_uv_camera']}">
     <xacro:visual_macro
       robot_namespace="${namespace}"
       name="uvdar_mount"
@@ -1377,7 +1383,7 @@
   <!--}-->
 
   <!-- left leg for front sensors between legs (realsenses) {-->
-  <xacro:if value="${('$(arg enable_realsense_front)' == 'true') or ('$(arg enable_realsense_front_pitched)' == 'true') or ('$(arg enable_realsense_down)' == 'true')}">
+  <xacro:if value="${(optionals['enable_realsense_front'] == 'true') or (optionals['enable_realsense_front_pitched'] == 'true') or (optionals['enable_realsense_down'] == 'true')}">
     <xacro:leg_macro
       robot_namespace="${namespace}"
       name="front_left_leg"
@@ -1448,7 +1454,7 @@
   </xacro:macro>
   <!--}-->
 
-  <xacro:if value="${('$(arg enable_realsense_top)' == 'true')}">
+  <xacro:if value="${optionals['enable_realsense_top']}">
     <xacro:top_holder_macro
       namespace="${namespace}"
       parent_link="base_link">
@@ -1460,7 +1466,7 @@
   <!-- ========================== other sensors ========================= -->
 
 <!-- Whycon box {-->
-<xacro:if value="$(arg enable_whycon_box)">
+<xacro:if value="${optionals['enable_whycon_box']}">
   <xacro:box_macro
     robot_namespace="${namespace}"
     name="whycon_box"
@@ -1472,7 +1478,7 @@
 <!--}-->
 
 <!-- Pendulum {-->
-<xacro:if value="$(arg enable_pendulum)">
+<xacro:if value="${optionals['enable_pendulum']}">
   <xacro:pendulum
     parent="base_link">
   </xacro:pendulum>
@@ -1480,7 +1486,7 @@
 <!--}-->
 
 <!-- Ball holder {-->
-<xacro:if value="$(arg enable_ball_holder)">
+<xacro:if value="${optionals['enable_ball_holder']}">
   <xacro:ball_holder
       parent="base_link">
   </xacro:ball_holder>

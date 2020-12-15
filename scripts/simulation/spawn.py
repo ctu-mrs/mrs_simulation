@@ -7,7 +7,7 @@ from simulation import get_vehicle_pose
 from simulation import get_vehicle_pose_from_file
 from simulation import delete_model
 from simulation import spawn_model
-from simulation import VEHICLE_BASE_PORT, VEHICLE_TCP_BASE_PORT
+from simulation import get_all_vehicle_ports
 from simulation import write_launch_file
 from simulation import print_ok
 from simulation import detect_available_arguments_in_xacro 
@@ -252,7 +252,7 @@ def spawn():
         return
 
     if args.file:
-        vehicle_id, poses = get_vehicle_pose_from_file(args.file, vehicle_id[0])
+        vehicle_id, pose = get_vehicle_pose_from_file(args.file, vehicle_id[0])
         n_vehicles = len(vehicle_id)
 
     ouster_model = args.ouster_model[0].upper()
@@ -276,13 +276,7 @@ def spawn():
 
         mav_sys_id = vehicle_id[i]
 
-        # each vehicle uses 4 ports
-        # VEHICLE_BASE_PORT + MAV_SYS_IDs used for UDP communication
-        # VEHICLE_TCP_PORT + MAV_SYS_IDs used for TCP communication
-        # two are used between the px4 and and the mavros node ang QGC
-
-        vehicle_base_port = VEHICLE_BASE_PORT + 4 * mav_sys_id
-        vehicle_tcp_port = VEHICLE_TCP_BASE_PORT + mav_sys_id
+        vehicle_ports = get_all_vehicle_ports(mav_sys_id)
 
         if args.file:
             vehicle_pose = poses[i]
@@ -293,8 +287,8 @@ def spawn():
         spawn_model(
             mav_sys_id = mav_sys_id,
             vehicle_type = vehicle_type, 
-            udp_port = vehicle_base_port, 
-            tcp_port = vehicle_tcp_port,
+            mavlink_udp_port = vehicle_ports['mavlink_udp_port'], 
+            mavlink_tcp_port = vehicle_ports['mavlink_tcp_port'],
             pose = vehicle_pose,
             ros_master_uri = args.gazebo_ros_master_uri,
             mavlink_address = args.mavlink_address,
@@ -346,8 +340,7 @@ def spawn():
             debug=args.debug)
 
         if args.generate_launch_file or args.run:
-            launch_snippet += get_launch_snippet(
-                mav_sys_id, vehicle_type, vehicle_base_port)
+            launch_snippet += get_launch_snippet(mav_sys_id, vehicle_type)
     print("----------------------------------------------")
 
     if args.generate_launch_file or args.run:

@@ -9,37 +9,76 @@ This platforms can be additionaly equipped with several sensors (rangefinders, 2
 
 ## Usage
 
-> :warning: **If you are not using this repository together with the [mrs_uav_core](https://github.com/ctu-mrs/uav_core) repository**: 
+> :warning: **New drone spawning mechanism**: 
 >
-> * Alias `spawn_uav=rosrun mrs_simulation spawn` doesn't exist for you and then you have to write the whole command!
-> * The autocompletion will not be available for you either.
+> * From now on, the drone spawning mechanism will be controlled by a ROS node
+> * Spawning new vehicles is now done by calling ROS services
+> * The spawner node is launched automatically with the simulation
+> * The arguments for vehicle configuration remain mostly unchanged, just use 'rosservice call /mrs_drone_spawner/spawn "args"' instead of 'spawn_uav args'
+> * Distributed simulation (running gazebo on one computer and mavros/PX4 on another is currently not supported
+
 
 ### Start of the Gazebo simulator
 
 To start the prepared example of Gazebo world call:
 
 ```bash
-roslaunch simulation mrs_simulation.launch world_file:='$(find mrs_gazebo_common)/worlds/grass_plane.world' gui:=true
+roslaunch mrs_simulation simulation.launch world_file:='$(find mrs_gazebo_common)/worlds/grass_plane.world' gui:=true
 ```
 
 At this point the Gazebo world will only contain the environment with grass plane but with no vehicles yet.
 
-### Spawning of UAVs 
-The command `spawn_uav` can be used to perform the following tasks:
-
-* Spawn the vehicle models in the Gazebo simulation (ids from 1 - 250). This is done internally by calling service `/gazebo/spawn_sdf_model`.
-  
-* For each vehicle a custom init script for PX4 and mavros is being generated which contains specific port numbers depending on the selected id.
-
-* For the set of spawned vehicles a single ROS launch file could be generated.
-  This launch configuration starts PX4 and mavros for each vehicle.
-
-For the capability of the script see help:
+### Spawning of UAVs (NEW)
+The `simulation.launch` will automatically start the `mrs_drone_spawner` python node. If you use a custom launch file to start the simulation, you can start it separately:
 
 ```bash
-spawn_uav --help
+roslaunch mrs_simulation mrs_drone_spawner.launch
 ```
 
+The `mrs_drone_spawner` will perform the following tasks:
+
+* Spawn vehicle models in the Gazebo simulation (ids from 0 to 250). This is done internally by calling the command `rosrun gazebo_ros spawn_model`.
+  
+* For each vehicle, PX4 firmware and mavros is started at specific port numbers depending on the vehicle ID.
+
+Vehicles are added to the simulation by calling the `spawn` service of the `mrs_drone_spawner`. The service takes one string argument, which specifies the vehicle ID, type and sensor configuration. Example: spawn a single vehicle with a down-facing laser rangefinder:
+
+```bash
+rosservice call /mrs_drone_spawner/spawn "1 --enable-rangefinder"
+```
+
+To display the manual containing a list of all available arguments, perform a dry-run of the script:
+
+```bash
+rosrun mrs_simulation mrs_drone_spawner.py
+```
+
+The arguments are also listed in the `mrs_simulation/config/spawner_params.yaml` file. Note that not all sensors are available for all the vehicle types. The config file stores the available configurations in the following format: `parameter: [default_value, help_description, [compatible_vehicles]]`
+
+#### New features
+Multiple vehicles may be spawned with one service call:
+
+```bash
+rosservice call /mrs_drone_spawner/spawn "1 2 3 4 5 --t650 --enable-bluefox-camera --enable-rangefinder"
+```
+
+Spawn position may be specified by a command line argument `--pos x y z heading`: [m, m, m, rad]
+```bash
+rosservice call /mrs_drone_spawner/spawn "1 --f550 --enable-rangefinder --pos 10 -15 0.3 0.7"
+```
+For multiple vehicles, `--pos` defines the spawn point of the first vehicle. Following vehicles will be spawned in a line, with an x-offset of 2 meters from the previous vehicle.
+
+Spawn position may be specified by a `.csv` or a `.yaml` file using `--file absolute_path_to_file`:
+```bash
+rosservice call /mrs_drone_spawner/spawn "1 --f450 --enable-rangefinder --enable-ouster --use-gpu-ray --ouster-model OS1-64 --file `pwd`/spawn_poses.yaml"
+```
+
+Use a whitespace instead of an ID to get an available ID automatically assigned by the spawner.
+```bash
+rosservice call /mrs_drone_spawner/spawn " --f450 --enable-rangefinder"
+```
+
+<!-- THIS SECTION IS OUTDATED
 Not all sensors have to be available for selected type of uav (DJI f450, DJI f550, Tarot t650 and Eagle.one mk2). Please check possible settings for
 the selected type of UAV by calling command: 
 
@@ -80,6 +119,7 @@ In order to run a simulation distributed to multiple machines, these prerequisit
 ```bash
     spawn_uav 1 --enable-bluefox-camera --enable-rangefinder --run --delete --mavlink-address IP_ADDR
 ```
+-->
 
 ### Running the MRS control pipeline
 Check out the wiki on [how to run control core](https://ctu-mrs.github.io/docs/simulation/howto.html#3-run-the-control-core).
