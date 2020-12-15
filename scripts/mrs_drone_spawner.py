@@ -18,6 +18,7 @@ from mrs_msgs.srv import StringResponse as StringSrvResponse
 from std_srvs.srv import Trigger, TriggerResponse
 from gazebo_msgs.srv import DeleteModel
 from gazebo_msgs.msg import ModelStates
+from mavros_msgs.msg import Mavlink as MavlinkMsg
 
 VEHICLE_BASE_PORT = 14000
 MAVLINK_TCP_BASE_PORT = 4560
@@ -84,7 +85,6 @@ class MrsDroneSpawner:
         for key, values in self.spawner_params.items():
             self.default_model_config[key] = values[0]
 
-        self.got_gazebo_model_states = False;
         self.assigned_ids = {} # {id: process_handle}
         self.path_to_launch_file_firmware = pkg_path + os.sep + 'launch' + os.sep + 'run_simulation_firmware.launch'
         self.path_to_launch_file_spawn_model = pkg_path + os.sep + 'launch' + os.sep + 'spawn_simulation_model.launch'
@@ -92,7 +92,6 @@ class MrsDroneSpawner:
 
         rospy.init_node('mrs_drone_spawner', anonymous=True)
         rinfo('Node initialization started. All parameters loaded correctly.')
-        rospy.Subscriber("~gazebo_model_states", ModelStates, self.callback_gazebo_model_states, queue_size=1)
 
         if self.verbose:
             rinfo('Loaded the following params:')
@@ -104,6 +103,10 @@ class MrsDroneSpawner:
         spawn_server = rospy.Service('~spawn', StringSrv, self.callback_spawn)
         delete_server = rospy.Service('~delete', StringSrv, self.callback_delete)
         self.delete_gazebo_proxy = rospy.ServiceProxy('gazebo/delete_model', DeleteModel)
+        self.model_states_subscriber = rospy.Subscriber('gazebo/model_states', ModelStates, self.callback_model_states) 
+        self.got_mavlink = {}
+        self.mavlink_sub = {}
+        self.models_in_simulation = None
         rospy.spin()
 
     # #{ params_integrity_ok
@@ -423,7 +426,6 @@ class MrsDroneSpawner:
         except:
             rerr('Error occured while spawning Gazebo model for uav' + str(ID) + '!')
             raise Exception('Cannot spawn uav' + str(ID))
-        return launch
     # #}
 
     # #{ launch_mavros
@@ -463,14 +465,20 @@ class MrsDroneSpawner:
             print(BOLDGREEN + '--' + str(param).replace('_', '-') + ENDC + BOLD + ' (default: ' + str(default_value) + ')' + ENDC + ': ' + str(help_string) )
     # #}
 
-    # #{ callback_gazebo_model_states
-    def callback_gazebo_model_states(self, msg):
-        self.got_gazebo_model_states = True
+    # #{ callback_model_states
+    def callback_model_states(self, msg):
+        uav_models = []
+        for modelname in msg.name:
+            if 'uav' in modelname:
+                uav_models.append(modelname)
+        self.models_in_simulation = uav_models
     # #}
 
     # #{ callback_spawn
     def callback_spawn(self, req):
-        if not self.got_gazebo_model_states:
+        try:
+            rospy.wait_for_message('/gazebo/model_states', ModelStates, 2)
+        except:
             res = StringSrvResponse()
             res.success = False
             res.message = str('Gazebo model state topic not found. Is Gazebo running?')
@@ -523,15 +531,25 @@ class MrsDroneSpawner:
             try:
                 firmware_process = self.launch_firmware(ID, uav_roslaunch_args)
                 launched_processes.append(firmware_process)
+                rospy.sleep(0.5)
+                
                 gz_spawning_process = self.spawn_simulation_model(ID, uav_roslaunch_args)
-                launched_processes.append(gz_spawning_process)
+                self.wait_for_model_to_spawn('uav' + str(ID))
+                
                 mavros_process = self.launch_mavros(ID, uav_roslaunch_args)
                 launched_processes.append(mavros_process)
+                
+                self.wait_for_mavlink(ID)
 
             except Exception as e:
                 unsuccessful_spawns += 1
                 del self.assigned_ids[ID]
                 rerr(str(e.args[0]))
+                rwarn('Error encountered while spawning. Killing orphaned processes')
+                for process in launched_processes:
+                    process.shutdown()
+                rospy.loginfo('Deleting model from Gazebo')
+                self.delete_model(ID)
                 continue
 
             self.assigned_ids[ID] = launched_processes
@@ -575,6 +593,18 @@ class MrsDroneSpawner:
         return res
     # #}
 
+    # #{ wait_for_mavlink
+    def wait_for_mavlink(self, ID):
+        topic_name = '/uav' + str(ID) + '/mavlink/from'
+        return rospy.wait_for_message(topic_name, MavlinkMsg, 3)
+    # #}
+
+    # #{ wait_for_model_to_spawn
+    def wait_for_model_to_spawn(self, modelname):
+        while not modelname in self.models_in_simulation:
+            rospy.sleep(0.01)
+    # #}
+
     # #{ kill_plugins
     def kill_plugins(self, ID):
         if ID not in self.assigned_ids.keys():
@@ -583,7 +613,7 @@ class MrsDroneSpawner:
 
         rinfo('Killing plugins of \'uav' + str(ID) + '\'...')
         try:
-            for process in self.assigned_ids[ID]:
+            for process in self.assigned_ids[ID][::-1]: # kill the youngest process first
                 process.shutdown()
         except:
             rerr('Cannot kill plugins of \'uav' + str(ID) + '\'')
