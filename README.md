@@ -1,15 +1,15 @@
 # MRS simulation
- 
+
 | Build status | [![Build Status](https://github.com/ctu-mrs/mrs_simulation/workflows/Melodic/badge.svg)](https://github.com/ctu-mrs/mrs_simulation/actions) | [![Build Status](https://github.com/ctu-mrs/mrs_simulation/workflows/Noetic/badge.svg)](https://github.com/ctu-mrs/mrs_simulation/actions) |
 |--------------|---------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
- 
+
 ## Overview
-Support for spawning vehicles into Gazebo simulation, where user can select from multiple UAV platforms. 
+Support for spawning vehicles into Gazebo simulation, where user can select from multiple UAV platforms.
 This platforms can be additionaly equipped with several sensors (rangefinders, 2d lidars, stereo cameras etc.).
 
 ## Usage
 
-> :warning: **New drone spawning mechanism**: 
+> :warning: **New drone spawning mechanism**:
 >
 > * From now on, the drone spawning mechanism will be controlled by a ROS node
 > * Spawning new vehicles is now done by calling ROS services
@@ -38,7 +38,7 @@ roslaunch mrs_simulation mrs_drone_spawner.launch
 The `mrs_drone_spawner` will perform the following tasks:
 
 * Spawn vehicle models in the Gazebo simulation (ids from 0 to 250). This is done internally by calling the command `rosrun gazebo_ros spawn_model`.
-  
+
 * For each vehicle, PX4 firmware and mavros is started at specific port numbers depending on the vehicle ID.
 
 Vehicles are added to the simulation by calling the `spawn` service of the `mrs_drone_spawner`. The service takes one string argument, which specifies the vehicle ID, type and sensor configuration. Example: spawn a single vehicle with a down-facing laser rangefinder:
@@ -80,7 +80,7 @@ rosservice call /mrs_drone_spawner/spawn " --f450 --enable-rangefinder"
 
 <!-- THIS SECTION IS OUTDATED
 Not all sensors have to be available for selected type of uav (DJI f450, DJI f550, Tarot t650 and Eagle.one mk2). Please check possible settings for
-the selected type of UAV by calling command: 
+the selected type of UAV by calling command:
 
 ```bash
 spawn_uav --$UAV_TYPE --available-sensors
