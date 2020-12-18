@@ -28,7 +28,7 @@ roslaunch mrs_simulation simulation.launch world_file:='$(find mrs_gazebo_common
 
 At this point the Gazebo world will only contain the environment with grass plane but with no vehicles yet.
 
-### Spawning of UAVs (NEW)
+### Spawning of UAVs ([NEW](https://ctu-mrs.github.io/docs/simulation/drone_spawner.html))
 The `simulation.launch` will automatically start the `mrs_drone_spawner` python node. If you use a custom launch file to start the simulation, you can start it separately:
 
 ```bash
