@@ -5298,37 +5298,18 @@ limitations under the License.
         </inertial>
     </link>
 
-    <joint name="ball_holder2_rod_joint" type="fixed">
-        <parent link="ball_holder2_spherical_joint_helper_link2"/>
-        <child link="ball_holder2_rod"/>
-        <origin xyz="0.0 0.0 -0.79" rpy="0.0 0.0 0.0"/>
-    </joint>
-
-    <link name="ball_holder2_rod">
-        <inertial>
-            <mass value="0.025" />
-            <inertia ixx="0.00004712" ixy="0.0" ixz="0.0" iyy="0.00004712" iyz="0.0" izz="0.00000112"/>
-        </inertial>
-        <visual>
-            <geometry>
-                <cylinder radius="0.0075" length="0.450" />
-            </geometry>
-            <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0" />
-        </visual>
-    </link>
-
     <joint name="ball_holder_ball_joint" type="revolute">
-        <parent link="ball_holder2_rod"/>
+        <parent link="ball_holder_rod"/>
         <child link="ball_holder_ball"/>
         <axis xyz="0 1 0"/>
         <dynamics damping="0.05" friction="0.08"/>
         <limit upper="0" lower="0" effort="0" velocity="0" />
-        <origin xyz="0.0 0.0 -0.225" rpy="0.0 0.0 0.0"/>
+        <origin xyz="0.0 0.0 -0.5" rpy="0.0 0.0 0.0"/>
     </joint>
 
     <link name="ball_holder_ball">
         <inertial>
-            <mass value="0.1" />
+            <mass value="0.2" />
             <inertia ixx="0.00000012" ixy="0.0" ixz="0.0" iyy="0.00000012" iyz="0.0" izz="0.00000012"/>
         </inertial>
         <visual>
