@@ -1420,4 +1420,12 @@
   </xacro:if>
   <!--}-->
 
+<!-- Ball holder {-->
+<xacro:if value="${optionals['enable_ball_holder']}">
+  <xacro:ball_holder
+      parent="base_link">
+  </xacro:ball_holder>
+</xacro:if>
+<!--}-->
+
 </robot>
