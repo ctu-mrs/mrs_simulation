@@ -339,7 +339,7 @@
     rotor_drag_coefficient="${rotor_drag_coefficient}"
     rolling_moment_coefficient="${rolling_moment_coefficient}"
     mesh_file="${prop_mesh_file}"
-    mesh_scale="${mesh_scale_prop_cw}">
+    mesh_scale="${mesh_scale_prop_ccw}">
     <origin xyz="${arm_length * sin45} -${arm_length * sin45} ${propeller_offset}"  rpy="0 0 0" />
     <xacro:insert_block name="rotor_inertia" />
   </xacro:textured_vertical_rotor>
@@ -359,7 +359,7 @@
     rotor_drag_coefficient="${rotor_drag_coefficient}"
     rolling_moment_coefficient="${rolling_moment_coefficient}"
     mesh_file="${prop_mesh_file}"
-    mesh_scale="${mesh_scale_prop_cw}">
+    mesh_scale="${mesh_scale_prop_ccw}">
     <origin xyz="-${arm_length * sin45} ${arm_length * sin45} ${propeller_offset}" rpy="0 0 0" />
     <xacro:insert_block name="rotor_inertia" />
   </xacro:textured_vertical_rotor>
@@ -401,7 +401,7 @@
     rotor_drag_coefficient="${rotor_drag_coefficient}"
     rolling_moment_coefficient="${rolling_moment_coefficient}"
     mesh_file="${prop_mesh_file}"
-    mesh_scale="${mesh_scale_prop_ccw}">
+    mesh_scale="${mesh_scale_prop_cw}">
     <origin xyz="-${arm_length * sin45} -${arm_length * sin45} ${propeller_offset}" rpy="0 0 0" />
     <xacro:insert_block name="rotor_inertia" />
   </xacro:textured_vertical_rotor>

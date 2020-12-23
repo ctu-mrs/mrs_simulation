@@ -69,7 +69,7 @@ limitations under the License.
 
   <!--  {-->
 
-  <!-- Macro for visualization of mash {-->
+  <!-- Macro for visualization of mesh {-->
   <xacro:macro name="visual_macro"
     params="robot_namespace name mesh_file mesh_scale color parent *origin">
     <joint name="${name}_joint" type="fixed">
@@ -83,6 +83,28 @@ limitations under the License.
         <origin xyz="0 0 0" rpy="0 0 0" />
         <geometry>
           <mesh filename="${mesh_file}" scale="${mesh_scale}" />
+        </geometry>
+      </visual>
+    </link>
+    <gazebo reference="${name}_link">
+      <material>Gazebo/${color}</material>
+    </gazebo>
+  </xacro:macro>
+  <!--}-->
+  
+  <!-- Macro for visualization of colored box {-->
+  <xacro:macro name="colored_box"
+    params="robot_namespace name size_x size_y size_z color parent *origin">
+    <joint name="${name}_joint" type="fixed">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent}" />
+      <child link="${name}_link" />
+    </joint>
+
+    <link name="${name}_link">
+      <visual>
+        <geometry>
+          <box size="${size_x} ${size_y} ${size_z}" />
         </geometry>
       </visual>
     </link>
