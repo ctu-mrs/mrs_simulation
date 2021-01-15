@@ -42,7 +42,7 @@
   <!-- ================================================================== -->
 
   <!-- Robot parameters and arguments {-->
-  <xacro:property name="mass" value="2.00" /> <!-- [kg] -->
+  <xacro:property name="mass" value="1.35" /> <!-- [kg] -->
   <xacro:property name="body_radius" value="0.08" /> <!-- [m] -->
   <xacro:property name="body_height" value="0.07" /> <!-- [m] -->
   <xacro:property name="mass_rotor" value="0.005" /> <!-- [kg] -->
@@ -63,7 +63,7 @@
 
   <!-- Motor constants {-->
   <xacro:property name="rotor_velocity_slowdown_sim" value="0.0159236" />
-  <xacro:property name="motor_constant" value="8.5" /> <!-- [kg.m/s^2] -->
+  <xacro:property name="motor_constant" value="8.91" /> <!-- [kg.m/s^2] -->
   <xacro:property name="moment_constant" value="0.016" /> <!-- [m] -->
   <xacro:property name="time_constant_up" value="${1.0 / 80.0}" /> <!-- [s] -->
   <xacro:property name="time_constant_down" value="${1.0 / 40.0}" /> <!-- [s] -->
