@@ -387,7 +387,7 @@ class MrsDroneSpawner:
             fd, path = tempfile.mkstemp(prefix='simulation_', suffix='_uav' + str(ID) + '.yaml')
             with os.fdopen(fd, 'w') as f:
                 for pname, pvalue in params_dict.items():
-                    f.write(str(pname) + ': ' + str(pvalue).lower() + '\n')
+                    f.write(str(pname) + ': ' + str(pvalue) + '\n')
             uav_args_sequence.append('model_config_file:=' + path)
 
 
