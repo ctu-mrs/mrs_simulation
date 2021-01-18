@@ -629,16 +629,22 @@
   <!--}-->
 
   <!-- High rate IMU {-->
-  <gazebo>
-    <plugin name="imu_plugin" filename="libgazebo_ros_imu.so">
-      <alwaysOn>true</alwaysOn>
-      <bodyName>base_link</bodyName>
-      <topicName>imu_vio</topicName>
-      <serviceName>imu_vio_service</serviceName>
-      <gaussianNoise>0.0</gaussianNoise>
-      <updateRate>125.0</updateRate>
-    </plugin>
-  </gazebo>
+  <xacro:custom_imu_plugin_macro
+    namespace="${namespace}"
+    body_name="base_link"
+    topic_name ="imu_vio"
+    service_name ="imu_vio_service"
+    gaussian_noise="0.0"
+    update_rate="125.0"
+    frame_name="${namespace}/fisheye_camera_optical"
+    x="0"
+    y="0"
+    z="0"
+    roll="${rad90}"
+    pitch="${rad90}"
+    yaw="0"
+    >
+  </xacro:custom_imu_plugin_macro>
   <!--}-->
   </xacro:if>
   

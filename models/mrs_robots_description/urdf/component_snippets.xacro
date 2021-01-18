@@ -667,6 +667,27 @@ limitations under the License.
     </gazebo>
   </xacro:macro>
   <!--}-->
+  
+  <!-- Macro to add custom imu{-->
+  <!-- Macro to add a custom IMU. -->
+  <xacro:macro name="custom_imu_plugin_macro"
+    params="namespace body_name topic_name service_name gaussian_noise update_rate
+    frame_name x y z roll pitch yaw">
+    <gazebo>
+      <plugin name="imu_plugin" filename="libgazebo_ros_imu.so">
+        <alwaysOn>true</alwaysOn>
+        <bodyName>${body_name}</bodyName>
+        <topicName>${topic_name}</topicName>
+        <serviceName>${service_name}</serviceName>
+        <gaussianNoise>${gaussian_noise}</gaussianNoise>
+        <updateRate>${update_rate}</updateRate>
+        <frameName>${frame_name}</frameName>
+        <xyzOffset>${x} ${y} ${z}</xyzOffset>
+        <rpyOffset>${roll} ${pitch} ${yaw}</rpyOffset>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+  <!--}-->
 
   <!-- Macro to add the wind_plugin{-->
   <xacro:macro name="wind_plugin_macro"
