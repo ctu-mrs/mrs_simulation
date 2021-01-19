@@ -594,60 +594,58 @@
     </xacro:garmin_macro>
   </xacro:if>
   <!--}-->
-  
+
   <!-- VIO {-->
 
-  <!-- fisheye forward {-->
+  <!-- fisheye forward with imu {-->
   <xacro:if value="${optionals['enable_vio']}">
-    <xacro:fisheye_camera_macro
+    <xacro:vio_macro
       namespace="${namespace}"
       parent_link="base_link"
-      camera_suffix="fisheye_camera"
-      frame_rate="45"
-      noise="0.000"
       parent_frame_name="${namespace}/fcu"
       camera_frame_name="${namespace}/fisheye_camera_optical"
       sensor_base_frame_name="${namespace}/fisheye_camera"
+      frame_rate="45"
+      horizontal_fov="${rad180}"
+      image_width="752"
+      image_height="480"
+      lens_type="custom"
+      lens_c1="1.05"
+      lens_c2="4"
+      lens_f="1.0"
+      lens_fun="tan"
+      lens_scale="true"
+      lens_cutoff_angle="${rad90}"
+      lens_texture_size="512"
+      min_distance="0.02"
+      max_distance="40"
+      camera_noise_mean="0.0"
+      camera_noise_stddev="0.0"
       x="0.107"
       y="0"
       z="-0.002"
       roll="0"
       pitch="0"
       yaw="0.0"
+      imu_rate="125.0"
+      imu_topic="imu_vio"
+      imu_noise_mean="0.0"
       >
-  </xacro:fisheye_camera_macro>
+    </xacro:vio_macro>
 
-  <xacro:visual_macro
-    robot_namespace="${namespace}"
-    name="bluefox_mount"
-    mesh_file="${bluefox_mount_mesh}"
-    mesh_scale="${mesh_scale}"
-    parent="base_link"
-    color="Black">
-    <origin xyz="0 0 0" rpy="0 0 ${-rad90}" />
-  </xacro:visual_macro>
+    <xacro:visual_macro
+      robot_namespace="${namespace}"
+      name="bluefox_mount"
+      mesh_file="${bluefox_mount_mesh}"
+      mesh_scale="${mesh_scale}"
+      parent="base_link"
+      color="Black">
+      <origin xyz="0 0 0" rpy="0 0 ${-rad90}" />
+    </xacro:visual_macro>
   <!--}-->
 
-  <!-- High rate IMU {-->
-  <xacro:custom_imu_plugin_macro
-    namespace="${namespace}"
-    body_name="base_link"
-    topic_name ="imu_vio"
-    service_name ="imu_vio_service"
-    gaussian_noise="0.0"
-    update_rate="125.0"
-    frame_name="${namespace}/fisheye_camera_optical"
-    x="0"
-    y="0"
-    z="0"
-    roll="${rad90}"
-    pitch="${rad90}"
-    yaw="0"
-    >
-  </xacro:custom_imu_plugin_macro>
-  <!--}-->
   </xacro:if>
-  
+
   <!--} VIO -->
 
 </robot>
