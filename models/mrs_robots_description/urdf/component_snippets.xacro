@@ -1066,7 +1066,7 @@ limitations under the License.
     horizontal_fov image_width image_height min_distance max_distance lens_type lens_c1 lens_c2 lens_f lens_fun lens_scale lens_cutoff_angle lens_texture_size x y z roll pitch yaw
    camera_noise_mean camera_noise_stddev imu_rate imu_topic imu_noise_mean">
 
-    <link name="${namespace}/vio_link">
+    <link name="${namespace}/vio_camera_link">
       <visual>
         <origin xyz="0 0 0" rpy="${rad90} 0 0" />
         <geometry>
@@ -1075,13 +1075,23 @@ limitations under the License.
       </visual>
     </link>
 
-    <joint name="${namespace}/vio_joint" type="fixed">
+    <joint name="${namespace}/vio_camera_joint" type="fixed">
       <origin xyz="${x} ${y} ${z}" rpy="${roll} ${pitch} ${yaw}"/>
       <parent link="${parent_link}" />
-      <child link="${namespace}/vio_link" />
+      <child link="${namespace}/vio_camera_link" />
     </joint>
 
-    <gazebo reference="${namespace}/vio_link">
+    <link name="${namespace}/vio_imu_link">
+      <pose>0 0 0 0 0 0</pose>
+    </link>
+
+    <joint name="${namespace}/vio_imu_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="${rad90} 0 0"/> <!-- TODO maybe some tweaking here is necessary -->
+      <parent link="${namespace}/vio_camera_link" />
+      <child link="${namespace}/vio_imu_link" />
+    </joint>
+
+    <gazebo reference="${namespace}/vio_camera_link">
 
       <!-- wide angle camera {-->
       <sensor type="wideanglecamera" name="${namespace}_vio_camera">
@@ -1140,29 +1150,30 @@ limitations under the License.
           <yaw>${yaw}</yaw>
         </plugin>
       </sensor>
-      <!--}-->
-
-    <!-- imu {-->
-    <sensor name="imu_sensor" type="imu">
-      <always_on>true</always_on>
-      <update_rate>${imu_rate}</update_rate>
-      <visualize>true</visualize>
-      <topic>__default_topic__</topic>
-      <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
-        <topicName>${imu_topic}</topicName>
-        <bodyName>${namespace}/vio_link</bodyName>
-        <updateRateHZ>${imu_rate}</updateRateHZ>
-        <gaussianNoise>${imu_noise_mean}</gaussianNoise>
-        <xyzOffset>0 0 0</xyzOffset>
-        <rpyOffset>0 0 0</rpyOffset>
-        <frameName>${namespace}/vio_link</frameName>
-        <initialOrientationAsReference>false</initialOrientationAsReference>
-      </plugin>
-      <pose>0 0 0 0 0 0</pose>
-    </sensor>
+    </gazebo>
     <!--}-->
 
+    <!-- imu {-->
+    <gazebo reference="${namespace}/vio_imu_link">
+      <sensor name="imu_sensor" type="imu">
+        <always_on>true</always_on>
+        <update_rate>${imu_rate}</update_rate>
+        <visualize>true</visualize>
+        <topic>__default_topic__</topic>
+        <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+          <topicName>${imu_topic}</topicName>
+          <bodyName>${namespace}/vio_imu_link</bodyName>
+          <updateRateHZ>${imu_rate}</updateRateHZ>
+          <gaussianNoise>${imu_noise_mean}</gaussianNoise>
+          <xyzOffset>0 0 0</xyzOffset>
+          <rpyOffset>0 0 0</rpyOffset>
+          <frameName>${namespace}/vio_camera_link</frameName>
+          <initialOrientationAsReference>false</initialOrientationAsReference>
+        </plugin>
+        <pose>0 0 0 0 0 0</pose>
+      </sensor>
     </gazebo>
+    <!--}-->
 
     <gazebo reference="${namespace}/vio_link">
       <material>Gazebo/DarkGrey</material>
@@ -2659,7 +2670,6 @@ limitations under the License.
   <!-- ================================================================== -->
   <!-- ||         other equipment definitions (holders, boxes ...)     || -->
   <!-- ================================================================== -->
-
 
   <!-- Macro to add a parachute {-->
   <xacro:macro name="parachute_macro" params="namespace name parent color offset_x offset_y offset_z *origin">
