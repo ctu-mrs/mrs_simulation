@@ -1135,7 +1135,7 @@
       name="timepix"
       parent="base_link"
       color="Green">
-      <origin xyz="0 0 0" rpy="0 0 0" />
+      <origin xyz="0.115 -0.05 -0.05" rpy="0 0 0" />
     </xacro:timepix_macro>
   </xacro:if>
   <!--}-->
