@@ -69,7 +69,8 @@ class MrsDroneSpawner():
         self.processing = False
         self.process_queue = []
         self.process_queue_mutex = threading.Lock()
-        self.models_in_simulation = []
+        self.active_vehicles = []
+        self.queued_vehicles = []
         self.got_mavlink = {}
         self.mavlink_sub = {}
         self.running_processes= []
@@ -154,6 +155,7 @@ class MrsDroneSpawner():
     def callback_action_timer(self, timer):
 
         self.process_queue_mutex.acquire()
+
         if len(self.process_queue) > 0:
             process, args = self.process_queue[0]
             del self.process_queue[0]
@@ -180,8 +182,10 @@ class MrsDroneSpawner():
         diagnostics = SpawnerDiagnostics()
         diagnostics.spawn_called = self.spawn_called
         diagnostics.processing = (len(self.process_queue) > 0)
-        diagnostics.vehicles = self.models_in_simulation
+        diagnostics.active_vehicles = self.active_vehicles
+        diagnostics.queued_vehicles = self.queued_vehicles
         self.process_queue_mutex.acquire()
+        self.queued_vehicles = list(set(self.queued_vehicles) - set(self.active_vehicles))
         diagnostics.queued_processes = len(self.process_queue)
         self.process_queue_mutex.release()
         self.diagnostics_pub.publish(diagnostics)
@@ -193,7 +197,7 @@ class MrsDroneSpawner():
         for modelname in msg.name:
             if 'uav' in modelname:
                 uav_models.append(modelname)
-        self.models_in_simulation = uav_models
+        self.active_vehicles = uav_models
     # #}
 
     # #{ callback_spawn
@@ -253,6 +257,7 @@ class MrsDroneSpawner():
         self.process_queue_mutex.acquire()
         for i, uav_roslaunch_args in enumerate(roslaunch_args):
             ID = params_dict['uav_ids'][i]
+            self.queued_vehicles.append('uav' + str(ID))
             self.process_queue.append((self.launch_mavros, (ID, uav_roslaunch_args)))
             self.process_queue.append((self.launch_firmware, (ID, uav_roslaunch_args)))
             self.process_queue.append((self.spawn_simulation_model, (ID, uav_roslaunch_args)))
@@ -493,16 +498,20 @@ class MrsDroneSpawner():
             raise Exception('File \'' + str(filename) + '\' does not exist!')
 
         spawn_poses = {}
+
+        # #{ csv
         if filename.endswith('.csv'):
             array_string = list(csv.reader(open(filename)))
             for row in array_string:
                 if (len(row)!=5):
-                    raise Exception('Incorrect data in file \'' + str(filename) +'\'! Data in \'.csv\' file type should be in format [id, x, y, z, heading] (example: int, float, float, float, float)')
+                    raise Exception('Incorrect data in file \'' + str(filename) + '\'! Data in \'.csv\' file type should be in format [id, x, y, z, heading] (example: int, float, float, float, float)')
                 if int(row[0]) in uav_ids:
                     spawn_poses[int(row[0])] = {'x' : float(row[1]), 'y' : float(row[2]), 'z' : float(row[3]), 'heading' : float(row[4])}
                 else:
                     raise Exception('File requires UAV ID \'' + str(row[0]) + '\' which was not assigned by the spawn command!')
+        # #}
 
+        # #{ yaml
         elif filename.endswith('.yaml'):
             dict_vehicle_info = yaml.safe_load(open(filename, 'r'))
             for item, data in dict_vehicle_info.items():
@@ -513,9 +522,13 @@ class MrsDroneSpawner():
                     spawn_poses[data['id']] = {'x' : float(data['x']), 'y' : float(data['y']), 'z' : float(data['z']), 'heading' : float(data['heading'])}
                 else:
                     raise Exception('File requires UAV ID \'' + str(dict_vehicle_info[item]['id']) + '\' which was not assigned by the spawn command!')
+        # #}
 
         else:
             raise Exception('Incorrect file format, must be either \'.csv\' or \'.yaml\'')
+
+        if len(spawn_poses.keys()) != len(uav_ids) or set(spawn_poses.keys()) != set(uav_ids):
+            raise Exception('File \'' + str(filename) + '\' does not cover all the UAV poses')
 
         rinfo('Spawn poses returned:')
         rinfo(str(spawn_poses))

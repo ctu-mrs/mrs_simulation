@@ -1,4 +1,5 @@
 bool spawn_called
 bool processing
-string[] vehicles
+string[] active_vehicles
+string[] queued_vehicles
 uint8 queued_processes
