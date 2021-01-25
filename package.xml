@@ -11,8 +11,9 @@
   <author email="vojtech.spurny@fel.cvut.cz">Vojtech Spurny</author>
 
   <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>rospy</build_depend>
+  
   <depend>roscpp</depend>
+  <depend>rospy</depend>
   <depend>cmake_modules</depend>
   <depend>mavros_msgs</depend>
   <depend>gazebo</depend>

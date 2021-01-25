@@ -6,13 +6,16 @@ project(mrs_simulation)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  mavros_msgs
+  rospy
+  cmake_modules
   gazebo_ros
   std_msgs
-  cmake_modules
 )
 
 find_package(mavros_msgs REQUIRED)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_message_files(DIRECTORY msg FILES
   SpawnerDiagnostics.msg  
@@ -23,7 +26,7 @@ generate_messages(DEPENDENCIES
 )
 
 catkin_package(
-  CATKIN_DEPENDS roscpp std_msgs mavros_msgs message_runtime
+  CATKIN_DEPENDS roscpp rospy std_msgs message_runtime
   LIBRARIES mrs_simulation
   DEPENDS mavros_msgs
 )
@@ -36,7 +39,7 @@ include_directories(
 add_library(mrs_simulation src/main.cpp)
 
 add_dependencies(mrs_simulation
-  ${mrs_simulation_EXPORTED_TARGETS}
+  ${${PROJECT_NAME}_EXPORTED_TARGETS}
   ${catkin_EXPORTED_TARGETS}
 )
 
