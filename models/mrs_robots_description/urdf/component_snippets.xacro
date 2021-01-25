@@ -668,24 +668,39 @@ limitations under the License.
   </xacro:macro>
   <!--}-->
 
-  <!-- Macro to add custom imu{-->
-  <!-- Macro to add a custom IMU. -->
-  <xacro:macro name="custom_imu_plugin_macro"
-    params="namespace body_name topic_name service_name gaussian_noise update_rate
-    frame_name x y z roll pitch yaw">
-    <gazebo>
-      <plugin name="imu_plugin" filename="libgazebo_ros_imu.so">
-        <alwaysOn>true</alwaysOn>
-        <bodyName>${body_name}</bodyName>
-        <topicName>${topic_name}</topicName>
-        <serviceName>${service_name}</serviceName>
-        <gaussianNoise>${gaussian_noise}</gaussianNoise>
-        <updateRate>${update_rate}</updateRate>
-        <frameName>${frame_name}</frameName>
-        <xyzOffset>${x} ${y} ${z}</xyzOffset>
-        <rpyOffset>${roll} ${pitch} ${yaw}</rpyOffset>
-      </plugin>
+  <!-- Macro to add imu with configurable rate {-->
+  <xacro:macro name="custom_imu_macro"
+    params="namespace parent_link sensor_name update_rate topic_name noise_mean *origin">
+    <link name="${namespace}/${sensor_name}_link">
+      <pose>0 0 0 0 0 0</pose>
+    </link>
+    
+    <joint name="${namespace}/${sensor_name}_joint" type="fixed">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent_link}" />
+      <child link="${namespace}/${sensor_name}_link" />
+    </joint>
+
+    <gazebo reference="${namespace}/${sensor_name}_link">
+      <sensor name="${sensor_name}" type="imu">
+        <always_on>true</always_on>
+        <update_rate>${update_rate}</update_rate>
+        <visualize>true</visualize>
+        <topic>__default_topic__</topic>
+        <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+          <topicName>${topic_name}</topicName>
+          <bodyName>${namespace}/${sensor_name}_link</bodyName>
+          <updateRateHZ>${imu_rate}</updateRateHZ>
+          <gaussianNoise>${imu_noise_mean}</gaussianNoise>
+          <xyzOffset>0 0 0</xyzOffset>
+          <rpyOffset>0 0 0</rpyOffset>
+          <frameName>${parent_link}</frameName>
+          <initialOrientationAsReference>false</initialOrientationAsReference>
+        </plugin>
+        <pose>0 0 0 0 0 0</pose>
+      </sensor>
     </gazebo>
+
   </xacro:macro>
   <!--}-->
 
@@ -1057,128 +1072,6 @@ limitations under the License.
     <gazebo reference="${namespace}/camera_${camera_suffix}_link">
       <material>Gazebo/DarkGrey</material>
     </gazebo>
-  </xacro:macro>
-  <!--}-->
-
-  <!-- Macro to add a fisheye camera with integrated imu {-->
-  <xacro:macro name="vio_macro"
-    params="namespace parent_link camera_frame_name sensor_base_frame_name frame_rate parent_frame_name
-    horizontal_fov image_width image_height min_distance max_distance lens_type lens_c1 lens_c2 lens_f lens_fun lens_scale lens_cutoff_angle lens_texture_size x y z roll pitch yaw
-   camera_noise_mean camera_noise_stddev imu_rate imu_topic imu_noise_mean">
-
-    <link name="${namespace}/vio_camera_link">
-      <visual>
-        <origin xyz="0 0 0" rpy="${rad90} 0 0" />
-        <geometry>
-          <mesh filename="package://mrs_robots_description/meshes/sensors/bluefox.dae" scale="1 1 1" />
-        </geometry>
-      </visual>
-    </link>
-
-    <joint name="${namespace}/vio_camera_joint" type="fixed">
-      <origin xyz="${x} ${y} ${z}" rpy="${roll} ${pitch} ${yaw}"/>
-      <parent link="${parent_link}" />
-      <child link="${namespace}/vio_camera_link" />
-    </joint>
-
-    <link name="${namespace}/vio_imu_link">
-      <pose>0 0 0 0 0 0</pose>
-    </link>
-
-    <joint name="${namespace}/vio_imu_joint" type="fixed">
-      <origin xyz="0 0 0" rpy="${rad90} 0 0"/> <!-- TODO maybe some tweaking here is necessary -->
-      <parent link="${namespace}/vio_camera_link" />
-      <child link="${namespace}/vio_imu_link" />
-    </joint>
-
-    <gazebo reference="${namespace}/vio_camera_link">
-
-      <!-- wide angle camera {-->
-      <sensor type="wideanglecamera" name="${namespace}_vio_camera">
-        <update_rate>${frame_rate}</update_rate>
-        <camera name="head">
-          <horizontal_fov>${horizontal_fov}</horizontal_fov>
-          <image>
-            <width>${image_width}</width>
-            <height>${image_height}</height>
-          </image>
-          <clip>
-            <near>${min_distance}</near>
-            <far>${max_distance}</far>
-          </clip>
-          <noise>
-            <type>gaussian</type>
-            <!-- Noise is sampled independently per pixel on each frame.
-            That pixel's noise value is added to each of its color
-            channels, which at that point lie in the range [0,1]. -->
-            <mean>${camera_noise_mean}</mean>
-            <stddev>${camera_noise_stddev}</stddev>
-          </noise>
-          <lens>
-            <type>${lens_type}</type>
-            <custom_function>
-              <c1>${lens_c1}</c1>
-              <c2>${lens_c2}</c2>
-              <f>${lens_f}</f>
-              <fun>${lens_fun}</fun>
-            </custom_function>
-            <scale_to_hfov>${lens_scale}</scale_to_hfov>
-            <cutoff_angle>${lens_cutoff_angle}</cutoff_angle>
-            <env_texture_size>${lens_texture_size}</env_texture_size>
-          </lens>
-        </camera>
-        <plugin name="${namespace}_vio_camera_controller" filename="libMRSGazeboCameraPlugin.so">
-          <alwaysOn>true</alwaysOn>
-          <updateRate>${frame_rate}</updateRate>
-          <cameraName>vio_camera</cameraName>
-          <imageTopicName>image_raw</imageTopicName>
-          <cameraInfoTopicName>camera_info</cameraInfoTopicName>
-          <frameName>/${camera_frame_name}</frameName>
-          <hackBaseline>0.0</hackBaseline>
-          <distortionK1>0.0</distortionK1>
-          <distortionK2>0.0</distortionK2>
-          <distortionK3>0.0</distortionK3>
-          <distortionT1>0.0</distortionT1>
-          <distortionT2>0.0</distortionT2>
-          <parentFrameName>${parent_frame_name}</parentFrameName>
-          <sensorBaseFrameName>${sensor_base_frame_name}</sensorBaseFrameName>
-          <x>${x}</x>
-          <y>${y}</y>
-          <z>${z}</z>
-          <roll>${roll}</roll>
-          <pitch>${pitch}</pitch>
-          <yaw>${yaw}</yaw>
-        </plugin>
-      </sensor>
-    </gazebo>
-    <!--}-->
-
-    <!-- imu {-->
-    <gazebo reference="${namespace}/vio_imu_link">
-      <sensor name="imu_sensor" type="imu">
-        <always_on>true</always_on>
-        <update_rate>${imu_rate}</update_rate>
-        <visualize>true</visualize>
-        <topic>__default_topic__</topic>
-        <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
-          <topicName>${imu_topic}</topicName>
-          <bodyName>${namespace}/vio_imu_link</bodyName>
-          <updateRateHZ>${imu_rate}</updateRateHZ>
-          <gaussianNoise>${imu_noise_mean}</gaussianNoise>
-          <xyzOffset>0 0 0</xyzOffset>
-          <rpyOffset>0 0 0</rpyOffset>
-          <frameName>${namespace}/vio_camera_link</frameName>
-          <initialOrientationAsReference>false</initialOrientationAsReference>
-        </plugin>
-        <pose>0 0 0 0 0 0</pose>
-      </sensor>
-    </gazebo>
-    <!--}-->
-
-    <gazebo reference="${namespace}/vio_link">
-      <material>Gazebo/DarkGrey</material>
-    </gazebo>
-
   </xacro:macro>
   <!--}-->
 
@@ -2232,6 +2125,43 @@ limitations under the License.
           <camera_type>${camera_type}</camera_type>
         </plugin>
       </gazebo>
+  </xacro:macro>
+  <!--}-->
+
+  <!-- Macro to add a fisheye camera with integrated imu {-->
+  <xacro:macro name="vio_macro"
+    params="namespace parent_link camera_frame_name sensor_base_frame_name frame_rate parent_frame_name
+    horizontal_fov image_width image_height min_distance max_distance lens_type lens_c1 lens_c2 lens_f lens_fun lens_scale lens_cutoff_angle lens_texture_size x y z roll pitch yaw
+   camera_noise_mean imu_rate imu_topic imu_noise_mean">
+
+    <xacro:fisheye_camera_macro
+      namespace="${namespace}"
+      parent_link="${parent_link}"
+      camera_suffix="vio"
+      frame_rate="${frame_rate}"
+      noise="${camera_noise_mean}"
+      x="${x}"
+      y="${y}"
+      z="${z}"
+      roll="${roll}"
+      pitch="${pitch}"
+      yaw="${yaw}"
+      camera_frame_name="${camera_frame_name}"
+      sensor_base_frame_name="${sensor_base_frame_name}"
+      parent_frame_name="${parent_frame_name}"
+      >
+    </xacro:fisheye_camera_macro>
+
+    <xacro:custom_imu_macro
+      namespace="${namespace}"
+      parent_link="${namespace}/camera_vio_link"
+      sensor_name="vio_imu"
+      update_rate="${imu_rate}"
+      topic_name="${imu_topic}"
+      noise_mean="${imu_noise_mean}"
+      >
+      <origin xyz="0 0 0" rpy="${rad90} 0 0"/>
+    </xacro:custom_imu_macro>
   </xacro:macro>
   <!--}-->
 

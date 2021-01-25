@@ -620,7 +620,6 @@
       min_distance="0.02"
       max_distance="40"
       camera_noise_mean="0.0"
-      camera_noise_stddev="0.0"
       x="0.107"
       y="0"
       z="-0.002"
