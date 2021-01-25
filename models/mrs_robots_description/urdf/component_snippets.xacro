@@ -1049,8 +1049,8 @@ limitations under the License.
           <alwaysOn>true</alwaysOn>
           <updateRate>${frame_rate}</updateRate>
           <cameraName>${camera_suffix}</cameraName>
-          <imageTopicName>image_raw</imageTopicName>
-          <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+          <imageTopicName>camera/image_raw</imageTopicName>
+          <cameraInfoTopicName>camera/camera_info</cameraInfoTopicName>
           <frameName>/${camera_frame_name}</frameName>
           <hackBaseline>0.0</hackBaseline>
           <distortionK1>0.0</distortionK1>
@@ -2160,7 +2160,7 @@ limitations under the License.
       topic_name="${imu_topic}"
       noise_mean="${imu_noise_mean}"
       >
-      <origin xyz="0 0 0" rpy="${rad90} 0 0"/>
+      <origin xyz="0 0 0" rpy="${-rad90} 0 0"/>
     </xacro:custom_imu_macro>
   </xacro:macro>
   <!--}-->

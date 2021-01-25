@@ -627,7 +627,7 @@
       pitch="0"
       yaw="0.0"
       imu_rate="125.0"
-      imu_topic="imu_vio"
+      imu_topic="vio/imu"
       imu_noise_mean="0.0"
       >
     </xacro:vio_macro>
