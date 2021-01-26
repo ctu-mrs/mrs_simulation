@@ -620,7 +620,6 @@
       min_distance="0.02"
       max_distance="40"
       camera_noise_mean="0.0"
-      camera_noise_stddev="0.0"
       x="0.107"
       y="0"
       z="-0.002"
@@ -628,7 +627,7 @@
       pitch="0"
       yaw="0.0"
       imu_rate="125.0"
-      imu_topic="imu_vio"
+      imu_topic="vio/imu"
       imu_noise_mean="0.0"
       >
     </xacro:vio_macro>
