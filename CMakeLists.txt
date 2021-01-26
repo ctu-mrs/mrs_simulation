@@ -32,6 +32,7 @@ catkin_package(
 )
 
 include_directories(
+  include
   ${catkin_INCLUDE_DIRS}
   ${mavros_msgs_INCLUDE_DIRS}
 )
