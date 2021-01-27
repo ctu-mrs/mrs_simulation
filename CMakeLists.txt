@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 3.2.0)
 project(mrs_simulation)
 
-## Find catkin macros and libraries
-## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
-## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
@@ -16,14 +13,6 @@ find_package(mavros_msgs REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-add_message_files(DIRECTORY msg FILES
-  SpawnerDiagnostics.msg  
-)
-
-generate_messages(DEPENDENCIES
-  std_msgs
-)
 
 catkin_package(
   CATKIN_DEPENDS roscpp rospy std_msgs message_runtime

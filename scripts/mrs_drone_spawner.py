@@ -16,7 +16,7 @@ from mrs_msgs.srv import StringResponse as StringSrvResponse
 from gazebo_msgs.msg import ModelStates
 from mavros_msgs.msg import State as MavrosState
 
-from mrs_simulation.msg import SpawnerDiagnostics
+from mrs_msgs.msg import SpawnerDiagnostics
 
 VEHICLE_BASE_PORT = 14000
 MAVLINK_TCP_BASE_PORT = 4560
@@ -157,6 +157,9 @@ class MrsDroneSpawner():
         self.process_queue_mutex.acquire()
 
         if len(self.process_queue) > 0:
+
+            rospy.logerr('START')
+
             process, args = self.process_queue[0]
             del self.process_queue[0]
             self.process_queue_mutex.release()
@@ -172,6 +175,9 @@ class MrsDroneSpawner():
                 self.process_queue_mutex.acquire()
                 self.process_queue.insert((process, args))
                 self.process_queue_mutex.release()
+
+            rospy.logerr('STOP')
+
         else:
             self.process_queue_mutex.release()
             # rinfo('Nothing to do')
@@ -259,8 +265,8 @@ class MrsDroneSpawner():
             ID = params_dict['uav_ids'][i]
             self.queued_vehicles.append('uav' + str(ID))
             self.process_queue.append((self.launch_mavros, (ID, uav_roslaunch_args)))
-            self.process_queue.append((self.launch_firmware, (ID, uav_roslaunch_args)))
             self.process_queue.append((self.spawn_simulation_model, (ID, uav_roslaunch_args)))
+            self.process_queue.append((self.launch_firmware, (ID, uav_roslaunch_args)))
         self.process_queue_mutex.release()
         # #}
 

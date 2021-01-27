@@ -22,7 +22,6 @@
   <depend>mavlink_sitl_gazebo</depend>
   <depend>mrs_gazebo_common_resources</depend>
   <depend>std_msgs</depend>
-  <depend>message_generation</depend>
   <depend>message_runtime</depend>
 
   <export>
