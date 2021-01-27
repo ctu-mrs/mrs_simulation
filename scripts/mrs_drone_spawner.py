@@ -34,7 +34,7 @@ class MrsDroneSpawner():
         rospack = rospkg.RosPack()
         pkg_path = rospack.get_path('mrs_simulation')
         path_to_spawner_params = pkg_path + os.sep + 'config' + os.sep + 'spawner_params.yaml'
-        with open(path_to_spawner_params, 'r', encoding='utf-8') as params_file:
+        with open(path_to_spawner_params, 'r') as params_file:
             self.spawner_params = yaml.safe_load(params_file)
 
         if not self.params_integrity_ok():
