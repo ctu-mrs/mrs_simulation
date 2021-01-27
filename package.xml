@@ -23,6 +23,7 @@
   <depend>mrs_gazebo_common_resources</depend>
   <depend>std_msgs</depend>
   <depend>message_runtime</depend>
+  <depend>mrs_msgs</depend>
 
   <export>
     <!-- gazebo_ros_paths_plugin automatically adds these to

@@ -7,6 +7,7 @@ find_package(catkin REQUIRED COMPONENTS
   cmake_modules
   gazebo_ros
   std_msgs
+  mrs_msgs
 )
 
 find_package(mavros_msgs REQUIRED)
