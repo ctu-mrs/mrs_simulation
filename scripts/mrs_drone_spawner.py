@@ -67,6 +67,7 @@ class MrsDroneSpawner():
         # #{ setup system variables
         self.spawn_called = False
         self.processing = False
+        self.mavros_connected = False
         self.process_queue = []
         self.process_queue_mutex = threading.Lock()
         self.active_vehicles = []
@@ -195,6 +196,13 @@ class MrsDroneSpawner():
         diagnostics.queued_processes = len(self.process_queue)
         self.process_queue_mutex.release()
         self.diagnostics_pub.publish(diagnostics)
+    # #}
+
+    # #{ callback_mavros_state
+    def callback_mavros_state(self, msg):
+        if msg.connected:
+            self.mavros_connected = True
+            self.mavros_state_sub.unregister()
     # #}
 
     # #{ callback_model_states
@@ -545,6 +553,7 @@ class MrsDroneSpawner():
 
     # #{ launch_firmware
     def launch_firmware(self, ID, uav_roslaunch_args):
+        self.mavros_connected = False
         rinfo('Running firmware for uav' + str(ID) + '...')
         uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
         roslaunch.configure_logging(uuid)
@@ -557,6 +566,11 @@ class MrsDroneSpawner():
             launch.shutdown()
             return None
 
+        self.mavros_state_sub = rospy.Subscriber('/uav' + str(ID) + '/mavros/state', MavrosState, self.callback_mavros_state)
+        while not self.mavros_connected:
+            rospy.sleep(0.05)
+        
+        self.mavros_connected = False
         rinfo('Firmware for uav' + str(ID) + ' started!')
         return launch
     # #}
