@@ -180,6 +180,7 @@ class MrsDroneSpawner():
             rospy.logerr('STOP')
 
         else:
+            self.processing = False
             self.process_queue_mutex.release()
             # rinfo('Nothing to do')
     # #}
@@ -188,7 +189,7 @@ class MrsDroneSpawner():
     def callback_diagnostics_timer(self, timer):
         diagnostics = SpawnerDiagnostics()
         diagnostics.spawn_called = self.spawn_called
-        diagnostics.processing = (len(self.process_queue) > 0)
+        diagnostics.processing = self.processing
         diagnostics.active_vehicles = self.active_vehicles
         diagnostics.queued_vehicles = self.queued_vehicles
         self.process_queue_mutex.acquire()
@@ -269,6 +270,7 @@ class MrsDroneSpawner():
 
         # #{ queue new launch processes
         self.process_queue_mutex.acquire()
+        self.processing = True
         for i, uav_roslaunch_args in enumerate(roslaunch_args):
             ID = params_dict['uav_ids'][i]
             self.queued_vehicles.append('uav' + str(ID))
