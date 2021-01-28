@@ -273,8 +273,8 @@ class MrsDroneSpawner():
             ID = params_dict['uav_ids'][i]
             self.queued_vehicles.append('uav' + str(ID))
             self.process_queue.append((self.launch_mavros, (ID, uav_roslaunch_args)))
-            self.process_queue.append((self.spawn_simulation_model, (ID, uav_roslaunch_args)))
             self.process_queue.append((self.launch_firmware, (ID, uav_roslaunch_args)))
+            self.process_queue.append((self.spawn_simulation_model, (ID, uav_roslaunch_args)))
         self.process_queue_mutex.release()
         # #}
 
@@ -566,11 +566,11 @@ class MrsDroneSpawner():
             launch.shutdown()
             return None
 
-        self.mavros_state_sub = rospy.Subscriber('/uav' + str(ID) + '/mavros/state', MavrosState, self.callback_mavros_state)
-        while not self.mavros_connected:
-            rospy.sleep(0.05)
+        # self.mavros_state_sub = rospy.Subscriber('/uav' + str(ID) + '/mavros/state', MavrosState, self.callback_mavros_state)
+        # while not self.mavros_connected:
+        #     rospy.sleep(0.05)
         
-        self.mavros_connected = False
+        # self.mavros_connected = False
         rinfo('Firmware for uav' + str(ID) + ' started!')
         return launch
     # #}

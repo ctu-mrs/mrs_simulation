@@ -28,7 +28,7 @@
     <env name="PX4_ESTIMATOR" value="$(arg est)" />
 
     <!-- PX4 SITL -->
-    <node name="sitl_uav$(arg ID)" pkg="px4" type="px4" output="screen" args="$(find mrs_simulation)/ROMFS/px4fmu_common -s etc/init.d-posix/rcS -i $(arg ID) -w sitl_uav$(arg ID)"/>
+    <node name="sitl_uav$(arg ID)" pkg="px4" type="px4" output="screen" args="$(find mrs_simulation)/ROMFS/px4fmu_common -s etc/init.d-posix/rcS -i $(arg ID) -w sitl_uav$(arg ID) -d"/>
   
   </group>
 </launch>
