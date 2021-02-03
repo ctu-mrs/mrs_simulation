@@ -759,12 +759,10 @@
     <xacro:property name="ouster_model" value="${optionals['ouster_model']}" />
 
     <!-- OS1-16 Generation 1 (default) -->
-    <xacro:property name="sensor_name" value="os1" />
     <xacro:property name="lasers" value="16" />
     <xacro:property name="vfov_angle" value="33.2" />
     <xacro:property name="range" value="120" />
     <xacro:if value="${ouster_model == 'OS1-16'}">
-      <xacro:property name="sensor_name" value="os1" />
       <xacro:property name="lasers" value="16" />
       <xacro:property name="vfov_angle" value="33.2" />
       <xacro:property name="range" value="120" />
@@ -773,7 +771,6 @@
     <!-- OS0 {-->
     <!-- OS0-32 -->
     <xacro:if value="${ouster_model == 'OS0-32'}">
-      <xacro:property name="sensor_name" value="os0" />
       <xacro:property name="lasers" value="32" />
       <xacro:property name="vfov_angle" value="90" />
       <xacro:property name="range" value="55" />
@@ -781,7 +778,6 @@
 
     <!-- OS0-64 -->
     <xacro:if value="${ouster_model == 'OS0-64'}">
-      <xacro:property name="sensor_name" value="os0" />
       <xacro:property name="lasers" value="64" />
       <xacro:property name="vfov_angle" value="90" />
       <xacro:property name="range" value="55" />
@@ -789,7 +785,6 @@
 
     <!-- OS0-128 -->
     <xacro:if value="${ouster_model == 'OS0-128'}">
-      <xacro:property name="sensor_name" value="os0" />
       <xacro:property name="lasers" value="128" />
       <xacro:property name="vfov_angle" value="90" />
       <xacro:property name="range" value="55" />
@@ -800,7 +795,6 @@
     <!-- OS1 Generation 2 {-->
     <!-- OS1-32 Generation 2 -->
     <xacro:if value="${ouster_model == 'OS1-32'}">
-      <xacro:property name="sensor_name" value="os1" />
       <xacro:property name="lasers" value="32" />
       <xacro:property name="vfov_angle" value="45" />
       <xacro:property name="range" value="120" />
@@ -808,7 +802,6 @@
 
     <!-- OS1-64 Generation 2 -->
     <xacro:if value="${ouster_model == 'OS1-64'}">
-      <xacro:property name="sensor_name" value="os1" />
       <xacro:property name="lasers" value="64" />
       <xacro:property name="vfov_angle" value="45" />
       <xacro:property name="range" value="120" />
@@ -816,7 +809,6 @@
 
     <!-- OS1-128 Generation 2 -->
     <xacro:if value="${ouster_model == 'OS1-128'}">
-      <xacro:property name="sensor_name" value="os1" />
       <xacro:property name="lasers" value="128" />
       <xacro:property name="vfov_angle" value="45" />
       <xacro:property name="range" value="120" />
@@ -827,7 +819,6 @@
     <!-- OS2 {-->
     <!-- OS2-32 -->
     <xacro:if value="${ouster_model == 'OS2-32'}">
-      <xacro:property name="sensor_name" value="os2" />
       <xacro:property name="lasers" value="32" />
       <xacro:property name="vfov_angle" value="22.5" />
       <xacro:property name="range" value="240" />
@@ -835,7 +826,6 @@
 
     <!-- OS2-64 -->
     <xacro:if value="${ouster_model == 'OS2-64'}">
-      <xacro:property name="sensor_name" value="os2" />
       <xacro:property name="lasers" value="64" />
       <xacro:property name="vfov_angle" value="22.5" />
       <xacro:property name="range" value="240" />
@@ -843,7 +833,6 @@
 
     <!-- OS2-128 -->
     <xacro:if value="${ouster_model == 'OS2-128'}">
-      <xacro:property name="sensor_name" value="os2" />
       <xacro:property name="lasers" value="128" />
       <xacro:property name="vfov_angle" value="22.5" />
       <xacro:property name="range" value="240" />
@@ -853,7 +842,7 @@
 
   <xacro:ouster_macro
     namespace="${namespace}"
-    sensor_name="${sensor_name}"
+    sensor_name="os"
     x="0"
     y="0"
     z="0.066"
