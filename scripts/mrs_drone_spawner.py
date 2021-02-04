@@ -159,8 +159,6 @@ class MrsDroneSpawner():
 
         if len(self.process_queue) > 0:
 
-            rospy.logerr('START')
-
             process, args = self.process_queue[0]
             del self.process_queue[0]
             self.process_queue_mutex.release()
@@ -176,8 +174,6 @@ class MrsDroneSpawner():
                 self.process_queue_mutex.acquire()
                 self.process_queue.insert((process, args))
                 self.process_queue_mutex.release()
-
-            rospy.logerr('STOP')
 
         else:
             self.processing = False
