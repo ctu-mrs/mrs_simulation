@@ -1545,7 +1545,7 @@ limitations under the License.
     </joint>
 
     <!-- Gazebo requires the ouster_gazebo_plugins package -->
-    <gazebo reference="${lidar_link}">
+    <gazebo reference="${sensor_link}">
       <xacro:if value="${enable_gpu_ray}">
         <xacro:property name="ouster_plugin_filename" value="libMRSGazebo3DLidarGpuPlugin.so" />
         <xacro:property name="sensor_type" value="gpu_ray" />
@@ -1563,8 +1563,8 @@ limitations under the License.
             <horizontal>
               <samples>${20480/rot_freq}</samples>
               <resolution>1</resolution>
-              <min_angle>-${rad180}</min_angle>
-              <max_angle>${rad180}</max_angle>
+              <min_angle>0</min_angle>
+              <max_angle>${2*pi}</max_angle>
             </horizontal>
             <vertical>
               <samples>${lasers}</samples>
