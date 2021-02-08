@@ -30,10 +30,13 @@ class MrsDroneSpawner():
 
     # #{ __init__
     def __init__(self, show_help=False, verbose=False):
+
         self.verbose = verbose
-        rospack = rospkg.RosPack()
-        pkg_path = rospack.get_path('mrs_simulation')
+        self.rospack = rospkg.RosPack()
+
+        pkg_path = self.rospack.get_path('mrs_simulation')
         path_to_spawner_params = pkg_path + os.sep + 'config' + os.sep + 'spawner_params.yaml'
+
         with open(path_to_spawner_params, 'r') as params_file:
             self.spawner_params = yaml.safe_load(params_file)
 
@@ -62,7 +65,6 @@ class MrsDroneSpawner():
                 print('\t\t' + str(param) + ': ' + str(value))
             print('')
             rinfo('remove arg \'verbose\' in mrs_drone_spawner.launch to stop listing params on startup')
-
 
         # #{ setup system variables
         self.spawn_called = False
@@ -327,6 +329,7 @@ class MrsDroneSpawner():
         num_uavs = len(params_dict['uav_ids'])
 
         for n in range(num_uavs):
+
             uav_args_sequence = []
             ID = params_dict['uav_ids'][n]
             # get vehicle ID number
@@ -353,10 +356,12 @@ class MrsDroneSpawner():
                     f.write(str(pname) + ': ' + str(pvalue) + '\n')
             uav_args_sequence.append('model_config_file:=' + path)
 
+            uav_args_sequence.append('resource_package_path:=' + self.rospack.get_path(str(params_dict['model_package'])))
 
             print('UAV' + str(ID) + ' ARGS_SEQUENCE:')
             print(uav_args_sequence)
             args_sequences.append(uav_args_sequence)
+
         return args_sequences
     # #}
 
@@ -567,7 +572,7 @@ class MrsDroneSpawner():
         self.mavros_state_sub = rospy.Subscriber('/uav' + str(ID) + '/mavros/state', MavrosState, self.callback_mavros_state)
         while not self.mavros_connected:
             rospy.sleep(0.05)
-        
+
         self.mavros_connected = False
         rinfo('Firmware for uav' + str(ID) + ' started!')
         return launch
