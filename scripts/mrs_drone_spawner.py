@@ -524,8 +524,8 @@ class MrsDroneSpawner():
                     raise Exception('Incorrect data in file \'' + str(filename) + '\'! Data in \'.csv\' file type should be in format [id, x, y, z, heading] (example: int, float, float, float, float)')
                 if int(row[0]) in uav_ids:
                     spawn_poses[int(row[0])] = {'x' : float(row[1]), 'y' : float(row[2]), 'z' : float(row[3]), 'heading' : float(row[4])}
-                else:
-                    raise Exception('File requires UAV ID \'' + str(row[0]) + '\' which was not assigned by the spawn command!')
+                # else:
+                #     raise Exception('File requires UAV ID \'' + str(row[0]) + '\' which was not assigned by the spawn command!')
         # #}
 
         # #{ yaml
@@ -537,8 +537,8 @@ class MrsDroneSpawner():
 
                 if int(data['id']) in uav_ids:
                     spawn_poses[data['id']] = {'x' : float(data['x']), 'y' : float(data['y']), 'z' : float(data['z']), 'heading' : float(data['heading'])}
-                else:
-                    raise Exception('File requires UAV ID \'' + str(dict_vehicle_info[item]['id']) + '\' which was not assigned by the spawn command!')
+                # else:
+                #     raise Exception('File requires UAV ID \'' + str(dict_vehicle_info[item]['id']) + '\' which was not assigned by the spawn command!')
         # #}
 
         else:
