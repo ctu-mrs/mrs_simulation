@@ -69,7 +69,6 @@ class MrsDroneSpawner():
         # #{ setup system variables
         self.spawn_called = False
         self.processing = False
-        self.mavros_connected = False
         self.process_queue = []
         self.process_queue_mutex = threading.Lock()
         self.active_vehicles = []
@@ -90,8 +89,6 @@ class MrsDroneSpawner():
         # spawning
         spawn_server = rospy.Service('~spawn', StringSrv, self.callback_spawn, buff_size=20)
 
-        # gazebo status
-        self.model_states_subscriber = rospy.Subscriber('/gazebo/model_states', ModelStates, self.callback_model_states)
         rospy.spin()
         # #}
 
@@ -191,26 +188,9 @@ class MrsDroneSpawner():
         diagnostics.active_vehicles = self.active_vehicles
         diagnostics.queued_vehicles = self.queued_vehicles
         self.process_queue_mutex.acquire()
-        self.queued_vehicles = list(set(self.queued_vehicles) - set(self.active_vehicles))
         diagnostics.queued_processes = len(self.process_queue)
         self.process_queue_mutex.release()
         self.diagnostics_pub.publish(diagnostics)
-    # #}
-
-    # #{ callback_mavros_state
-    def callback_mavros_state(self, msg):
-        if msg.connected:
-            self.mavros_connected = True
-            self.mavros_state_sub.unregister()
-    # #}
-
-    # #{ callback_model_states
-    def callback_model_states(self, msg):
-        uav_models = []
-        for modelname in msg.name:
-            if 'uav' in modelname:
-                uav_models.append(modelname)
-        self.active_vehicles = uav_models
     # #}
 
     # #{ callback_spawn
@@ -218,7 +198,7 @@ class MrsDroneSpawner():
 
         # #{ check gazebo running
         try:
-            rospy.wait_for_message('/gazebo/model_states', ModelStates, 2)
+            rospy.wait_for_message('/gazebo/model_states', ModelStates, 10)
         except:
             res = StringSrvResponse()
             res.success = False
@@ -524,8 +504,6 @@ class MrsDroneSpawner():
                     raise Exception('Incorrect data in file \'' + str(filename) + '\'! Data in \'.csv\' file type should be in format [id, x, y, z, heading] (example: int, float, float, float, float)')
                 if int(row[0]) in uav_ids:
                     spawn_poses[int(row[0])] = {'x' : float(row[1]), 'y' : float(row[2]), 'z' : float(row[3]), 'heading' : float(row[4])}
-                # else:
-                #     raise Exception('File requires UAV ID \'' + str(row[0]) + '\' which was not assigned by the spawn command!')
         # #}
 
         # #{ yaml
@@ -537,8 +515,6 @@ class MrsDroneSpawner():
 
                 if int(data['id']) in uav_ids:
                     spawn_poses[data['id']] = {'x' : float(data['x']), 'y' : float(data['y']), 'z' : float(data['z']), 'heading' : float(data['heading'])}
-                # else:
-                #     raise Exception('File requires UAV ID \'' + str(dict_vehicle_info[item]['id']) + '\' which was not assigned by the spawn command!')
         # #}
 
         else:
@@ -556,7 +532,6 @@ class MrsDroneSpawner():
 
     # #{ launch_firmware
     def launch_firmware(self, ID, uav_roslaunch_args):
-        self.mavros_connected = False
         rinfo('Running firmware for uav' + str(ID) + '...')
         uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
         roslaunch.configure_logging(uuid)
@@ -569,11 +544,13 @@ class MrsDroneSpawner():
             launch.shutdown()
             return None
 
-        self.mavros_state_sub = rospy.Subscriber('/uav' + str(ID) + '/mavros/state', MavrosState, self.callback_mavros_state)
-        while not self.mavros_connected:
-            rospy.sleep(0.05)
+        try:
+            rospy.wait_for_message('/uav' + str(ID) + '/mavros/state', MavrosState, 10)
+        except:
+            rerr('Mavros did not respond while starting firmware for uav' + str(ID) + '!')
+            launch.shutdown()
+            return None
 
-        self.mavros_connected = False
         rinfo('Firmware for uav' + str(ID) + ' started!')
         return launch
     # #}
@@ -593,6 +570,8 @@ class MrsDroneSpawner():
             return None
 
         rinfo('Gazebo model for uav' + str(ID) + ' spawned!')
+        self.queued_vehicles.remove('uav' + str(ID))
+        self.active_vehicles.append('uav' + str(ID))
         return launch
     # #}
 
