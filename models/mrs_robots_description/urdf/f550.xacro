@@ -1240,8 +1240,8 @@
 
   <xacro:if value="${optionals['enable_uv_leds']}">
     <xacro:uvled_hexarotor
-      f1="${optionals['uvled_fr_l']}"
-      f2="${optionals['uvled_fr_r']}"
+      f1="${optionals['uvled_s_l']}"
+      f2="${optionals['uvled_s_r']}"
       namespace="${namespace}"
       parent_link="base_link"/>
   </xacro:if>
