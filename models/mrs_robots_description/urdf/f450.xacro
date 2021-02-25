@@ -1050,7 +1050,7 @@
       namespace="${namespace}"
       parent_link="base_link"
       number="1"
-      frame_rate="80"
+      frame_rate="60"
       camera_publish_topic="/${namespace}/uvdar_bluefox_left/image_raw"
       calibration_file="${optionals['uvcam_calib_file']}"
       occlusions="${optionals['uvcam_occlusions']}">
@@ -1061,7 +1061,7 @@
       namespace="${namespace}"
       parent_link="base_link"
       number="2"
-      frame_rate="80"
+      frame_rate="60"
       camera_publish_topic="/${namespace}/uvdar_bluefox_right/image_raw"
       calibration_file="${optionals['uvcam_calib_file']}"
       occlusions="${optionals['uvcam_occlusions']}">
