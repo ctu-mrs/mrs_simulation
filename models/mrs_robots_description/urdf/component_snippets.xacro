@@ -2088,7 +2088,7 @@ limitations under the License.
   <!--}-->
 
   <!-- Macro to add a camera mounted on virtual servo {-->
-  <xacro:macro name="servo_camera_macro" params="namespace name parent offset_x offset_y offset_z offset_yaw offset_roll offset_pitch update_rate max_pitch_rate camera_type">
+  <xacro:macro name="servo_camera_macro" params="namespace name parent offset_x offset_y offset_z offset_yaw offset_roll offset_pitch update_rate max_pitch_rate camera_type compensate_tilt">
 
       <joint name="${name}_joint" type="revolute">
           <parent link="${parent}"/>
@@ -2123,6 +2123,7 @@ limitations under the License.
           <max_pitch_rate>${max_pitch_rate}</max_pitch_rate>
           <joint_name>${name}_joint</joint_name>
           <camera_type>${camera_type}</camera_type>
+          <compensate_tilt>${compensate_tilt}</compensate_tilt>
         </plugin>
       </gazebo>
   </xacro:macro>
@@ -2489,7 +2490,7 @@ limitations under the License.
   <!--}-->
 
   <!-- Macro to add a light {-->
-  <xacro:macro name="light_macro" params="namespace name parent offset_x offset_y offset_z offset_yaw offset_roll offset_pitch update_rate max_pitch_rate initial_on ">
+  <xacro:macro name="light_macro" params="namespace name parent offset_x offset_y offset_z offset_yaw offset_roll offset_pitch update_rate max_pitch_rate initial_on compensate_tilt ">
       <joint name="${name}_joint" type="revolute">
           <parent link="${parent}"/>
           <child link="${name}_link"/>
@@ -2521,6 +2522,7 @@ limitations under the License.
           <update_rate>${update_rate}</update_rate>
           <max_pitch_rate>${max_pitch_rate}</max_pitch_rate>
           <initial_on>${initial_on}</initial_on>
+          <compensate_tilt>${compensate_tilt}</compensate_tilt>
         </plugin>
       </gazebo>
   </xacro:macro>

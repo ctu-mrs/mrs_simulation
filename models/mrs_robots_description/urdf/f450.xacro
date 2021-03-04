@@ -1085,7 +1085,8 @@
       offset_pitch="0.0"
       max_pitch_rate="0.1"
       camera_type="servo_camera"
-      update_rate="30.0">
+      update_rate="30.0"
+      compensate_tilt="true">
     </xacro:servo_camera_macro>
   </xacro:if>
   <!--}-->
@@ -1263,7 +1264,8 @@
       offset_pitch="0.0"
       max_pitch_rate="0.1"
       initial_on="1"
-      update_rate="30.0">
+      update_rate="30.0"
+      compensate_tilt="true">
     </xacro:light_macro>
   </xacro:if>
   <!--}-->
