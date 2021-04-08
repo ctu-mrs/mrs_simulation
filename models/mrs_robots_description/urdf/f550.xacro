@@ -919,6 +919,7 @@
     <!-- sensor -->
     <xacro:realsense_macro
       namespace="${namespace}"
+      realsense_namespace=""
       parent_link="base_link"
       camera_suffix="realsense_top"
       parent_frame_name="${namespace}/fcu"
@@ -937,6 +938,7 @@
   <xacro:if value="${optionals['enable_realsense_down']}">
     <xacro:realsense_macro
       namespace="${namespace}"
+      realsense_namespace=""
       parent_link="base_link"
       camera_suffix="realsense_down"
       parent_frame_name="${namespace}/fcu"
@@ -956,6 +958,7 @@
     <!-- sensor -->
     <xacro:realsense_macro
       namespace="${namespace}"
+      realsense_namespace=""
       parent_link="base_link"
       camera_suffix="realsense_front_pitched"
       parent_frame_name="${namespace}/fcu"
@@ -978,6 +981,7 @@
     <!-- sensor -->
     <xacro:realsense_macro
       namespace="${namespace}"
+      realsense_namespace=""
       parent_link="base_link"
       camera_suffix="realsense_front"
       parent_frame_name="${namespace}/fcu"
@@ -997,6 +1001,7 @@
     <!-- sensor -->
     <xacro:realsense_macro
       namespace="${namespace}"
+      realsense_namespace=""
       parent_link="base_link"
       camera_suffix="realsense_up"
       parent_frame_name="${namespace}/fcu"
@@ -1006,6 +1011,42 @@
       z="0.025"
       roll="0"
       pitch="-${rad90}"
+      yaw="0">
+    </xacro:realsense_macro>
+  </xacro:if>
+  <!--}-->
+
+  <!-- up_down {-->
+  <xacro:if value="${optionals['enable_realsense_up_down']}">
+    <!-- sensor -->
+    <xacro:realsense_macro
+      namespace="${namespace}"
+      realsense_namespace="up_rgbd"
+      parent_link="base_link"
+      camera_suffix="realsense_up"
+      parent_frame_name="${namespace}/fcu"
+      enable_realistic_realsense="${optionals['use_realistic_realsense']}"
+      x="-0.01"
+      y="-0.07"
+      z="0.05"
+      roll="0"
+      pitch="-${rad90}"
+      yaw="${rad90}">
+    </xacro:realsense_macro>
+
+    <!-- sensor -->
+    <xacro:realsense_macro
+      namespace="${namespace}"
+      realsense_namespace="down_rgbd"
+      parent_link="base_link"
+      camera_suffix="realsense_down"
+      parent_frame_name="${namespace}/fcu"
+      enable_realistic_realsense="${optionals['use_realistic_realsense']}"
+      x="0.12"
+      y="0"
+      z="-0.05"
+      roll="0"
+      pitch="+${rad90}"
       yaw="0">
     </xacro:realsense_macro>
   </xacro:if>
