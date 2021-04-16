@@ -1090,7 +1090,7 @@
       namespace="${namespace}"
       parent_link="base_link"
       number="1"
-      frame_rate="80"
+      frame_rate="60"
       camera_publish_topic="/${namespace}/uvdar_bluefox_left/image_raw"
       calibration_file="${optionals['uvcam_calib_file']}"
       occlusions="${optionals['uvcam_occlusions']}">
@@ -1101,7 +1101,7 @@
       namespace="${namespace}"
       parent_link="base_link"
       number="2"
-      frame_rate="80"
+      frame_rate="60"
       camera_publish_topic="/${namespace}/uvdar_bluefox_right/image_raw"
       calibration_file="${optionals['uvcam_calib_file']}"
       occlusions="${optionals['uvcam_occlusions']}">
@@ -1174,62 +1174,62 @@
 
   <!-- UV led - quadrotor configuration {-->
   <xacro:macro name="uvled_quadrotor"
-    params="f1 f2 namespace parent_link">
+    params="s1 s2 namespace parent_link">
     <!-- UV LED -->
     <xacro:uvled_macro
       namespace="${namespace}"
       parent_link="base_link"
       number="1"
-      frequency="${f1}">
+      signal_id="${s1}">
       <origin xyz="-.1697045 .1767755 -0.05" rpy="0 ${rad90} ${rad90}" />
     </xacro:uvled_macro>
     <xacro:uvled_macro
       namespace="${namespace}"
       parent_link="base_link"
       number="2"
-      frequency="${f1}">
+      signal_id="${s1}">
       <origin xyz="-.1767755 .1697045 -0.05" rpy="0 ${rad90} ${rad180}" />
     </xacro:uvled_macro>
     <xacro:uvled_macro
       namespace="${namespace}"
       parent_link="base_link"
       number="3"
-      frequency="${f2}">
+      signal_id="${s2}">
       <origin xyz="-.1767755 -.1697045 -0.05" rpy="0 ${rad90} -${rad180}" />
     </xacro:uvled_macro>
     <xacro:uvled_macro
       namespace="${namespace}"
       parent_link="base_link"
       number="4"
-      frequency="${f2}">
+      signal_id="${s2}">
       <origin xyz="-.1697045 -.1767755 -0.05" rpy="0 ${rad90} -${rad90}" />
     </xacro:uvled_macro>
     <xacro:uvled_macro
       namespace="${namespace}"
       parent_link="base_link"
       number="5"
-      frequency="${f2}">
+      signal_id="${s2}">
       <origin xyz=".1697045 -.1767755 -0.05" rpy="0 ${rad90} -${rad90}" />
     </xacro:uvled_macro>
     <xacro:uvled_macro
       namespace="${namespace}"
       parent_link="base_link"
       number="6"
-      frequency="${f2}">
+      signal_id="${s2}">
       <origin xyz=".1767755 -.1697045 -0.05" rpy="0 ${rad90} 0" />
     </xacro:uvled_macro>
     <xacro:uvled_macro
       namespace="${namespace}"
       parent_link="base_link"
       number="7"
-      frequency="${f1}">
+      signal_id="${s1}">
       <origin xyz=".1767755 .1697045 -0.05" rpy="0 ${rad90} 0" />
     </xacro:uvled_macro>
     <xacro:uvled_macro
       namespace="${namespace}"
       parent_link="base_link"
       number="8"
-      frequency="${f1}">
+      signal_id="${s1}">
       <origin xyz=".1697045 .1767755 -0.05" rpy="0 ${rad90} ${rad90}" />
     </xacro:uvled_macro>
   </xacro:macro>
@@ -1237,8 +1237,8 @@
 
   <xacro:if value="${optionals['enable_uv_leds']}">
     <xacro:uvled_quadrotor
-      f1="${optionals['uvled_fr_l']}"
-      f2="${optionals['uvled_fr_r']}"
+      s1="${optionals['uvled_s_l']}"
+      s2="${optionals['uvled_s_r']}"
       namespace="${namespace}"
       parent_link="base_link"/>
   </xacro:if>
@@ -1248,34 +1248,34 @@
 
   <!-- UV led - beacon configuration {-->
   <xacro:macro name="uvled_beacon"
-    params="height f namespace parent_link">
+    params="height s namespace parent_link">
     <!-- UV LED -->
     <xacro:uvled_macro
       namespace="${namespace}"
       parent_link="base_link"
       number="b1"
-      frequency="${f}">
+      signal_id="${s}">
       <origin xyz="0.01 0 ${height}" rpy="0 ${rad90} 0" />
     </xacro:uvled_macro>
     <xacro:uvled_macro
       namespace="${namespace}"
       parent_link="base_link"
       number="b2"
-      frequency="${f}">
+      signal_id="${s}">
       <origin xyz="0 0.01 ${height}" rpy="0 ${rad90} ${rad90}" />
     </xacro:uvled_macro>
     <xacro:uvled_macro
       namespace="${namespace}"
       parent_link="base_link"
       number="b3"
-      frequency="${f}">
+      signal_id="${s}">
       <origin xyz="-0.01 0 ${height}" rpy="0 ${rad90} ${rad180}" />
     </xacro:uvled_macro>
     <xacro:uvled_macro
       namespace="${namespace}"
       parent_link="base_link"
       number="b4"
-      frequency="${f}">
+      signal_id="${s}">
       <origin xyz="0 -0.01 ${height}" rpy="0 ${rad90} -${rad90}" />
     </xacro:uvled_macro>
   </xacro:macro>
@@ -1284,7 +1284,7 @@
   <xacro:if value="${optionals['enable_uv_leds_beacon']}">
     <xacro:uvled_beacon
       height="0.15"
-      f="${optionals['uvled_beacon_f']}"
+      s="${optionals['uvled_beacon_f']}"
       namespace="${namespace}"
       parent_link="base_link"/>
   </xacro:if>
