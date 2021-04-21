@@ -171,7 +171,7 @@ class MrsDroneSpawner():
                 self.running_processes.append(process_handle)
             else:
                 self.process_queue_mutex.acquire()
-                self.process_queue.insert((process, args))
+                self.process_queue.append((process, args))
                 self.process_queue_mutex.release()
 
         else:
