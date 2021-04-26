@@ -1083,8 +1083,8 @@
 
   <!--} Mobius placements -->
 
-  <!-- UV camera {-->
-  <xacro:if value="${optionals['enable_uv_camera']}">
+  <!-- Dual UV cameras {-->
+  <xacro:if value="${optionals['enable_dual_uv_cameras']}">
 
     <xacro:uvcam_macro
       namespace="${namespace}"
@@ -1094,7 +1094,7 @@
       camera_publish_topic="/${namespace}/uvdar_bluefox_left/image_raw"
       calibration_file="${optionals['uvcam_calib_file']}"
       occlusions="${optionals['uvcam_occlusions']}">
-    <origin xyz="0.037 0.1175 0.05" rpy="0 0 ${rad70}" />
+    <origin xyz="0.03 0.10 0.06" rpy="0 0 ${rad70}" />
     </xacro:uvcam_macro>
 
     <xacro:uvcam_macro
@@ -1105,7 +1105,24 @@
       camera_publish_topic="/${namespace}/uvdar_bluefox_right/image_raw"
       calibration_file="${optionals['uvcam_calib_file']}"
       occlusions="${optionals['uvcam_occlusions']}">
-    <origin xyz="0.037 -0.1175 0.05" rpy="0 0 -${rad70}" />
+    <origin xyz="0.03 -0.10 0.06" rpy="0 0 -${rad70}" />
+    </xacro:uvcam_macro>
+
+  </xacro:if>
+  <!--}-->
+
+  <!-- Back UV camera {-->
+  <xacro:if value="${optionals['enable_back_uv_camera']}">
+
+    <xacro:uvcam_macro
+      namespace="${namespace}"
+      parent_link="base_link"
+      number="3"
+      frame_rate="60"
+      camera_publish_topic="/${namespace}/uvdar_bluefox_back/image_raw"
+      calibration_file="${optionals['uvcam_calib_file']}"
+      occlusions="${optionals['uvcam_occlusions']}">
+    <origin xyz="-0.1 0.0 -0.02" rpy="${rad90} 0 ${rad180}" />
     </xacro:uvcam_macro>
 
   </xacro:if>
@@ -1415,7 +1432,7 @@
   <!--}-->
 
   <!-- UVDAR mount {-->
-  <xacro:if value="${optionals['enable_uv_camera']}">
+  <xacro:if value="${optionals['enable_dual_uv_cameras']}">
     <xacro:visual_macro
       robot_namespace="${namespace}"
       name="uvdar_mount"
