@@ -45,6 +45,7 @@ limitations under the License.
   <xacro:property name="rad90" value="${90*pi/180}" />
   <xacro:property name="rad95" value="${95*pi/180}" />
   <xacro:property name="rad115" value="${115*pi/180}" />
+  <xacro:property name="rad120" value="${120*pi/180}" />
   <xacro:property name="rad135" value="${135*pi/180}" />
   <xacro:property name="rad150" value="${150*pi/180}" />
   <xacro:property name="rad180" value="${180*pi/180}" />
