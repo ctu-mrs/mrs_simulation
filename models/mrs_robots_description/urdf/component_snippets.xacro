@@ -45,6 +45,7 @@ limitations under the License.
   <xacro:property name="rad90" value="${90*pi/180}" />
   <xacro:property name="rad95" value="${95*pi/180}" />
   <xacro:property name="rad115" value="${115*pi/180}" />
+  <xacro:property name="rad120" value="${120*pi/180}" />
   <xacro:property name="rad135" value="${135*pi/180}" />
   <xacro:property name="rad150" value="${150*pi/180}" />
   <xacro:property name="rad180" value="${180*pi/180}" />
@@ -2531,7 +2532,7 @@ limitations under the License.
 
   <!-- Macro to add a UV LED{-->
   <xacro:macro name="uvled_macro"
-    params="namespace parent_link number frequency *origin">
+    params="namespace parent_link number signal_id *origin">
     <link name="${namespace}_uvled_${number}_link">
       <visual>
         <origin xyz="0 0 -0.0025" rpy="0 0 0" />
@@ -2583,7 +2584,7 @@ limitations under the License.
           <link_name>${namespace}_uvled_${number}_lens_link</link_name>
           <alwaysOn>false</alwaysOn>
           <updateRate>1</updateRate>
-          <frequency>${frequency}</frequency>
+          <signal_id>${signal_id}</signal_id>
           <number>${number}</number>
         </plugin>
       </sensor>
