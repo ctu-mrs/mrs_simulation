@@ -198,7 +198,7 @@ class MrsDroneSpawner():
 
         # #{ check gazebo running
         try:
-            rospy.wait_for_message('/gazebo/model_states', ModelStates, 10)
+            rospy.wait_for_message('/gazebo/model_states', ModelStates, 60)
         except:
             res = StringSrvResponse()
             res.success = False
@@ -545,7 +545,7 @@ class MrsDroneSpawner():
             return None
 
         try:
-            rospy.wait_for_message('/uav' + str(ID) + '/mavros/state', MavrosState, 10)
+            rospy.wait_for_message('/uav' + str(ID) + '/mavros/state', MavrosState, 60)
         except:
             rerr('Mavros did not respond while starting firmware for uav' + str(ID) + '!')
             launch.shutdown()
@@ -591,9 +591,9 @@ class MrsDroneSpawner():
 
         rinfo('Waiting for uav' + str(ID) + '\'s mavros to start publishing...')
         try:
-            rospy.wait_for_message('/uav' + str(ID) + '/mavros/state', MavrosState, 10)
+            rospy.wait_for_message('/uav' + str(ID) + '/mavros/state', MavrosState, 60)
         except:
-            rerr('Mavros for uav' + str(ID) + ' did not start in 10 seconds!')
+            rerr('Mavros for uav' + str(ID) + ' did not start in 60 seconds!')
             launch.shutdown()
             return None
 
