@@ -2,8 +2,8 @@
 Changelog for package mrs_simulation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.1 (2021-05-16)
+------------------
 * increased timeouts in drone spawner to 60s
 * add rad120 to component_snippets.xacro
 * Adding the third/back camera to simulation
