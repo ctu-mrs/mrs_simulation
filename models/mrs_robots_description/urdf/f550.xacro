@@ -586,6 +586,16 @@
   </xacro:magnetometer_plugin_macro>
   <!--}-->
 
+   <!-- Groundtruth {-->
+  <xacro:groundtruth_plugin_macro
+    namespace="${namespace}"
+    home_latitude="0.0"
+    home_longitude="0.0"
+    home_altitude="0.0"
+    >
+  </xacro:groundtruth_plugin_macro>
+  <!--}-->
+
   <!-- Barometer {-->
   <xacro:barometer_plugin_macro
     namespace="${namespace}"

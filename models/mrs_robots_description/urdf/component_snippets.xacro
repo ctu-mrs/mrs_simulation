@@ -503,13 +503,26 @@ limitations under the License.
   <!-- Macro to add the magnetometer_plugin{-->
   <xacro:macro name="magnetometer_plugin_macro" params="namespace pub_rate noise_density random_walk bias_correlation_time mag_topic">
     <gazebo>
-      <plugin name="magnetometer_plugin" filename="libgazebo_magnetometer_plugin.so">
+      <plugin name="magnetometer_plugin" filename="libMRSGazeboMagnetometerPlugin.so">
         <robotNamespace>${namespace}</robotNamespace>
         <pubRate>${pub_rate}</pubRate>
         <noiseDensity>${noise_density}</noiseDensity>
         <randomWalk>${random_walk}</randomWalk>
         <biasCorrelationTime>${bias_correlation_time}</biasCorrelationTime>
         <magTopic>${mag_topic}</magTopic>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+  <!--}-->
+
+  <!-- Macro to add the groundtruth_plugin{-->
+  <xacro:macro name="groundtruth_plugin_macro" params="namespace home_latitude home_longitude home_altitude">
+    <gazebo>
+      <plugin name="groundtruth_plugin" filename="libgazebo_groundtruth_plugin.so">
+        <robotNamespace>${namespace}</robotNamespace>
+        <homeLatitude>${home_latitude}</homeLatitude>
+        <homeLongitude>${home_longitude}</homeLongitude>
+        <homeAltitude>${home_altitude}</homeAltitude>
       </plugin>
     </gazebo>
   </xacro:macro>
@@ -675,7 +688,7 @@ limitations under the License.
     <link name="${namespace}/${sensor_name}_link">
       <pose>0 0 0 0 0 0</pose>
     </link>
-    
+
     <joint name="${namespace}/${sensor_name}_joint" type="fixed">
       <xacro:insert_block name="origin" />
       <parent link="${parent_link}" />
