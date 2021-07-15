@@ -200,35 +200,37 @@
   <!--}-->
 
   <!-- onboard computer (up! extreme) {-->
-  <xacro:visual_macro
-    robot_namespace="${namespace}"
-    name="pc_mount"
-    mesh_file="${pc_mount_mesh}"
-    mesh_scale="${mesh_scale}"
-    parent="base_link"
-    color="Default">
-    <origin xyz="0 0 0" rpy="0 0 0" />
-  </xacro:visual_macro>
-  <xacro:colored_box
-    robot_namespace="${namespace}"
-    name="computer_board"
-    size_x="0.125"
-    size_y="0.125"
-    size_z="0.002"
-    parent="base_link"
-    color="Grass">
-    <origin xyz="0 0 0.058" rpy="0 0 0" />
-  </xacro:colored_box>
-  <xacro:colored_box
-    robot_namespace="${namespace}"
-    name="computer_heatsink"
-    size_x="0.071"
-    size_y="0.071"
-    size_z="0.027"
-    parent="base_link"
-    color="Grey">
-    <origin xyz="0.009 0.012 0.074" rpy="0 0 0" />
-  </xacro:colored_box>
+  <xacro:unless value="${optionals['enable_ouster']}">
+    <xacro:visual_macro
+      robot_namespace="${namespace}"
+      name="pc_mount"
+      mesh_file="${pc_mount_mesh}"
+      mesh_scale="${mesh_scale}"
+      parent="base_link"
+      color="Default">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </xacro:visual_macro>
+    <xacro:colored_box
+      robot_namespace="${namespace}"
+      name="computer_board"
+      size_x="0.125"
+      size_y="0.125"
+      size_z="0.002"
+      parent="base_link"
+      color="Grass">
+      <origin xyz="0 0 0.058" rpy="0 0 0" />
+    </xacro:colored_box>
+    <xacro:colored_box
+      robot_namespace="${namespace}"
+      name="computer_heatsink"
+      size_x="0.071"
+      size_y="0.071"
+      size_z="0.027"
+      parent="base_link"
+      color="Grey">
+      <origin xyz="0.009 0.012 0.074" rpy="0 0 0" />
+    </xacro:colored_box>
+  </xacro:unless>
   <!--}-->
 
   <!-- pixhawk {-->
@@ -631,6 +633,112 @@
     color="Default">
   <origin xyz="0 0 0" rpy="0 0 0" />
   </xacro:visual_macro>
+  </xacro:if>
+  <!--}-->
+
+  <!-- Ouster {-->
+  <xacro:if value="${optionals['enable_ouster']}">
+    <xacro:property name="ouster_model" value="${optionals['ouster_model']}" />
+
+    <!-- OS1-16 Generation 1 (default) -->
+    <xacro:property name="lasers" value="16" />
+    <xacro:property name="vfov_angle" value="33.2" />
+    <xacro:property name="range" value="120" />
+    <xacro:if value="${ouster_model == 'OS1-16'}">
+      <xacro:property name="lasers" value="16" />
+      <xacro:property name="vfov_angle" value="33.2" />
+      <xacro:property name="range" value="120" />
+    </xacro:if>
+
+    <!-- OS0 {-->
+    <!-- OS0-32 -->
+    <xacro:if value="${ouster_model == 'OS0-32'}">
+      <xacro:property name="lasers" value="32" />
+      <xacro:property name="vfov_angle" value="90" />
+      <xacro:property name="range" value="55" />
+    </xacro:if>
+
+    <!-- OS0-64 -->
+    <xacro:if value="${ouster_model == 'OS0-64'}">
+      <xacro:property name="lasers" value="64" />
+      <xacro:property name="vfov_angle" value="90" />
+      <xacro:property name="range" value="55" />
+    </xacro:if>
+
+    <!-- OS0-128 -->
+    <xacro:if value="${ouster_model == 'OS0-128'}">
+      <xacro:property name="lasers" value="128" />
+      <xacro:property name="vfov_angle" value="90" />
+      <xacro:property name="range" value="55" />
+    </xacro:if>
+
+    <!--}-->
+
+    <!-- OS1 Generation 2 {-->
+    <!-- OS1-32 Generation 2 -->
+    <xacro:if value="${ouster_model == 'OS1-32'}">
+      <xacro:property name="lasers" value="32" />
+      <xacro:property name="vfov_angle" value="45" />
+      <xacro:property name="range" value="120" />
+    </xacro:if>
+
+    <!-- OS1-64 Generation 2 -->
+    <xacro:if value="${ouster_model == 'OS1-64'}">
+      <xacro:property name="lasers" value="64" />
+      <xacro:property name="vfov_angle" value="45" />
+      <xacro:property name="range" value="120" />
+    </xacro:if>
+
+    <!-- OS1-128 Generation 2 -->
+    <xacro:if value="${ouster_model == 'OS1-128'}">
+      <xacro:property name="lasers" value="128" />
+      <xacro:property name="vfov_angle" value="45" />
+      <xacro:property name="range" value="120" />
+    </xacro:if>
+
+    <!--}-->
+
+    <!-- OS2 {-->
+    <!-- OS2-32 -->
+    <xacro:if value="${ouster_model == 'OS2-32'}">
+      <xacro:property name="lasers" value="32" />
+      <xacro:property name="vfov_angle" value="22.5" />
+      <xacro:property name="range" value="240" />
+    </xacro:if>
+
+    <!-- OS2-64 -->
+    <xacro:if value="${ouster_model == 'OS2-64'}">
+      <xacro:property name="lasers" value="64" />
+      <xacro:property name="vfov_angle" value="22.5" />
+      <xacro:property name="range" value="240" />
+    </xacro:if>
+
+    <!-- OS2-128 -->
+    <xacro:if value="${ouster_model == 'OS2-128'}">
+      <xacro:property name="lasers" value="128" />
+      <xacro:property name="vfov_angle" value="22.5" />
+      <xacro:property name="range" value="240" />
+    </xacro:if>
+
+    <!--}-->
+
+  <xacro:ouster_macro
+    namespace="${namespace}"
+    sensor_name="os"
+    x="0"
+    y="0"
+    z="0.066"
+    roll="0"
+    pitch="0"
+    yaw="0"
+    rot_freq="10"
+    lasers="${lasers}"
+    vfov_angle="${vfov_angle}"
+    max_range="${range}"
+    noise="0.03"
+    enable_gpu_ray="${optionals['use_gpu_ray']}"
+    >
+  </xacro:ouster_macro>
   </xacro:if>
   <!--}-->
 
