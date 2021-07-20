@@ -591,6 +591,26 @@
   </xacro:if>
   <!--}-->
 
+  <!-- Light {-->
+  <xacro:if value="${optionals['enable_light']}">
+    <xacro:light_macro
+      namespace="${namespace}"
+      name="light_macro"
+      parent="base_link"
+      offset_x="0.2"
+      offset_y="0.0"
+      offset_z="-0.10"
+      offset_roll="0.0"
+      offset_yaw="0.0"
+      offset_pitch="0.0"
+      max_pitch_rate="0.1"
+      initial_on="1"
+      update_rate="30.0"
+      compensate_tilt="false">
+    </xacro:light_macro>
+  </xacro:if>
+  <!--}-->
+
   <!-- ======================= rangefinder sensors ======================-->
 
   <!-- Garmin {-->
