@@ -1852,8 +1852,8 @@ limitations under the License.
               <height>180</height>
             </xacro:if>
             <xacro:unless value="${enable_realistic_realsense}">
-              <width>1280</width>
-              <height>720</height>
+              <width>640</width>
+              <height>360</height>
             </xacro:unless>
           </image>
           <clip>
@@ -1867,7 +1867,7 @@ limitations under the License.
           </noise>
         </camera>
         <always_on>1</always_on>
-        <update_rate>60</update_rate>
+        <update_rate>1</update_rate>
         <visualize>0</visualize>
       </sensor>
       <!--}-->

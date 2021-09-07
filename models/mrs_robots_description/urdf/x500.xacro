@@ -630,6 +630,129 @@
   </xacro:if>
   <!--}-->
 
+  <!-- ========================= camera sensors ========================= -->
+
+  <!-- Realsense placements {-->
+
+  <!-- down {-->
+  <xacro:if value="${optionals['enable_realsense_down']}">
+
+    <!-- sensor -->
+    <xacro:realsense_macro
+      namespace="${namespace}"
+      realsense_namespace=""
+      parent_link="base_link"
+      camera_suffix="realsense_down"
+      parent_frame_name="${namespace}/fcu"
+      enable_realistic_realsense="${optionals['use_realistic_realsense']}"
+      x="0.103"
+      y="0"
+      z="-0.083"
+      roll="0"
+      pitch="${rad90}"
+      yaw="0">
+    </xacro:realsense_macro>
+  </xacro:if>
+  <!--}-->
+
+  <!-- front pitched {-->
+  <xacro:if value="${optionals['enable_realsense_front_pitched']}">
+    <!-- sensor -->
+    <xacro:realsense_macro
+      namespace="${namespace}"
+      realsense_namespace=""
+      parent_link="base_link"
+      camera_suffix="realsense_front_pitched"
+      parent_frame_name="${namespace}/fcu"
+      enable_realistic_realsense="${optionals['use_realistic_realsense']}"
+      x="0.16"
+      y="0"
+      z="-0.089"
+      roll="0"
+      pitch="${rad45}"
+      yaw="0">
+    </xacro:realsense_macro>
+  </xacro:if>
+  <!--}-->
+
+  <!-- front {-->
+  <xacro:if value="${optionals['enable_realsense_front']}">
+    <!-- sensor -->
+    <xacro:realsense_macro
+      namespace="${namespace}"
+      realsense_namespace=""
+      parent_link="base_link"
+      camera_suffix="realsense_front"
+      parent_frame_name="${namespace}/fcu"
+      enable_realistic_realsense="${optionals['use_realistic_realsense']}"
+      x="0.155"
+      y="0"
+      z="-0.089"
+      roll="0"
+      pitch="0"
+      yaw="0">
+    </xacro:realsense_macro>
+  </xacro:if>
+  <!--}-->
+
+  <!-- up {-->
+  <xacro:if value="${optionals['enable_realsense_up']}">
+    <!-- sensor -->
+    <xacro:realsense_macro
+      namespace="${namespace}"
+      realsense_namespace=""
+      parent_link="base_link"
+      camera_suffix="realsense_up"
+      parent_frame_name="${namespace}/fcu"
+      enable_realistic_realsense="${optionals['use_realistic_realsense']}"
+      x="0.05"
+      y="0"
+      z="0.125"
+      roll="0"
+      pitch="-${rad90}"
+      yaw="0">
+    </xacro:realsense_macro>
+  </xacro:if>
+  <!--}-->
+
+  <!-- up_down {-->
+  <xacro:if value="${optionals['enable_realsense_up_down']}">
+    <!-- sensor -->
+    <xacro:realsense_macro
+      namespace="${namespace}"
+      realsense_namespace="up_rgbd"
+      parent_link="base_link"
+      camera_suffix="realsense_up"
+      parent_frame_name="${namespace}/fcu"
+      enable_realistic_realsense="${optionals['use_realistic_realsense']}"
+      x="0.05"
+      y="0"
+      z="0.125"
+      roll="0"
+      pitch="-${rad90}"
+      yaw="0">
+    </xacro:realsense_macro>
+
+    <!-- sensor -->
+    <xacro:realsense_macro
+      namespace="${namespace}"
+      realsense_namespace="down_rgbd"
+      parent_link="base_link"
+      camera_suffix="realsense_down"
+      parent_frame_name="${namespace}/fcu"
+      enable_realistic_realsense="${optionals['use_realistic_realsense']}"
+      x="0.103"
+      y="0"
+      z="-0.083"
+      roll="0"
+      pitch="+${rad90}"
+      yaw="0">
+    </xacro:realsense_macro>
+  </xacro:if>
+  <!--}-->
+
+  <!--} Realsense placements-->
+
   <!-- ========================== LIDAR sensors ========================= -->
 
   <!-- Rplidar {-->
