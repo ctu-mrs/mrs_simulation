@@ -515,6 +515,22 @@
   </xacro:gps_macro>
   <!--}-->
 
+  <!-- Timepix3 {-->
+  <xacro:if value="${optionals['enable_timepix3']}">
+    <xacro:timepix3_macro
+      namespace="${namespace}"
+      name="timepix3"
+      parent="base_link"
+      color="Green"
+      material="cdte"
+      thickness="0.002"
+      max_message_window="1.0"
+      sensor_suffix="">
+      <origin xyz="0.115 -0.05 -0.05" rpy="0 0 0" />
+    </xacro:timepix3_macro>
+  </xacro:if>
+  <!--}-->
+
   <!-- Magnetometer {-->
   <xacro:magnetometer_plugin_macro
     namespace="${namespace}"

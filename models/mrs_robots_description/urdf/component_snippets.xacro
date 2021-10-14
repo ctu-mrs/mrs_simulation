@@ -2453,6 +2453,35 @@ limitations under the License.
   </xacro:macro>
   <!--}-->
 
+  <!-- Macro to add a Timepix3 event camera {-->
+  <xacro:macro name="timepix3_macro" params="namespace name parent color material thickness max_message_window sensor_suffix *origin">
+    <joint name="${name}_joint" type="fixed">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent}" />
+      <child link="${name}_link" />
+    </joint>
+    <link name="${name}_link">
+      <visual>
+        <origin xyz="0 0.05 0" rpy="0 0 0" />
+        <geometry>
+          <box size="0.02 0.09 0.02" />
+        </geometry>
+      </visual>
+    </link>
+    <gazebo reference="${name}_link">
+      <material>Gazebo/${color}</material>
+    </gazebo>
+    <gazebo>
+      <plugin name="gazebo_timepix3" filename="libgazebo_timepix3.so" >
+        <material>${material}</material>                 <!-- string -->
+        <size>${thickness} 0.01408 0.01408</size>     <!-- [m m m] -->
+        <max_message_window>${max_message_window}</max_message_window> <!-- [s] -->
+        <sensor_suffix>${sensor_suffix}</sensor_suffix> <!-- [s] -->
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+  <!--}-->
+
   <!-- Macro to add a water gun {-->
   <xacro:macro name="water_gun_macro" params="namespace name parent muzzle_velocity particle_capacity spread spawning_reservoir offset_x offset_y offset_z size_x size_y size_z *origin">
     <joint name="${name}_body_joint" type="fixed">

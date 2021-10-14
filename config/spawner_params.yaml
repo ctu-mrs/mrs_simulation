@@ -23,6 +23,7 @@ enable_rplidar: [False, 'Add the RPlidar A3 laser scanner to the vehicle', [f450
 enable_pendulum: [False, 'Add pendulum to the vehicle', [f450, f550, t650]]
 enable_teraranger_tower_evo: [False, 'Add the Teraranger Tower Evo laser scanner to the vehicle', [f450, f550, t650]]
 enable_timepix: [False, 'Add Timepix radiation detector to the vehicle', [f450, f550, t650]]
+enable_timepix3: [False, 'Add Timepix radiation detector to the vehicle', [t650, x500]]
 enable_thermal_camera: [False, 'Add thermal camera to the vehicle', [t650]]
 enable_velodyne: [False, 'Add Velodyne PUCK Lite laser scanner to the vehicle', [f450, f550, t650]]
 enable_ouster: [False, 'Add Ouster laser scanner to the vehicle', [f450, f550, t650, x500, eaglemk2]]
