@@ -1,119 +1,124 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
+<sdf version='1.6'>
 
-{%- import "mrs_robots_description/urdf/component_snippets.sdf.jinja" as components -%}
+  {%- import "mrs_robots_description/urdf/component_snippets.sdf.jinja" as components -%}
+  
+  {# ================================================================== #}
+  {# ||                    parameters definition                     || #}
+  {# ================================================================== #}
+  
+  {%- set namespace = "uav1" -%} {# DELETE THIS #}
+  
+  {#-  Robot parameters and arguments -#}
+  {%- set mass = 2.00 -%} {# [kg] #}
+  {%- set body_radius = 0.2 -%} {# [m] #}
+  {%- set body_height = 0.10 -%} {# [m] #}
+  {%- set mass_rotor = 0.005 -%} {# [kg] #}
+  {%- set radius_rotor = 0.118 -%} {# [m] #}
+  {%- set rotor_offset_top = 0.0235 -%} {# [m] #}
+  {%- set arm_length = 0.23 -%} {# [m] #}
+  {%- set arm_height = 0.038 -%} {# [m] #}
+  {%- set board_radius = 0.065 -%} {# [m] #}
+  {%- set board_height = 0.002 -%} {# [m] #}
+  {%- set holder_offset = 0.02 -%} {# [m] #}
+  {%- set leg_offset_z = 0.098 -%} {# [m] #}
+  {%- set leg_offset_r = 0.0072 -%} {# [m] #}
+  {%- set pixhawk_offset = 0.0075 -%} {# [m] #}
+  {%- set use_battery_mount = True -%} {# [bool] #}
+  
+  {#- Motor constants -#}
+  {%- set rotor_velocity_slowdown_sim = 0.0159236 -%}
+  {%- set motor_constant = 10.04544 -%} {# [kg.m/s^2] #}
+  {%- set moment_constant = 0.016 -%} {# [m] #}
+  {%- set time_constant_up = 1.0 / 80.0 -%} {# [s] #}
+  {%- set time_constant_down = 1.0 / 40.0 -%} {# [s] #}
+  {%- set max_rot_velocity = 1 -%} {# [rad/s] #}
+  {%- set rotor_drag_coefficient = 0.001 -%} {# orig 8.06428e-04 #}
+  {%- set rolling_moment_coefficient = "1.0E-6" -%}
+  
+  {#- Inertia constants -#}
+  {%- set inertia_body_radius = 0.20 -%} {# [m] #}
+  {%- set inertia_body_height = 0.05 -%} {# [m] #}
+  
+  {#- Meshes -#}
+  {#- Drone parts -#}
+  {%- set central_board_mesh_top = "package://mrs_robots_description/meshes/dji/f450/dji_f450_central_top.dae" -%}
+  {%- set central_board_mesh_bottom = "package://mrs_robots_description/meshes/dji/f450/dji_f450_central_bottom.dae" -%}
+  {%- set arm_mesh_file = "package://mrs_robots_description/meshes/dji/f450/dji_f450_arm.dae" -%}
+  {%- set leg_mesh_file = "package://mrs_robots_description/meshes/dji/f450/dji_f450_leg_170mm.dae"-%}
+  {%- set rotor_mesh_file = "package://mrs_robots_description/meshes/dji/f450/dji_f450_rotor.dae" -%}
+  {%- set prop_mesh_file = "package://mrs_robots_description/meshes/dji/f450/dji_f450_prop.dae"-%}
+  {%- set pixhawk_mesh_file = "package://mrs_robots_description/meshes/sensors/pixhawk.dae" -%}
+  {%- set nuc_mesh_file = "package://mrs_robots_description/meshes/dji/f450/dji_f450_nuc.dae" -%}
+  
+  {#- Holders #}
+  {%- set battery_mount_mesh = "package://mrs_robots_description/meshes/dji/f450/dji_f450_battery_mount.dae" -%}
+  {%- set bluefox_mount_mesh = "package://mrs_robots_description/meshes/dji/f450/dji_f450_bluefox_mount.dae" -%}
+  {%- set ouster_mount_mesh = "package://mrs_robots_description/meshes/dji/f450/dji_f450_ouster_mount.dae" -%}
+  {%- set garmin_mount_mesh = "package://mrs_robots_description/meshes/dji/f450/dji_f450_garmin_mount.dae" -%}
+  {%- set rplidar_mount_mesh = "package://mrs_robots_description/meshes/dji/f450/dji_f450_rplidar_mount.dae" -%}
+  {%- set realsense_front_mount_mesh = "package://mrs_robots_description/meshes/dji/f450/dji_f450_realsense_front_pitched_0_mount.dae" -%}
+  {%- set realsense_front_pitched_mount_mesh = "package://mrs_robots_description/meshes/dji/f450/dji_f450_realsense_front_pitched_45_mount.dae" -%}
+  {%- set realsense_front_down_mount_mesh = "package://mrs_robots_description/meshes/dji/f450/dji_f450_realsense_front_pitched_90_mount.dae" -%}
+  {%- set uvdar_mount_mesh = "package://mrs_robots_description/meshes/dji/f450/dji_f450_uvdar_mount.dae" -%}
+  
+  {#- Scales -#}
+  {%- set mesh_scale = "1 1 1" -%}
+  {%- set mesh_scale_prop_ccw = "1 1 1" -%}
+  {%- set mesh_scale_prop_cw = "-1 1 1" -%}
+  {%- set mesh_scale_milimeters = "0.001 0.001 0.001" -%}
+  
+  {#- Inertias -#}
+  {%- set body_ixx = mass * (3 * inertia_body_radius * inertia_body_radius + inertia_body_height * inertia_body_height) / 12 -%}
+  {%- set body_ixy = 0 -%}
+  {%- set body_ixz = 0 -%}
+  {%- set body_iyy = mass * (3 * inertia_body_radius * inertia_body_radius + inertia_body_height * inertia_body_height) / 12 -%}
+  {%- set body_iyz = 0 -%}
+  {%- set body_izz = mass * (3 * inertia_body_radius * inertia_body_radius + inertia_body_height * inertia_body_height) / 12 -%}
+  
+  {%- set rotor_ixx = 0.0001 -%}
+  {%- set rotor_ixy = 0 -%}
+  {%- set rotor_ixz = 0 -%}
+  {%- set rotor_iyy = 0.0001 -%}
+  {%- set rotor_iyz = 0 -%}
+  {%- set rotor_izz = 0.0001 -%}
 
-{# ================================================================== #}
-{# ||                    parameters definition                     || #}
-{# ================================================================== #}
+  <model name="{{ name }}">
 
-{%- set namespace = "uav1" -%} {# DELETE THIS #}
-
-{#-  Robot parameters and arguments -#}
-{%- set mass = 2.00 -%} {# [kg] #}
-{%- set body_radius = 0.2 -%} {# [m] #}
-{%- set body_height = 0.10 -%} {# [m] #}
-{%- set mass_rotor = 0.005 -%} {# [kg] #}
-{%- set radius_rotor = 0.118 -%} {# [m] #}
-{%- set rotor_offset_top = 0.0235 -%} {# [m] #}
-{%- set arm_length = 0.23 -%} {# [m] #}
-{%- set arm_height = 0.038 -%} {# [m] #}
-{%- set board_radius = 0.065 -%} {# [m] #}
-{%- set board_height = 0.002 -%} {# [m] #}
-{%- set holder_offset = 0.02 -%} {# [m] #}
-{%- set leg_offset_z = 0.098 -%} {# [m] #}
-{%- set leg_offset_r = 0.0072 -%} {# [m] #}
-{%- set pixhawk_offset = 0.0075 -%} {# [m] #}
-{%- set use_battery_mount = True -%} {# [bool] #}
-
-{#- Motor constants -#}
-{%- set rotor_velocity_slowdown_sim = 0.0159236 -%}
-{%- set motor_constant = 10.04544 -%} {# [kg.m/s^2] #}
-{%- set moment_constant = 0.016 -%} {# [m] #}
-{%- set time_constant_up = 1.0 / 80.0 -%} {# [s] #}
-{%- set time_constant_down = 1.0 / 40.0 -%} {# [s] #}
-{%- set max_rot_velocity = 1 -%} {# [rad/s] #}
-{%- set rotor_drag_coefficient = 0.001 -%} {# orig 8.06428e-04 #}
-{%- set rolling_moment_coefficient = "1.0E-6" -%}
-
-{#- Inertia constants -#}
-{%- set inertia_body_radius = 0.20 -%} {# [m] #}
-{%- set inertia_body_height = 0.05 -%} {# [m] #}
-
-{#- Meshes -#}
-{#- Drone parts -#}
-{%- set central_board_mesh_top = "package://mrs_robots_description/meshes/dji/f450/dji_f450_central_top.dae" -%}
-{%- set central_board_mesh_bottom = "package://mrs_robots_description/meshes/dji/f450/dji_f450_central_bottom.dae" -%}
-{%- set arm_mesh_file = "package://mrs_robots_description/meshes/dji/f450/dji_f450_arm.dae" -%}
-{%- set leg_mesh_file = "package://mrs_robots_description/meshes/dji/f450/dji_f450_leg_170mm.dae"-%}
-{%- set rotor_mesh_file = "package://mrs_robots_description/meshes/dji/f450/dji_f450_rotor.dae" -%}
-{%- set prop_mesh_file = "package://mrs_robots_description/meshes/dji/f450/dji_f450_prop.dae"-%}
-{%- set pixhawk_mesh_file = "package://mrs_robots_description/meshes/sensors/pixhawk.dae" -%}
-{%- set nuc_mesh_file = "package://mrs_robots_description/meshes/dji/f450/dji_f450_nuc.dae" -%}
-
-{#- Holders #}
-{%- set battery_mount_mesh = "package://mrs_robots_description/meshes/dji/f450/dji_f450_battery_mount.dae" -%}
-{%- set bluefox_mount_mesh = "package://mrs_robots_description/meshes/dji/f450/dji_f450_bluefox_mount.dae" -%}
-{%- set ouster_mount_mesh = "package://mrs_robots_description/meshes/dji/f450/dji_f450_ouster_mount.dae" -%}
-{%- set garmin_mount_mesh = "package://mrs_robots_description/meshes/dji/f450/dji_f450_garmin_mount.dae" -%}
-{%- set rplidar_mount_mesh = "package://mrs_robots_description/meshes/dji/f450/dji_f450_rplidar_mount.dae" -%}
-{%- set realsense_front_mount_mesh = "package://mrs_robots_description/meshes/dji/f450/dji_f450_realsense_front_pitched_0_mount.dae" -%}
-{%- set realsense_front_pitched_mount_mesh = "package://mrs_robots_description/meshes/dji/f450/dji_f450_realsense_front_pitched_45_mount.dae" -%}
-{%- set realsense_front_down_mount_mesh = "package://mrs_robots_description/meshes/dji/f450/dji_f450_realsense_front_pitched_90_mount.dae" -%}
-{%- set uvdar_mount_mesh = "package://mrs_robots_description/meshes/dji/f450/dji_f450_uvdar_mount.dae" -%}
-
-{#- Scales -#}
-{%- set mesh_scale = "1 1 1" -%}
-{%- set mesh_scale_prop_ccw = "1 1 1" -%}
-{%- set mesh_scale_prop_cw = "-1 1 1" -%}
-{%- set mesh_scale_milimeters = "0.001 0.001 0.001" -%}
-
-{#- Inertias -#}
-{%- set body_ixx = mass * (3 * inertia_body_radius * inertia_body_radius + inertia_body_height * inertia_body_height) / 12 -%}
-{%- set body_ixy = 0 -%}
-{%- set body_ixz = 0 -%}
-{%- set body_iyy = mass * (3 * inertia_body_radius * inertia_body_radius + inertia_body_height * inertia_body_height) / 12 -%}
-{%- set body_iyz = 0 -%}
-{%- set body_izz = mass * (3 * inertia_body_radius * inertia_body_radius + inertia_body_height * inertia_body_height) / 12 -%}
-
-{%- set rotor_ixx = 0.0001 -%}
-{%- set rotor_ixy = 0 -%}
-{%- set rotor_ixz = 0 -%}
-{%- set rotor_iyy = 0.0001 -%}
-{%- set rotor_iyz = 0 -%}
-{%- set rotor_izz = 0.0001 -%}
-
-<!-- ================================================================== -->
-<!-- ||                    bare body definitions                     || -->
-<!-- ================================================================== -->
-
-<!-- Instantiate multirotor_base_macro {-->
-{{ components.multirotor_base_without_mesh_macro(namespace, mass, body_radius, body_height, body_ixx, body_ixy, body_ixz, body_iyy, body_iyz, body_izz) }}
-<!--}-->
-
-<!-- Body parts {-->
-
-<!-- Boards {-->
-{{ components.visual_macro(namespace, "lower_central_board", central_board_mesh_bottom, mesh_scale, "base_link", "DarkGrey", 0, 0, -body_height / 2, 0, 0, 0) }}
-
-{{ components.visual_macro(namespace, "upper_central_board", central_board_mesh_top, mesh_scale, "base_link", "DarkGrey", 0, 0, arm_height - body_height / 2, 0, 0, 0) }}
-<!--}-->
-
-<!-- Arms {-->
-{{ components.visual_macro(namespace, "front_right_arm", arm_mesh_file, mesh_scale, "base_link", "White", board_radius * components.sin45, -board_radius * components.sin45, arm_height - body_height / 2, 0, 0, components.rad2deg(-45)) }}
-
-{{ components.visual_macro(namespace, "front_left_arm", arm_mesh_file, mesh_scale, "base_link", "White", board_radius * components.sin45, board_radius * components.sin45, arm_height - body_height / 2, 0, 0, components.rad2deg(45)) }}
-
-{{ components.visual_macro(namespace, "back_right_arm", arm_mesh_file, mesh_scale, "base_link", "Red", -board_radius * components.sin45, -board_radius * components.sin45, arm_height - body_height / 2, 0, 0, components.rad2deg(-135)) }}
-
-{{ components.visual_macro(namespace, "back_left_arm", arm_mesh_file, mesh_scale, "base_link", "Red", -board_radius * components.sin45, board_radius * components.sin45, arm_height - body_height / 2, 0, 0, components.rad2deg(135)) }}
-<!--}-->
-
-<!-- intel nuc {-->
-{{ components.visual_macro(namespace, "NUC", nuc_mesh_file, mesh_scale_milimeters, "base_link", "DarkGrey", 0, 0, 0.023, 0, 0, 0) }}
-<!--}-->
-
-<!-- pixhawk {-->
-{{ components.visual_macro(namespace, "pixhawk", pixhawk_mesh_file, mesh_scale, "base_link", "DarkGrey", 0, 0, -body_height / 2 - pixhawk_offset, 0, 0, 0) }}
-<!--}-->
-<!--}-->
-
+  <!-- ================================================================== -->
+  <!-- ||                    bare body definitions                     || -->
+  <!-- ================================================================== -->
+  
+  <!-- Instantiate multirotor_base_macro {-->
+  {{ components.multirotor_base_without_mesh_macro(namespace, mass, body_radius, body_height, body_ixx, body_ixy, body_ixz, body_iyy, body_iyz, body_izz) }}
+  <!--}-->
+  
+  <!-- Body parts {-->
+  
+  <!-- Boards {-->
+  {{ components.visual_macro(namespace, "lower_central_board", central_board_mesh_bottom, mesh_scale, "DarkGrey", "base_link", 0, 0, -body_height / 2, 0, 0, 0) }}
+  
+  {{ components.visual_macro(namespace, "upper_central_board", central_board_mesh_top, mesh_scale, "DarkGrey", "base_link", 0, 0, arm_height - body_height / 2, 0, 0, 0) }}
+  <!--}-->
+  
+  <!-- Arms {-->
+  {{ components.visual_macro(namespace, "front_right_arm", arm_mesh_file, mesh_scale, "White", "base_link", board_radius * components.sin45, -board_radius * components.sin45, arm_height - body_height / 2, 0, 0, components.rad2deg(-45)) }}
+  
+  {{ components.visual_macro(namespace, "front_left_arm", arm_mesh_file, mesh_scale, "White", "base_link", board_radius * components.sin45, board_radius * components.sin45, arm_height - body_height / 2, 0, 0, components.rad2deg(45)) }}
+  
+  {{ components.visual_macro(namespace, "back_right_arm", arm_mesh_file, mesh_scale, "Red", "base_link", -board_radius * components.sin45, -board_radius * components.sin45, arm_height - body_height / 2, 0, 0, components.rad2deg(-135)) }}
+  
+  {{ components.visual_macro(namespace, "back_left_arm", arm_mesh_file, mesh_scale, "Red", "base_link", -board_radius * components.sin45, board_radius * components.sin45, arm_height - body_height / 2, 0, 0, components.rad2deg(135)) }}
+  <!--}-->
+  
+  <!-- intel nuc {-->
+  {{ components.visual_macro(namespace, "NUC", nuc_mesh_file, mesh_scale_milimeters, "DarkGrey", "base_link", 0, 0, 0.023, 0, 0, 0) }}
+  <!--}-->
+  
+  <!-- pixhawk {-->
+  {{ components.visual_macro(namespace, "pixhawk", pixhawk_mesh_file, mesh_scale, "DarkGrey", "base_link", 0, 0, -body_height / 2 - pixhawk_offset, 0, 0, 0) }}
+  <!--}-->
+  <!--}-->
+  
+  </model>
+</sdf>

@@ -78,15 +78,18 @@ limitations under the License.
 {%- macro visual_macro(robot_namespace, name, mesh_file, mesh_scale, color, parent, x, y, z, roll, pitch, yaw) -%}
 <joint name="{{ name }}_joint" type="fixed">
   <origin xyz="{{ x }} {{ y }} {{ z }}" rpy="{{ roll }} {{ pitch }} {{ yaw }}" />
-  <parent link="{{ parent }}" />
-  <child link="{{ name }}_link" />
+  <parent>{{ parent }}</parent>
+  <child>{{ name }}_link</child>
 </joint>
 
 <link name="{{ name }}_link">
-  <visual>
+  <visual name="{{ name }}_link_visual">
     <origin xyz="0 0 0" rpy="0 0 0" />
     <geometry>
-      <mesh filename="{{ mesh_file }}" scale="{{ mesh_scale }}" />
+      <mesh>
+        <filename>{{ mesh_file }}</filename>
+        <scale>{{ mesh_scale }}</scale>
+      </mesh>
     </geometry>
   </visual>
 </link>
@@ -100,12 +103,12 @@ limitations under the License.
 {%- macro colored_box(robot_namespace, name, size_x, size_y, size_z, color, parent, x, y, z, roll, pitch, yaw) -%}
 <joint name="{{ name }}_joint" type="fixed">
   <origin xyz="{{ x }} {{ y }} {{ z }}" rpy="{{ roll }} {{ pitch }} {{ yaw }}" />
-  <parent link="{{ parent }}" />
-  <child link="{{ name }}_link" />
+  <parent>{{ parent }}</parent>
+  <child>{{ name }}_link</child>
 </joint>
 
 <link name="{{ name }}_link">
-  <visual>
+  <visual name="{{ name }}_link_visual">
     <geometry>
       <box size="{{ size_x }} {{ size_y }} {{ size_z }}" />
     </geometry>
@@ -121,15 +124,18 @@ limitations under the License.
 {%- macro textured_visual_macro(robot_namespace, name, mesh_file, mesh_scale, parent, x, y, z, roll, pitch, yaw) -%}
 <joint name="{{ name }}_joint" type="fixed">
   <origin xyz="{{ x }} {{ y }} {{ z }}" rpy="{{ roll }} {{ pitch }} {{ yaw }}" />
-  <parent link="{{ parent }}" />
-  <child link="{{ name }}_link" />
+  <parent>{{ parent }}</parent>
+  <child>{{ name }}_link</child>
 </joint>
 
 <link name="{{ name }}_link">
-  <visual>
+  <visual name="{{ name }}_link_visual">
     <origin xyz="0 0 0" rpy="0 0 0" />
     <geometry>
-      <mesh filename="{{ mesh_file }}" scale="{{ mesh_scale }}" />
+      <mesh>
+        <filename>{{ mesh_file }}</filename>
+        <scale>{{ mesh_scale }}</scale>
+      </mesh>
     </geometry>
   </visual>
 </link>
@@ -140,15 +146,18 @@ limitations under the License.
 {%- macro visual_macro_with_collision(robot_namespace, name, mesh_file, mesh_scale, color, parent, x, y, z, roll, pitch, yaw, collision_height, collision_radius) -%}
 <joint name="{{ name }}_joint" type="fixed">
   <origin xyz="{{ x }} {{ y }} {{ z }}" rpy="{{ roll }} {{ pitch }} {{ yaw }}" />
-  <parent link="{{ parent }}" />
-  <child link="{{ name }}_link" />
+  <parent>{{ parent }}</parent>
+  <child>{{ name }}_link</child>
 </joint>
 <link name="{{ name }}_link">
-  <visual>
+  <visual name="{{ name }}_link_visual">
     <origin xyz="0 0 -0.015" rpy="0 0 0" />
     <geometry>
-      <mesh filename="{{ mesh_file }}" scale="{{ mesh_scale }}" />
-    </geometry>
+      <mesh>
+        <filename>{{ mesh_file }}</filename>
+        <scale>{{ mesh_scale }}</scale>
+    </mesh>
+  </geometry>
   </visual>
   <collision>
     <geometry>
@@ -164,17 +173,19 @@ limitations under the License.
 
 <!-- Macro for leg {-->
 {%- macro leg_macro(robot_namespace, name, mesh_file, mesh_scale, color, parent, x, y, z, roll, pitch, yaw, collision_height, collision_radius) -%}
-<joint name="{{ name }}_clip_joint" type="fixed">
+<joint name="{{ name }}_joint" type="fixed">
   <origin xyz="{{ x }} {{ y }} {{ z }}" rpy="{{ roll }} {{ pitch }} {{ yaw }}" />
-  <parent link="{{ parent }}" />
-  <child link="{{ name }}_clip_link" />
+  <parent>{{ parent }}</parent>
+  <child>{{ name }}_link</child>
 </joint>
 <link name="{{ name }}_clip_link">
-  <visual>
+  <visual name="{{ name }}_link_visual">
     <origin xyz="0 0 0" rpy="0 0 0" />
     <geometry>
-      <mesh filename="{{ mesh_file }}"
-        scale="{{ mesh_scale }}" />
+      <mesh>
+        <filename>{{ mesh_file }}</filename>
+        <scale>{{ mesh_scale }}</scale>
+      </mesh>
     </geometry>
   </visual>
   <collision>
@@ -207,17 +218,20 @@ limitations under the License.
 <joint name="rotor_{{ motor_number }}_joint" type="continuous">
   <origin xyz="{{ x }} {{ y }} {{ z }}" rpy="{{ roll }} {{ pitch }} {{ yaw }}" />
   <axis xyz="0 0 1" />
-  <parent link="{{ parent }}" />
-  <child link="rotor_{{ motor_number }}" />
+  <parent>{{ parent }}</parent>
+  <child>rotor_{{ motor_number }}</child>
 </joint>
 <link name="rotor_{{ motor_number }}">
   <inertial>
     <mass value="{{ mass_rotor }}" /> <!-- [kg] -->
     <inertia ixx="{{ ixx }}" ixy="{{ ixy }}" ixz="{{ ixz }}" iyy="{{ iyy }}" iyz="{{ iyz }}" izz="{{ izz }}" /> <!-- [kg.m^2] [kg.m^2] [kg.m^2] [kg.m^2] [kg.m^2] [kg.m^2] -->
   </inertial>
-  <visual>
+  <visual name="{{ name }}_link_visual">
     <geometry>
-      <mesh filename="{{ mesh_file }}" scale="{{ mesh_scale }}" />
+      <mesh>
+        <filename>{{ mesh_file }}</filename>
+        <scale>{{ mesh_scale }}</scale>
+      </mesh>
     </geometry>
   </visual>
   <collision>
@@ -256,17 +270,20 @@ limitations under the License.
 <joint name="rotor_{{ motor_number }}_joint" type="continuous">
   <origin xyz="{{ x }} {{ y }} {{ z }}" rpy="{{ roll }} {{ pitch }} {{ yaw }}" />
   <axis xyz="0 0 1" />
-  <parent link="{{ parent }}" />
-  <child link="rotor_{{ motor_number }}" />
+  <parent>{{ parent }}</parent>
+  <child>rotor_{{ motor_number }}</child>
 </joint>
 <link name="rotor_{{ motor_number }}">
   <inertial>
     <mass value="{{ mass_rotor }}" /> <!-- [kg] -->
     <inertia ixx="{{ ixx }}" ixy="{{ ixy }}" ixz="{{ ixz }}" iyy="{{ iyy }}" iyz="{{ iyz }}" izz="{{ izz }}" /> <!-- [kg.m^2] [kg.m^2] [kg.m^2] [kg.m^2] [kg.m^2] [kg.m^2] -->
   </inertial>
-  <visual>
+  <visual name="{{ name }}_link_visual">
     <geometry>
-      <mesh filename="{{ mesh_file }}" scale="{{ mesh_scale }}" />
+      <mesh>
+        <filename>{{ mesh_file }}</filename>
+        <scale>{{ mesh_scale }}</scale>
+      </mesh>
     </geometry>
   </visual>
   <collision>
@@ -305,8 +322,8 @@ limitations under the License.
 
 <joint name="base_joint" type="fixed">
   <origin xyz="0 0 0" rpy="0 0 0" />
-  <parent link="base_link" />
-  <child link="base_link_inertia" />
+  <parent>base_link</parent>
+  <child>base_link_inertia</child>
 </joint>
 
 <link name="base_link_inertia">
@@ -316,10 +333,13 @@ limitations under the License.
     <inertia ixx="{{ ixx }}" ixy="{{ ixy }}" ixz="{{ ixz }}" iyy="{{ iyy }}" iyz="{{ iyz }}" izz="{{ izz }}" /> <!-- [kg.m^2] [kg.m^2] [kg.m^2] [kg.m^2] [kg.m^2] [kg.m^2] -->
   </inertial>
 
-  <visual>
+  <visual name="{{ name }}_link_visual">
     <origin xyz="0 0 0" rpy="0 0 0" />
     <geometry>
-      <mesh filename="{{ mesh_file }}" scale="{{ mesh_scale }}" />
+      <mesh>
+        <filename>{{ mesh_file }}</filename>
+        <scale>{{ mesh_scale }}</scale>
+      </mesh>
     </geometry>
   </visual>
 
@@ -362,25 +382,38 @@ limitations under the License.
 {%- macro multirotor_base_without_mesh_macro(robot_namespace, mass, body_radius, body_height, ixx, ixy, ixz, iyy, iyz, izz) -%}
 <link name="base_link"></link>
 
-<joint name="base_joint" type="fixed">
-  <origin xyz="0 0 0" rpy="0 0 0" />
-  <parent link="base_link" />
-  <child link="base_link_inertia" />
-</joint>
-
 <link name="base_link_inertia">
   <inertial>
-    <mass value="{{ mass }}" />  <!-- [kg] -->
-    <origin xyz="0 0 0" />
-    <inertia ixx="{{ ixx }}" ixy="{{ ixy }}" ixz="{{ ixz }}" iyy="{{ iyy }}" iyz="{{ iyz }}" izz="{{ izz }}" /> <!-- [kg.m^2] [kg.m^2] [kg.m^2] [kg.m^2] [kg.m^2] [kg.m^2] -->
+    <mass>{{ mass }}</mass>  <!-- [kg] -->
+    <origin>
+      <x>0</x>
+      <y>0</y>
+      <z>0</z>
+    </origin>
+    <inertia>
+      <ixx>{{ ixx }}</ixx>
+      <ixy>{{ ixy }}</ixy>
+      <ixz>{{ ixz }}</ixz>
+      <iyy>{{ iyy }}</iyy>
+      <iyz>{{ iyz }}</iyz>
+      <izz>{{ izz }}</izz>
+    </inertia>
   </inertial>
-  <collision>
-    <origin xyz="0 0 0" rpy="0 0 0" />
+  <collision name="base_link_inertia_collision">
     <geometry>
-      <cylinder length="{{ body_height }}" radius="{{ body_radius }}" />
+      <cylinder>
+        <length>{{ body_height }}</length>
+        <radius>{{ body_radius }}</radius>
+      </cylinder>
     </geometry>
   </collision>
 </link>
+
+<joint name="base_joint" type="fixed">
+  <origin xyz="0 0 0" rpy="0 0 0" />
+  <parent>base_link</parent>
+  <child>base_link_inertia</child>
+</joint>
 
 <!-- attach multirotor_base_plugin to the base_link -->
 <gazebo>
