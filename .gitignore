@@ -1,3 +1,7 @@
+# jinja generated sdf files
+*.sdf
+*.last_generated
+
 # Python files
 *.pyc
 
