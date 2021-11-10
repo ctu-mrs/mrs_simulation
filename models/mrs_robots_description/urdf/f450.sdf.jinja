@@ -24,7 +24,7 @@
   {%- set leg_offset_z = 0.098 -%} {# [m] #}
   {%- set leg_offset_r = 0.0072 -%} {# [m] #}
   {%- set leg_height = 0.17 -%} {# [m] #}
-  {%- set pixhawk_offset = 0.0075 -%} {# [m] #}
+  {%- set pixhawk_offset = -0.0075 -%} {# [m] #}
   {%- set use_battery_mount = true -%} {# [bool] #}
   
   {#- Motor constants -#}
@@ -145,21 +145,101 @@
     
   {{ components.prop_macro(namespace, "ccw", rotor_velocity_slowdown_sim, motor_constant, moment_constant, "base_link", mass_prop, radius_prop, time_constant_up, time_constant_down, max_rot_velocity, 1, rotor_drag_coefficient, rolling_moment_coefficient, "White", prop_mesh_file, mesh_scale_prop_ccw, -arm_length * components.sin45, arm_length * components.sin45, arm_height + prop_offset_top - body_height/2, 0, 0, 0, prop_ixx, prop_ixy, prop_ixz, prop_iyy, prop_iyz, prop_izz) }}
     
-  {{ components.prop_macro(namespace, "cw", rotor_velocity_slowdown_sim, motor_constant, moment_constant, "base_link", mass_prop, radius_prop, time_constant_up, time_constant_down, max_rot_velocity, 2, rotor_drag_coefficient, rolling_moment_coefficient, "White", prop_mesh_file, mesh_scale_prop_ccw, arm_length * components.sin45, arm_length * components.sin45, arm_height + prop_offset_top - body_height/2, 0, 0, 0, prop_ixx, prop_ixy, prop_ixz, prop_iyy, prop_iyz, prop_izz) }}
+  {{ components.prop_macro(namespace, "cw", rotor_velocity_slowdown_sim, motor_constant, moment_constant, "base_link", mass_prop, radius_prop, time_constant_up, time_constant_down, max_rot_velocity, 2, rotor_drag_coefficient, rolling_moment_coefficient, "White", prop_mesh_file, mesh_scale_prop_cw, arm_length * components.sin45, arm_length * components.sin45, arm_height + prop_offset_top - body_height/2, 0, 0, 0, prop_ixx, prop_ixy, prop_ixz, prop_iyy, prop_iyz, prop_izz) }}
     
-  {{ components.prop_macro(namespace, "cw", rotor_velocity_slowdown_sim, motor_constant, moment_constant, "base_link", mass_prop, radius_prop, time_constant_up, time_constant_down, max_rot_velocity, 3, rotor_drag_coefficient, rolling_moment_coefficient, "White", prop_mesh_file, mesh_scale_prop_ccw, -arm_length * components.sin45, -arm_length * components.sin45, arm_height + prop_offset_top - body_height/2, 0, 0, 0, prop_ixx, prop_ixy, prop_ixz, prop_iyy, prop_iyz, prop_izz) }}
+  {{ components.prop_macro(namespace, "cw", rotor_velocity_slowdown_sim, motor_constant, moment_constant, "base_link", mass_prop, radius_prop, time_constant_up, time_constant_down, max_rot_velocity, 3, rotor_drag_coefficient, rolling_moment_coefficient, "White", prop_mesh_file, mesh_scale_prop_cw, -arm_length * components.sin45, -arm_length * components.sin45, arm_height + prop_offset_top - body_height/2, 0, 0, 0, prop_ixx, prop_ixy, prop_ixz, prop_iyy, prop_iyz, prop_izz) }}
   <!--}-->
 
   {%- if use_battery_mount -%}
   <!-- battery mount and battery {-->
     {{ components.visual_macro(namespace, "battery_mount", battery_mount_mesh, mesh_scale_milimeters, "DarkGrey", "base_link", 0, 0, -body_height / 2 - 0.027, 0, 0, 0) }}
     {{ components.colored_box(namespace, "battery", 0.13, 0.042, 0.044, "Grey", "base_link", 0, 0, -body_height / 2 - 0.025, 0, 0, 0) }}
-  {%- endif -%}
-
   <!--}-->
-
+  {%- endif -%}
     
   <!--}-->
-  
+
+  <!-- ================================================================== -->
+  <!-- ||                compulsory sensor definitions                 || -->
+  <!-- ================================================================== -->
+
+  <!-- Mavlink interface {-->
+  <!-- Instantiate mavlink telemetry interface. -->
+  {{ components.mavlink_interface_macro(namespace, mavlink_addr, mavlink_udp_port, mavlink_tcp_port, serial_enabled, serial_device, serial_baudrate, qgc_addr, qgc_udp_port, sdk_addr, sdk_udp_port, hil_mode, hil_state_level, 0, send_vision_estimation, serial_enabled, use_lockstep, use_tcp) }}
+  <!--}-->
+
+<!--  <!-1- GPS {-1->-->
+<!--  <xacro:gps_macro-->
+<!--    gps_name="gps0"-->
+<!--    pos_x="0.0"-->
+<!--    pos_y="0.0"-->
+<!--    pos_z="0.0"-->
+<!--    gps_noise="true"-->
+<!--    gps_xy_random_walk="2.0"-->
+<!--    gps_z_random_walk="4.0"-->
+<!--    gps_xy_noise_density="2.0e-4"-->
+<!--    gps_z_noise_density="4.0e-4"-->
+<!--    gps_vxy_noise_density="0.2"-->
+<!--    gps_vz_noise_density="0.4"-->
+<!--    update_rate="10"-->
+<!--    namespace="${namespace}"-->
+<!--    parent_link="base_link">-->
+<!--  </xacro:gps_macro>-->
+<!--  <!-1-}-1->-->
+
+<!--  <!-1- Magnetometer {-1->-->
+<!--  <xacro:magnetometer_plugin_macro-->
+<!--    namespace="${namespace}"-->
+<!--    pub_rate="100"-->
+<!--    noise_density="0.0004"-->
+<!--    random_walk="0.0000064"-->
+<!--    bias_correlation_time="600"-->
+<!--    mag_topic="/mag"-->
+<!--    >-->
+<!--  </xacro:magnetometer_plugin_macro>-->
+<!--  <!-1-}-1->-->
+
+<!--   <!-1- Groundtruth {-1->-->
+<!--  <xacro:groundtruth_plugin_macro-->
+<!--    namespace="${namespace}"-->
+<!--    home_latitude="0.0"-->
+<!--    home_longitude="0.0"-->
+<!--    home_altitude="0.0"-->
+<!--    >-->
+<!--  </xacro:groundtruth_plugin_macro>-->
+<!--  <!-1-}-1->-->
+
+<!-- <!-1- Barometer {-1->-->
+<!--  <xacro:barometer_plugin_macro-->
+<!--  namespace="${namespace}"-->
+<!--  pub_rate="50"-->
+<!--  baro_topic="/baro"-->
+<!--  baro_drift_pa_per_sec="0"-->
+<!--  >-->
+<!--  </xacro:barometer_plugin_macro>-->
+<!--  <!-1-}-1->-->
+
+<!--  <!-1- IMU (ADIS16448) {-1->-->
+<!--  <xacro:imu_plugin_macro-->
+<!--    namespace="${namespace}"-->
+<!--    imu_suffix=""-->
+<!--    parent_link="base_link"-->
+<!--    imu_topic="/imu"-->
+<!--    mass_imu_sensor="0.015"-->
+<!--    gyroscope_noise_density="0.00018665"-->
+<!--    gyroscope_random_walk="0.000038785"-->
+<!--    gyroscope_bias_correlation_time="1000.0"-->
+<!--    gyroscope_turn_on_bias_sigma="0.0087"-->
+<!--    accelerometer_noise_density="0.00186"-->
+<!--    accelerometer_random_walk="0.006"-->
+<!--    accelerometer_bias_correlation_time="300.0"-->
+<!--    accelerometer_turn_on_bias_sigma="0.1960"-->
+<!--    >-->
+<!--  <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />-->
+<!--  <origin xyz="0 0 0" rpy="0 0 0" />-->
+<!--  </xacro:imu_plugin_macro>-->
+<!--  <!-1-}-1->-->
+
+
   </model>
 </sdf>
