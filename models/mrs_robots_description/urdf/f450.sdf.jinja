@@ -11,11 +11,11 @@
   
   {#-  Robot parameters and arguments -#}
   {%- set mass = 2.00 -%} {# [kg] #}
-  {%- set body_radius = 0.225 -%} {# [m] #}
-  {%- set body_height = 0.05 -%} {# [m] #}
-  {%- set mass_rotor = 0.005 -%} {# [kg] #}
-  {%- set radius_rotor = 0.118 -%} {# [m] #}
-  {%- set rotor_offset_top = 0.0235 -%} {# [m] #}
+  {%- set body_radius = 0.2 -%} {# [m] #}
+  {%- set body_height = 0.1 -%} {# [m] #}
+  {%- set mass_prop = 0.005 -%} {# [kg] #}
+  {%- set radius_prop = 0.118 -%} {# [m] #}
+  {%- set prop_offset_top = 0.0235 -%} {# [m] #}
   {%- set arm_length = 0.23 -%} {# [m] #}
   {%- set arm_height = 0.038 -%} {# [m] #}
   {%- set board_radius = 0.065 -%} {# [m] #}
@@ -25,7 +25,7 @@
   {%- set leg_offset_r = 0.0072 -%} {# [m] #}
   {%- set leg_height = 0.17 -%} {# [m] #}
   {%- set pixhawk_offset = 0.0075 -%} {# [m] #}
-  {%- set use_battery_mount = True -%} {# [bool] #}
+  {%- set use_battery_mount = true -%} {# [bool] #}
   
   {#- Motor constants -#}
   {%- set rotor_velocity_slowdown_sim = 0.0159236 -%}
@@ -39,7 +39,7 @@
   
   {#- Inertia constants -#}
   {%- set inertia_body_radius = 0.225 -%} {# [m] #}
-  {%- set inertia_body_height = 0.05 -%} {# [m] #}
+  {%- set inertia_body_height = 0.15 -%} {# [m] #}
   
   {#- Meshes -#}
   {#- Drone parts -#}
@@ -47,7 +47,7 @@
   {%- set central_board_mesh_bottom = "model://mrs_robots_description/meshes/dji/f450/dji_f450_central_bottom.dae" -%}
   {%- set arm_mesh_file = "model://mrs_robots_description/meshes/dji/f450/dji_f450_arm.dae" -%}
   {%- set leg_mesh_file = "model://mrs_robots_description/meshes/dji/f450/dji_f450_leg_170mm.dae"-%}
-  {%- set rotor_mesh_file = "model://mrs_robots_description/meshes/dji/f450/dji_f450_rotor.dae" -%}
+  {%- set motor_mesh_file = "model://mrs_robots_description/meshes/dji/f450/dji_f450_motor.dae" -%}
   {%- set prop_mesh_file = "model://mrs_robots_description/meshes/dji/f450/dji_f450_prop.dae"-%}
   {%- set pixhawk_mesh_file = "model://mrs_robots_description/meshes/sensors/pixhawk.dae" -%}
   {%- set nuc_mesh_file = "model://mrs_robots_description/meshes/dji/f450/dji_f450_nuc.dae" -%}
@@ -77,12 +77,12 @@
   {%- set body_iyz = 0 -%}
   {%- set body_izz = (mass * inertia_body_radius * inertia_body_radius) / 2 -%}
   
-  {%- set rotor_ixx = 0.0001 -%}
-  {%- set rotor_ixy = 0 -%}
-  {%- set rotor_ixz = 0 -%}
-  {%- set rotor_iyy = 0.0001 -%}
-  {%- set rotor_iyz = 0 -%}
-  {%- set rotor_izz = 0.0001 -%}
+  {%- set prop_ixx = 0.0001 -%}
+  {%- set prop_ixy = 0 -%}
+  {%- set prop_ixz = 0 -%}
+  {%- set prop_iyy = 0.0001 -%}
+  {%- set prop_iyz = 0 -%}
+  {%- set prop_izz = 0.0001 -%}
 
   <model name="{{ name }}">
 
@@ -91,7 +91,7 @@
   <!-- ================================================================== -->
   
   <!-- Instantiate multirotor_base_macro {-->
-  {{ components.multirotor_base_without_mesh_macro(namespace, mass, body_radius, body_height, body_ixx, body_ixy, body_ixz, body_iyy, body_iyz, body_izz) }}
+  {{ components.multirotor_base_without_mesh_macro(namespace, mass, body_radius, body_height, rotor_velocity_slowdown_sim, body_ixx, body_ixy, body_ixz, body_iyy, body_iyz, body_izz) }}
   <!--}-->
   
   <!-- Body parts {-->
@@ -129,7 +129,36 @@
     
   {{ components.leg_macro(namespace, "back_left_leg", leg_mesh_file, mesh_scale_milimeters, "Red", "base_link", -(arm_length - leg_offset_r) * components.sin45, (arm_length - leg_offset_r) * components.sin45, arm_height - body_height/2 - leg_offset_z, 0, 0, components.rad(-45), leg_height, leg_offset_r) }}
   <!--}-->
- 
+
+  <!-- motors {-->
+  {{ components.visual_macro(namespace, "front_right_motor", motor_mesh_file, mesh_scale, "Black", "base_link", arm_length * components.sin45, -arm_length * components.sin45, arm_height - body_height / 2, 0, 0, 0) }}
+    
+    {{ components.visual_macro(namespace, "front_left_motor", motor_mesh_file, mesh_scale, "Black", "base_link", arm_length * components.sin45, arm_length * components.sin45, arm_height - body_height / 2, 0, 0, 0) }}
+    
+    {{ components.visual_macro(namespace, "back_right_motor", motor_mesh_file, mesh_scale, "Black", "base_link", -arm_length * components.sin45, -arm_length * components.sin45, arm_height - body_height / 2, 0, 0, 0) }}
+    
+    {{ components.visual_macro(namespace, "back_left_motor", motor_mesh_file, mesh_scale, "Black", "base_link", -arm_length * components.sin45, arm_length * components.sin45, arm_height - body_height / 2, 0, 0, 0) }}
+  <!--}-->
+
+  <!-- propellers {-->
+  {{ components.prop_macro(namespace, "ccw", rotor_velocity_slowdown_sim, motor_constant, moment_constant, "base_link", mass_prop, radius_prop, time_constant_up, time_constant_down, max_rot_velocity, 0, rotor_drag_coefficient, rolling_moment_coefficient, "White", prop_mesh_file, mesh_scale_prop_ccw, arm_length * components.sin45, -arm_length * components.sin45, arm_height + prop_offset_top - body_height/2, 0, 0, 0, prop_ixx, prop_ixy, prop_ixz, prop_iyy, prop_iyz, prop_izz) }}
+    
+  {{ components.prop_macro(namespace, "ccw", rotor_velocity_slowdown_sim, motor_constant, moment_constant, "base_link", mass_prop, radius_prop, time_constant_up, time_constant_down, max_rot_velocity, 1, rotor_drag_coefficient, rolling_moment_coefficient, "White", prop_mesh_file, mesh_scale_prop_ccw, -arm_length * components.sin45, arm_length * components.sin45, arm_height + prop_offset_top - body_height/2, 0, 0, 0, prop_ixx, prop_ixy, prop_ixz, prop_iyy, prop_iyz, prop_izz) }}
+    
+  {{ components.prop_macro(namespace, "cw", rotor_velocity_slowdown_sim, motor_constant, moment_constant, "base_link", mass_prop, radius_prop, time_constant_up, time_constant_down, max_rot_velocity, 2, rotor_drag_coefficient, rolling_moment_coefficient, "White", prop_mesh_file, mesh_scale_prop_ccw, arm_length * components.sin45, arm_length * components.sin45, arm_height + prop_offset_top - body_height/2, 0, 0, 0, prop_ixx, prop_ixy, prop_ixz, prop_iyy, prop_iyz, prop_izz) }}
+    
+  {{ components.prop_macro(namespace, "cw", rotor_velocity_slowdown_sim, motor_constant, moment_constant, "base_link", mass_prop, radius_prop, time_constant_up, time_constant_down, max_rot_velocity, 3, rotor_drag_coefficient, rolling_moment_coefficient, "White", prop_mesh_file, mesh_scale_prop_ccw, -arm_length * components.sin45, -arm_length * components.sin45, arm_height + prop_offset_top - body_height/2, 0, 0, 0, prop_ixx, prop_ixy, prop_ixz, prop_iyy, prop_iyz, prop_izz) }}
+  <!--}-->
+
+  {%- if use_battery_mount -%}
+  <!-- battery mount and battery {-->
+    {{ components.visual_macro(namespace, "battery_mount", battery_mount_mesh, mesh_scale_milimeters, "DarkGrey", "base_link", 0, 0, -body_height / 2 - 0.027, 0, 0, 0) }}
+    {{ components.colored_box(namespace, "battery", 0.13, 0.042, 0.044, "Grey", "base_link", 0, 0, -body_height / 2 - 0.025, 0, 0, 0) }}
+  {%- endif -%}
+
+  <!--}-->
+
+    
   <!--}-->
   
   </model>
