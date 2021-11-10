@@ -74,90 +74,134 @@ limitations under the License.
 
 <!-- {-->
 
-<!-- Macro for visualization of mesh {-->
-{%- macro visual_macro(robot_namespace, name, mesh_file, mesh_scale, color, parent, x, y, z, roll, pitch, yaw) -%}
-<joint name="{{ name }}_joint" type="fixed">
-  <origin xyz="{{ x }} {{ y }} {{ z }}" rpy="{{ roll }} {{ pitch }} {{ yaw }}" />
-  <parent>{{ parent }}</parent>
-  <child>{{ name }}_link</child>
-</joint>
+<!-- Origin macro {-->
+{%- macro pose_macro(x, y, z, roll, pitch, yaw) -%}
+<pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
+{%- endmacro -%}
+<!--}-->
 
-<link name="{{ name }}_link">
-  <visual name="{{ name }}_link_visual">
-    <origin xyz="0 0 0" rpy="0 0 0" />
-    <geometry>
-      <mesh>
-        <filename>{{ mesh_file }}</filename>
-        <scale>{{ mesh_scale }}</scale>
-      </mesh>
-    </geometry>
-  </visual>
-</link>
-<gazebo reference="{{ name }}_link">
-  <material>Gazebo/{{ color }}</material>
-</gazebo>
+<!-- Inertia macro {-->
+{%- macro inertia_macro(ixx, ixy, ixz, iyy, iyz, izz) -%}
+<inertia>
+  <ixx>{{ ixx }}</ixx>
+  <ixy>{{ ixy }}</ixy>
+  <ixz>{{ ixz }}</ixz>
+  <iyy>{{ iyy }}</iyy>
+  <iyz>{{ iyz }}</iyz>
+  <izz>{{ izz }}</izz>
+</inertia>
+{%- endmacro -%}
+<!--}-->
+
+<!-- Cylinder inertia {-->
+{%- macro cylinder_inertia(m, r, h) -%}
+<inertia>
+  <ixx>{{ m * ( 3 * r * r + h * h ) / 12 }}</ixx>
+  <ixy>0</ixy>
+  <ixz>0</ixz>
+  <iyy>{{ m * ( 3 * r * r + h * h ) / 12 }}</iyy>
+  <iyz>0</iyz>
+  <izz>{{ m * r * r / 2 }}</izz>
+</inertia>
 {%- endmacro -%}
 <!--}-->
 
 <!-- Macro for visualization of colored box {-->
 {%- macro colored_box(robot_namespace, name, size_x, size_y, size_z, color, parent, x, y, z, roll, pitch, yaw) -%}
+<link name="{{ name }}_link">
+  {{ pose_macro(x, y, z, roll, pitch, yaw) }}
+  <visual name="{{ name }}_link_visual">
+    <geometry>
+      <box>
+        <size>{{ size_x }} {{ size_y }} {{ size_z }}</size>
+      </box>
+    </geometry>
+    <material>
+      <script>
+        <name>Gazebo/{{ color }}</name>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+      </script>
+    </material>
+  </visual>
+</link>
+
 <joint name="{{ name }}_joint" type="fixed">
-  <origin xyz="{{ x }} {{ y }} {{ z }}" rpy="{{ roll }} {{ pitch }} {{ yaw }}" />
   <parent>{{ parent }}</parent>
   <child>{{ name }}_link</child>
 </joint>
+{%- endmacro -%}
+<!--}-->
 
+<!-- Macro for visualization of mesh {-->
+{%- macro visual_macro(robot_namespace, name, mesh_file, mesh_scale, color, parent, x, y, z, roll, pitch, yaw) -%}
 <link name="{{ name }}_link">
+  <inertial>
+    <mass>0.001</mass>  <!-- [kg] -->
+    {{ inertia_macro(0.001,0,0,0.001,0,0.001) }}
+  </inertial>
+  {{ pose_macro(x, y, z, roll, pitch, yaw) }}
   <visual name="{{ name }}_link_visual">
     <geometry>
-      <box size="{{ size_x }} {{ size_y }} {{ size_z }}" />
+      <mesh>
+        <uri>{{ mesh_file }}</uri>
+        <scale>{{ mesh_scale }}</scale>
+      </mesh>
     </geometry>
+    <material>
+      <script>
+        <name>Gazebo/{{ color }}</name>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+      </script>
+    </material>
   </visual>
 </link>
-<gazebo reference="{{ name }}_link">
-  <material>Gazebo/{{ color }}</material>
-</gazebo>
+
+<joint name="{{ name }}_joint" type="fixed">
+  <parent>{{ parent }}</parent>
+  <child>{{ name }}_link</child>
+</joint>
 {%- endmacro -%}
 <!--}-->
 
 <!-- Macro for visualization of textured mesh {-->
 {%- macro textured_visual_macro(robot_namespace, name, mesh_file, mesh_scale, parent, x, y, z, roll, pitch, yaw) -%}
-<joint name="{{ name }}_joint" type="fixed">
-  <origin xyz="{{ x }} {{ y }} {{ z }}" rpy="{{ roll }} {{ pitch }} {{ yaw }}" />
-  <parent>{{ parent }}</parent>
-  <child>{{ name }}_link</child>
-</joint>
-
 <link name="{{ name }}_link">
+  {{ pose_macro(x, y, z, roll, pitch, yaw) }}
   <visual name="{{ name }}_link_visual">
-    <origin xyz="0 0 0" rpy="0 0 0" />
     <geometry>
       <mesh>
-        <filename>{{ mesh_file }}</filename>
+        <uri>{{ mesh_file }}</uri>
         <scale>{{ mesh_scale }}</scale>
       </mesh>
     </geometry>
   </visual>
 </link>
+
+<joint name="{{ name }}_joint" type="fixed">
+  <parent>{{ parent }}</parent>
+  <child>{{ name }}_link</child>
+</joint>
 {%- endmacro -%}
 <!--}-->
 
 <!-- Macro for visualization of mesh with collision {-->
 {%- macro visual_macro_with_collision(robot_namespace, name, mesh_file, mesh_scale, color, parent, x, y, z, roll, pitch, yaw, collision_height, collision_radius) -%}
-<joint name="{{ name }}_joint" type="fixed">
-  <origin xyz="{{ x }} {{ y }} {{ z }}" rpy="{{ roll }} {{ pitch }} {{ yaw }}" />
-  <parent>{{ parent }}</parent>
-  <child>{{ name }}_link</child>
-</joint>
 <link name="{{ name }}_link">
+  {{ pose_macro(x, y, z, roll, pitch, yaw) }}
   <visual name="{{ name }}_link_visual">
-    <origin xyz="0 0 -0.015" rpy="0 0 0" />
+    {{ pose_macro(0, 0, -collision_height/2, 0, 0, 0) }}
     <geometry>
       <mesh>
-        <filename>{{ mesh_file }}</filename>
+        <uri>{{ mesh_file }}</uri>
         <scale>{{ mesh_scale }}</scale>
-    </mesh>
-  </geometry>
+      </mesh>
+    </geometry>
+    <material>
+      <script>
+        <name>Gazebo/{{ color }}</name>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+      </script>
+    </material>
   </visual>
   <collision>
     <geometry>
@@ -165,38 +209,36 @@ limitations under the License.
     </geometry>
   </collision>
 </link>
-<gazebo reference="{{ name }}_link">
-  <material>Gazebo/{{ color }}</material>
-</gazebo>
+
+<joint name="{{ name }}_joint" type="fixed">
+  <parent>{{ parent }}</parent>
+  <child>{{ name }}_link</child>
+</joint>
 {%- endmacro -%}
 <!--}-->
 
 <!-- Macro for leg {-->
 {%- macro leg_macro(robot_namespace, name, mesh_file, mesh_scale, color, parent, x, y, z, roll, pitch, yaw, collision_height, collision_radius) -%}
-<joint name="{{ name }}_joint" type="fixed">
-  <origin xyz="{{ x }} {{ y }} {{ z }}" rpy="{{ roll }} {{ pitch }} {{ yaw }}" />
-  <parent>{{ parent }}</parent>
-  <child>{{ name }}_link</child>
-</joint>
 <link name="{{ name }}_clip_link">
+  {{ pose_macro(x, y, z, roll, pitch, yaw) }}
   <visual name="{{ name }}_link_visual">
-    <origin xyz="0 0 0" rpy="0 0 0" />
     <geometry>
       <mesh>
-        <filename>{{ mesh_file }}</filename>
+        <uri>{{ mesh_file }}</uri>
         <scale>{{ mesh_scale }}</scale>
       </mesh>
     </geometry>
+    <material>
+      <script>
+        <name>Gazebo/{{ color }}</name>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+      </script>
+    </material>
   </visual>
   <collision>
     <geometry>
       <cylinder length="{{ collision_height }}" radius="{{ collision_radius }}" />
     </geometry>
-  </collision>
-</link>
-<gazebo reference="{{ name }}_clip_link">
-  <material>Gazebo/{{ color }}</material>
-  <collision name='{{ name }}_clip_link_collision'>
     <surface>
       <contact>
         <ode>
@@ -204,35 +246,38 @@ limitations under the License.
           <max_vel>0.0</max_vel>
         </ode>
       </contact>
-      <friction>
-        <ode/>
-      </friction>
     </surface>
   </collision>
-</gazebo>
+</link>
+
+<joint name="{{ name }}_joint" type="fixed">
+  <parent>{{ parent }}</parent>
+  <child>{{ name }}_link</child>
+</joint>
 {%- endmacro -%}
 <!--}-->
 
 <!-- Macro for rotor {-->
 {%- macro vertical_rotor(robot_namespace, suffix, direction, motor_constant, moment_constant, parent, mass_rotor, radius_rotor, time_constant_up, time_constant_down, max_rot_velocity, motor_number, rotor_drag_coefficient, rolling_moment_coefficient, color, mesh_file, mesh_scale, x, y, z, ixx, ixy, ixz, iyy, iyz, izz) -%}
-<joint name="rotor_{{ motor_number }}_joint" type="continuous">
-  <origin xyz="{{ x }} {{ y }} {{ z }}" rpy="{{ roll }} {{ pitch }} {{ yaw }}" />
-  <axis xyz="0 0 1" />
-  <parent>{{ parent }}</parent>
-  <child>rotor_{{ motor_number }}</child>
-</joint>
 <link name="rotor_{{ motor_number }}">
+  {{ pose_macro(x, y, z, roll, pitch, yaw) }}
   <inertial>
     <mass value="{{ mass_rotor }}" /> <!-- [kg] -->
-    <inertia ixx="{{ ixx }}" ixy="{{ ixy }}" ixz="{{ ixz }}" iyy="{{ iyy }}" iyz="{{ iyz }}" izz="{{ izz }}" /> <!-- [kg.m^2] [kg.m^2] [kg.m^2] [kg.m^2] [kg.m^2] [kg.m^2] -->
+    {{ inertia_macro(ixx, ixy, ixz, iyy, iyz, izz) }}
   </inertial>
   <visual name="{{ name }}_link_visual">
     <geometry>
       <mesh>
-        <filename>{{ mesh_file }}</filename>
+        <uri>{{ mesh_file }}</uri>
         <scale>{{ mesh_scale }}</scale>
       </mesh>
     </geometry>
+    <material>
+      <script>
+        <name>Gazebo/{{ color }}</name>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+      </script>
+    </material>
   </visual>
   <collision>
     <geometry>
@@ -240,6 +285,7 @@ limitations under the License.
     </geometry>
   </collision>
 </link>
+
 <gazebo>
   <plugin name="{{ suffix }}_motor_model" filename="libgazebo_motor_model.so">
     <robotNamespace>{{ robot_namespace }}</robotNamespace>
@@ -259,29 +305,27 @@ limitations under the License.
     <rotorVelocitySlowdownSim>{{ rotor_velocity_slowdown_sim }}</rotorVelocitySlowdownSim>
   </plugin>
 </gazebo>
-<gazebo reference="rotor_{{ motor_number }}">
-  <material>Gazebo/{{ color }}</material>
-</gazebo>
+
+<joint name="rotor_{{ motor_number }}_joint" type="continuous">
+  <axis xyz="0 0 1" />
+  <parent>{{ parent }}</parent>
+  <child>rotor_{{ motor_number }}</child>
+</joint>
 {%- endmacro -%}
 <!--}-->
 
 <!-- Macro for textured rotor {-->
 {%- macro textured_vertical_rotor(robot_namespace, suffix, direction, motor_constant, moment_constant, parent, mass_rotor, radius_rotor, time_constant_up, time_constant_down, max_rot_velocity, motor_number, rotor_drag_coefficient, rolling_moment_coefficient, mesh_file, mesh_scale, x, y, z, roll, pitch, yaw, ixx, ixy, ixz, iyy, iyz, izz) -%}
-<joint name="rotor_{{ motor_number }}_joint" type="continuous">
-  <origin xyz="{{ x }} {{ y }} {{ z }}" rpy="{{ roll }} {{ pitch }} {{ yaw }}" />
-  <axis xyz="0 0 1" />
-  <parent>{{ parent }}</parent>
-  <child>rotor_{{ motor_number }}</child>
-</joint>
 <link name="rotor_{{ motor_number }}">
+  {{ pose_macro(x, y, z, roll, pitch, yaw) }}
   <inertial>
     <mass value="{{ mass_rotor }}" /> <!-- [kg] -->
-    <inertia ixx="{{ ixx }}" ixy="{{ ixy }}" ixz="{{ ixz }}" iyy="{{ iyy }}" iyz="{{ iyz }}" izz="{{ izz }}" /> <!-- [kg.m^2] [kg.m^2] [kg.m^2] [kg.m^2] [kg.m^2] [kg.m^2] -->
+    {{ inertia_macro(ixx, ixy, ixz, iyy, iyz, izz) }}
   </inertial>
   <visual name="{{ name }}_link_visual">
     <geometry>
       <mesh>
-        <filename>{{ mesh_file }}</filename>
+        <uri>{{ mesh_file }}</uri>
         <scale>{{ mesh_scale }}</scale>
       </mesh>
     </geometry>
@@ -292,6 +336,13 @@ limitations under the License.
     </geometry>
   </collision>
 </link>
+
+<joint name="rotor_{{ motor_number }}_joint" type="continuous">
+  <axis xyz="0 0 1" />
+  <parent>{{ parent }}</parent>
+  <child>rotor_{{ motor_number }}</child>
+</joint>
+
 <gazebo>
   <plugin name="{{ suffix }}_motor_model" filename="libgazebo_motor_model.so">
     <robotNamespace>{{ robot_namespace }}</robotNamespace>
@@ -314,106 +365,30 @@ limitations under the License.
 {%- endmacro -%}
 <!--}-->
 
-<!-- Macro for main multirotor link {-->
-{%- macro multirotor_base_macro(robot_namespace, mass, body_width, body_height, mesh_file, mesh_scale, color, ixx, ixy, ixz, iyy, iyz, izz) -%}
-<link name="base_link">
-  <origin xyz="0 0 0" rpy="0 0 0" />
-</link>
-
-<joint name="base_joint" type="fixed">
-  <origin xyz="0 0 0" rpy="0 0 0" />
-  <parent>base_link</parent>
-  <child>base_link_inertia</child>
-</joint>
-
-<link name="base_link_inertia">
-  <inertial>
-    <mass value="{{ mass }}" />  <!-- [kg] -->
-    <origin xyz="0 0 0" />
-    <inertia ixx="{{ ixx }}" ixy="{{ ixy }}" ixz="{{ ixz }}" iyy="{{ iyy }}" iyz="{{ iyz }}" izz="{{ izz }}" /> <!-- [kg.m^2] [kg.m^2] [kg.m^2] [kg.m^2] [kg.m^2] [kg.m^2] -->
-  </inertial>
-
-  <visual name="{{ name }}_link_visual">
-    <origin xyz="0 0 0" rpy="0 0 0" />
-    <geometry>
-      <mesh>
-        <filename>{{ mesh_file }}</filename>
-        <scale>{{ mesh_scale }}</scale>
-      </mesh>
-    </geometry>
-  </visual>
-
-  <collision>
-    <origin xyz="0 0 0" rpy="0 0 0" />
-    <geometry>
-      <box size="{{ body_width }} {{ body_width }} {{ body_height }}" /> <!-- [m] [m] [m] -->
-    </geometry>
-  </collision>
-</link>
-
-<!-- attach multirotor_base_plugin to the base_link -->
-<gazebo>
-  <plugin filename="libgazebo_multirotor_base_plugin.so" name="rosbag">
-    <robotNamespace>{{ robot_namespace }}</robotNamespace>
-    <linkName>base_link</linkName>
-    <rotorVelocitySlowdownSim>{{ rotor_velocity_slowdown_sim }}</rotorVelocitySlowdownSim>
-  </plugin>
-</gazebo>
-<gazebo reference="base_link">
-  <material>Gazebo/{{ color }}</material>
-  <collision name='base_link_inertia_collision'>
-    <surface>
-      <contact>
-        <ode>
-          <min_depth>0.001</min_depth>
-          <max_vel>0.0</max_vel>
-        </ode>
-      </contact>
-      <friction>
-        <ode/>
-      </friction>
-    </surface>
-  </collision>
-</gazebo>
-{%- endmacro -%}
-<!--}-->
-
-<!-- Macro for main multirotor without mesh for simplier physics{-->
+<!-- Macro for main multirotor without mesh {-->
 {%- macro multirotor_base_without_mesh_macro(robot_namespace, mass, body_radius, body_height, ixx, ixy, ixz, iyy, iyz, izz) -%}
-<link name="base_link"></link>
-
-<link name="base_link_inertia">
+<link name="base_link">
   <inertial>
     <mass>{{ mass }}</mass>  <!-- [kg] -->
-    <origin>
-      <x>0</x>
-      <y>0</y>
-      <z>0</z>
-    </origin>
-    <inertia>
-      <ixx>{{ ixx }}</ixx>
-      <ixy>{{ ixy }}</ixy>
-      <ixz>{{ ixz }}</ixz>
-      <iyy>{{ iyy }}</iyy>
-      <iyz>{{ iyz }}</iyz>
-      <izz>{{ izz }}</izz>
-    </inertia>
+    {{ inertia_macro(ixx, ixy, ixz, iyy, iyz, izz) }}
   </inertial>
-  <collision name="base_link_inertia_collision">
+  <collision name="base_link_collision">
     <geometry>
       <cylinder>
         <length>{{ body_height }}</length>
         <radius>{{ body_radius }}</radius>
       </cylinder>
     </geometry>
+    <surface>
+      <contact>
+        <ode>
+          <min_depth>0.001</min_depth>
+          <max_vel>0.0</max_vel>
+        </ode>
+      </contact>
+    </surface>
   </collision>
 </link>
-
-<joint name="base_joint" type="fixed">
-  <origin xyz="0 0 0" rpy="0 0 0" />
-  <parent>base_link</parent>
-  <child>base_link_inertia</child>
-</joint>
 
 <!-- attach multirotor_base_plugin to the base_link -->
 <gazebo>
@@ -423,29 +398,9 @@ limitations under the License.
     <rotorVelocitySlowdownSim>{{ rotor_velocity_slowdown_sim }}</rotorVelocitySlowdownSim>
   </plugin>
 </gazebo>
-<gazebo reference="base_link">
-  <collision name='base_link_inertia_collision'>
-    <surface>
-      <contact>
-        <ode>
-          <min_depth>0.001</min_depth>
-          <max_vel>0.0</max_vel>
-        </ode>
-      </contact>
-      <friction>
-        <ode/>
-      </friction>
-    </surface>
-  </collision>
-</gazebo>
 {%- endmacro -%}
 <!--}-->
 
-<!-- Macro for calculating inertia of cylinder {-->
-{%- macro cylinder_inertia(m, r, h) -%}
-<inertia ixx="{{ m * ( 3 * r * r + h * h ) / 12 }}" ixy="0" ixz="0" iyy="{{ m * ( 3 * r * r + h * h ) / 12 }}" iyz="0" izz="{{ m * r * r / 2 }}"/>
-{%- endmacro -%}
-<!--}-->
 
 <!--}-->
 
