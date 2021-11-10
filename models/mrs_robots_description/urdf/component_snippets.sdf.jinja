@@ -33,7 +33,7 @@ limitations under the License.
 
 {%- set pi = 3.14159265359 -%}
 
-{%- macro rad2deg(deg) -%}
+{%- macro rad(deg) -%}
 {{ deg * pi / 180 }}
 {%- endmacro -%}
 
@@ -109,6 +109,10 @@ limitations under the License.
 <!-- Macro for visualization of colored box {-->
 {%- macro colored_box(robot_namespace, name, size_x, size_y, size_z, color, parent, x, y, z, roll, pitch, yaw) -%}
 <link name="{{ name }}_link">
+  <inertial>
+    <mass>0.001</mass>  <!-- [kg] -->
+    {{ inertia_macro(0.001,0,0,0.001,0,0.001) }}
+  </inertial>
   {{ pose_macro(x, y, z, roll, pitch, yaw) }}
   <visual name="{{ name }}_link_visual">
     <geometry>
@@ -166,6 +170,10 @@ limitations under the License.
 <!-- Macro for visualization of textured mesh {-->
 {%- macro textured_visual_macro(robot_namespace, name, mesh_file, mesh_scale, parent, x, y, z, roll, pitch, yaw) -%}
 <link name="{{ name }}_link">
+  <inertial>
+    <mass>0.001</mass>  <!-- [kg] -->
+    {{ inertia_macro(0.001,0,0,0.001,0,0.001) }}
+  </inertial>
   {{ pose_macro(x, y, z, roll, pitch, yaw) }}
   <visual name="{{ name }}_link_visual">
     <geometry>
@@ -187,6 +195,10 @@ limitations under the License.
 <!-- Macro for visualization of mesh with collision {-->
 {%- macro visual_macro_with_collision(robot_namespace, name, mesh_file, mesh_scale, color, parent, x, y, z, roll, pitch, yaw, collision_height, collision_radius) -%}
 <link name="{{ name }}_link">
+  <inertial>
+    <mass>0.001</mass>  <!-- [kg] -->
+    {{ inertia_macro(0.001,0,0,0.001,0,0.001) }}
+  </inertial>
   {{ pose_macro(x, y, z, roll, pitch, yaw) }}
   <visual name="{{ name }}_link_visual">
     {{ pose_macro(0, 0, -collision_height/2, 0, 0, 0) }}
@@ -219,7 +231,11 @@ limitations under the License.
 
 <!-- Macro for leg {-->
 {%- macro leg_macro(robot_namespace, name, mesh_file, mesh_scale, color, parent, x, y, z, roll, pitch, yaw, collision_height, collision_radius) -%}
-<link name="{{ name }}_clip_link">
+<link name="{{ name }}_link">
+  <inertial>
+    <mass>0.05</mass>  <!-- [kg] -->
+    {{ inertia_macro(0.01,0,0,0.01,0,0.01) }}
+  </inertial>
   {{ pose_macro(x, y, z, roll, pitch, yaw) }}
   <visual name="{{ name }}_link_visual">
     <geometry>
@@ -235,9 +251,13 @@ limitations under the License.
       </script>
     </material>
   </visual>
-  <collision>
+  <collision name="{{ name }}_link_collision">
+    {{ pose_macro(0.005, 0, 0, 0, 0, 0) }}
     <geometry>
-      <cylinder length="{{ collision_height }}" radius="{{ collision_radius }}" />
+      <cylinder>
+        <length>{{ collision_height }}</length>
+        <radius>{{ collision_radius }}</radius>
+      </cylinder>
     </geometry>
     <surface>
       <contact>
@@ -400,7 +420,6 @@ limitations under the License.
 </gazebo>
 {%- endmacro -%}
 <!--}-->
-
 
 <!--}-->
 

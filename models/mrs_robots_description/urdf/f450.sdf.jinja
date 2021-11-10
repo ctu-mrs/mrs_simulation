@@ -23,6 +23,7 @@
   {%- set holder_offset = 0.02 -%} {# [m] #}
   {%- set leg_offset_z = 0.098 -%} {# [m] #}
   {%- set leg_offset_r = 0.0072 -%} {# [m] #}
+  {%- set leg_height = 0.17 -%} {# [m] #}
   {%- set pixhawk_offset = 0.0075 -%} {# [m] #}
   {%- set use_battery_mount = True -%} {# [bool] #}
   
@@ -102,15 +103,32 @@
   <!--}-->
     
   <!-- Arms {-->
-  {{ components.visual_macro(namespace, "front_right_arm", arm_mesh_file, mesh_scale, "White", "base_link", board_radius * components.sin45, -board_radius * components.sin45, arm_height - body_height / 2, 0, 0, components.rad2deg(-45)) }}
+  {{ components.visual_macro(namespace, "front_right_arm", arm_mesh_file, mesh_scale, "White", "base_link", board_radius * components.sin45, -board_radius * components.sin45, arm_height - body_height / 2, 0, 0, components.rad(-45)) }}
   
-  {{ components.visual_macro(namespace, "front_left_arm", arm_mesh_file, mesh_scale, "White", "base_link", board_radius * components.sin45, board_radius * components.sin45, arm_height - body_height / 2, 0, 0, components.rad2deg(45)) }}
+  {{ components.visual_macro(namespace, "front_left_arm", arm_mesh_file, mesh_scale, "White", "base_link", board_radius * components.sin45, board_radius * components.sin45, arm_height - body_height / 2, 0, 0, components.rad(45)) }}
   
-  {{ components.visual_macro(namespace, "back_right_arm", arm_mesh_file, mesh_scale, "Red", "base_link", -board_radius * components.sin45, -board_radius * components.sin45, arm_height - body_height / 2, 0, 0, components.rad2deg(-135)) }}
+  {{ components.visual_macro(namespace, "back_right_arm", arm_mesh_file, mesh_scale, "Red", "base_link", -board_radius * components.sin45, -board_radius * components.sin45, arm_height - body_height / 2, 0, 0, components.rad(-135)) }}
   
-  {{ components.visual_macro(namespace, "back_left_arm", arm_mesh_file, mesh_scale, "Red", "base_link", -board_radius * components.sin45, board_radius * components.sin45, arm_height - body_height / 2, 0, 0, components.rad2deg(135)) }}
+  {{ components.visual_macro(namespace, "back_left_arm", arm_mesh_file, mesh_scale, "Red", "base_link", -board_radius * components.sin45, board_radius * components.sin45, arm_height - body_height / 2, 0, 0, components.rad(135)) }}
+  <!--}-->
+
+  <!-- intel nuc {-->
+  {{ components.visual_macro(namespace, "NUC", nuc_mesh_file, mesh_scale_milimeters, "DarkGrey", "base_link", 0, 0, 0.023, 0, 0, 0) }}
   <!--}-->
   
+  <!-- pixhawk {-->
+  {{ components.visual_macro(namespace, "pixhawk", pixhawk_mesh_file, mesh_scale, "DarkGrey", "base_link", 0, 0, -body_height / 2 - pixhawk_offset, 0, 0, 0) }}
+  <!--}-->
+
+  <!-- legs {-->
+  {{ components.leg_macro(namespace, "front_right_leg", leg_mesh_file, mesh_scale_milimeters, "White", "base_link", (arm_length - leg_offset_r) * components.sin45, -(arm_length - leg_offset_r) * components.sin45, arm_height - body_height/2 - leg_offset_z, 0, 0, components.rad(135), leg_height, leg_offset_r) }}
+    
+  {{ components.leg_macro(namespace, "front_left_leg", leg_mesh_file, mesh_scale_milimeters, "White", "base_link", (arm_length - leg_offset_r) * components.sin45, (arm_length - leg_offset_r) * components.sin45, arm_height - body_height/2 - leg_offset_z, 0, 0, components.rad(-135), leg_height, leg_offset_r) }}
+    
+  {{ components.leg_macro(namespace, "back_right_leg", leg_mesh_file, mesh_scale_milimeters, "Red", "base_link", -(arm_length - leg_offset_r) * components.sin45, -(arm_length - leg_offset_r) * components.sin45, arm_height - body_height/2 - leg_offset_z, 0, 0, components.rad(45), leg_height, leg_offset_r) }}
+    
+  {{ components.leg_macro(namespace, "back_left_leg", leg_mesh_file, mesh_scale_milimeters, "Red", "base_link", -(arm_length - leg_offset_r) * components.sin45, (arm_length - leg_offset_r) * components.sin45, arm_height - body_height/2 - leg_offset_z, 0, 0, components.rad(-45), leg_height, leg_offset_r) }}
+  <!--}-->
  
   <!--}-->
   
