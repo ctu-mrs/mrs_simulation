@@ -33,7 +33,9 @@
       mavlink_tcp_port:=$(arg mavlink_tcp_port)
       model_config_file:=$(arg model_config_file)"/>
     <param name="robot_description" command="$(arg cmd)"/>
-    <node name="uav$(arg ID)_spawn" output="screen" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model uav$(arg ID) -package_to_model -x $(arg x) -y $(arg y) -z $(arg z) -R $(arg roll) -P $(arg pitch) -Y $(arg heading)"/>
+    <!-- <node name="uav$(arg ID)_spawn" output="screen" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model uav$(arg ID) -package_to_model -x $(arg x) -y $(arg y) -z $(arg z) -R $(arg roll) -P $(arg pitch) -Y $(arg heading)"/> -->
+    
+    <node name="uav$(arg ID)_spawn" output="screen" pkg="gazebo_ros" type="spawn_model" args="-sdf -file /home/mrs/mrs_workspace/src/simulation/.gitman/mrs_simulation/models/mrs_robots_description/urdf/f450.sdf -model uav$(arg ID) -x $(arg x) -y $(arg y) -z $(arg z) -R $(arg roll) -P $(arg pitch) -Y $(arg heading)"/>
 
   </group>
 </launch>
