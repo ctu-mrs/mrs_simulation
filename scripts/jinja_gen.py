@@ -30,6 +30,9 @@ if __name__ == "__main__":
     parser.add_argument('--serial_device', default="/dev/ttyACM0", help="Serial device for FMU")
     parser.add_argument('--serial_baudrate', default=921600, help="Baudrate of Serial device for FMU")
     parser.add_argument('--qgc_addr', default="INADDR_ANY", help="IP address for QGC")
+    parser.add_argument('--qgc_udp_port', default=14550, help="UDP port for QGC")
+    parser.add_argument('--sdk_addr', default="INADDR_ANY", help="IP address for MAVSDK")
+    parser.add_argument('--sdk_udp_port', default=14540, help="UDP port for MAVSDK")
     parser.add_argument('--hil_mode', default=0, help="Enable HIL mode for HITL simulation")
     parser.add_argument('--hil_state_level', default=0, help="HIL state level HITL simulation")
     parser.add_argument('--send_vision_estimation', default=0)
@@ -69,6 +72,9 @@ if __name__ == "__main__":
          'serial_device': args.serial_device, \
          'serial_baudrate': args.serial_baudrate, \
          'qgc_addr': args.qgc_addr, \
+         'qgc_udp_port': args.qgc_udp_port, \
+         'sdk_addr': args.sdk_addr, \
+         'sdk_udp_port': args.sdk_udp_port, \
          'hil_mode': args.hil_mode, \
          'hil_state_level': args.hil_state_level, \
          'send_vision_estimation': args.send_vision_estimation, \

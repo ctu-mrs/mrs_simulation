@@ -249,25 +249,23 @@ limitations under the License.
   </collision>
 </link>
 
-<gazebo>
-  <plugin name="prop_{{ motor_number }}_motor_model" filename="libgazebo_motor_model.so">
-    <robotNamespace>{{ robot_namespace }}</robotNamespace>
-    <jointName>prop_{{ motor_number }}_joint</jointName>
-    <linkName>prop_{{ motor_number }}_link</linkName>
-    <turningDirection>{{ direction }}</turningDirection>
-    <timeConstantUp>{{ time_constant_up }}</timeConstantUp>
-    <timeConstantDown>{{ time_constant_down }}</timeConstantDown>
-    <maxRotVelocity>{{ max_rot_velocity }}</maxRotVelocity>
-    <motorConstant>{{ motor_constant }}</motorConstant>
-    <momentConstant>{{ moment_constant }}</momentConstant>
-    <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
-    <motorNumber>{{ motor_number }}</motorNumber>
-    <rotorDragCoefficient>{{ rotor_drag_coefficient }}</rotorDragCoefficient>
-    <rollingMomentCoefficient>{{ rolling_moment_coefficient }}</rollingMomentCoefficient>
-    <motorSpeedPubTopic>/motor_speed/{{ motor_number }}</motorSpeedPubTopic>
-    <rotorVelocitySlowdownSim>{{ rotor_velocity_slowdown_sim }}</rotorVelocitySlowdownSim>
-  </plugin>
-</gazebo>
+<plugin name="prop_{{ motor_number }}_motor_model" filename="libgazebo_motor_model.so">
+  <robotNamespace>{{ robot_namespace }}</robotNamespace>
+  <jointName>prop_{{ motor_number }}_joint</jointName>
+  <linkName>prop_{{ motor_number }}_link</linkName>
+  <turningDirection>{{ direction }}</turningDirection>
+  <timeConstantUp>{{ time_constant_up }}</timeConstantUp>
+  <timeConstantDown>{{ time_constant_down }}</timeConstantDown>
+  <maxRotVelocity>{{ max_rot_velocity }}</maxRotVelocity>
+  <motorConstant>{{ motor_constant }}</motorConstant>
+  <momentConstant>{{ moment_constant }}</momentConstant>
+  <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
+  <motorNumber>{{ motor_number }}</motorNumber>
+  <rotorDragCoefficient>{{ rotor_drag_coefficient }}</rotorDragCoefficient>
+  <rollingMomentCoefficient>{{ rolling_moment_coefficient }}</rollingMomentCoefficient>
+  <motorSpeedPubTopic>/motor_speed/{{ motor_number }}</motorSpeedPubTopic>
+  <rotorVelocitySlowdownSim>{{ rotor_velocity_slowdown_sim }}</rotorVelocitySlowdownSim>
+</plugin>
 
 <joint name="prop_{{ motor_number }}_joint" type="revolute">
   <parent>{{ parent }}</parent>
@@ -309,13 +307,11 @@ limitations under the License.
   </collision>
 </link>
 
-<gazebo>
-  <plugin filename="libgazebo_multirotor_base_plugin.so" name="rosbag">
-    <robotNamespace>{{ robot_namespace }}</robotNamespace>
-    <linkName>base_link</linkName>
-    <rotorVelocitySlowdownSim>{{ rotor_velocity_slowdown_sim }}</rotorVelocitySlowdownSim>
-  </plugin>
-</gazebo>
+<plugin filename="libgazebo_multirotor_base_plugin.so" name="rosbag">
+  <robotNamespace>{{ robot_namespace }}</robotNamespace>
+  <linkName>base_link</linkName>
+  <rotorVelocitySlowdownSim>{{ rotor_velocity_slowdown_sim }}</rotorVelocitySlowdownSim>
+</plugin>
 {%- endmacro -%}
 <!--}-->
 
@@ -327,180 +323,170 @@ limitations under the License.
 
 <!-- Macro to add the gps_plugin {-->
 {%- macro gps_macro(gps_name, pos_x, pos_y, pos_z, namespace, gps_noise, gps_xy_random_walk, gps_z_random_walk, gps_xy_noise_density, gps_z_noise_density, update_rate, gps_vxy_noise_density, gps_vz_noise_density, parent_link) -%}
-<gazebo>
-  <link name="{{ gps_name }}_link">
-    <pose>{{ pos_x }} {{ pos_y }} {{ pos_z }} 0 0 0</pose>
-    <inertial>
-      <pose>0 0 0 0 0 0</pose>
-      <mass>0.01</mass>
-      <inertia>
-        <ixx>2.1733e-6</ixx>
-        <ixy>0</ixy>
-        <ixz>0</ixz>
-        <iyy>2.1733e-6</iyy>
-        <iyz>0</iyz>
-        <izz>1.8e-7</izz>
-      </inertia>
-    </inertial>
-    <sensor name="gps" type="gps">
-      <pose>0 0 0 0 0 0</pose>
-      <plugin name="gps_plugin" filename="libgazebo_gps_plugin.so">
-        <robotNamespace>{{ namespace }}</robotNamespace>
-        <gpsNoise>{{ gps_noise }}</gpsNoise>
-        <gpsXYRandomWalk>{{ gps_xy_random_walk }}</gpsXYRandomWalk>
-        <gpsZRandomWalk>{{ gps_z_random_walk }}</gpsZRandomWalk>
-        <gpsXYNoiseDensity>{{ gps_xy_noise_density }}</gpsXYNoiseDensity>
-        <gpsZNoiseDensity>{{ gps_z_noise_density }}</gpsZNoiseDensity>
-        <gpsVXYNoiseDensity>{{ gps_vxy_noise_density }}</gpsVXYNoiseDensity>
-        <gpsVZNoiseDensity>{{ gps_vz_noise_density }}</gpsVZNoiseDensity>
-        <update_rate>{{ update_rate }}</update_rate>
-        <topic>{{ gps_name }}</topic>
-      </plugin>
-    </sensor>
-  </link>
-  <joint name="{{ gps_name }}_joint" type="fixed">
-    <parent>{{ parent_link }}</parent>
-    <child>{{ gps_name }}_link</child>
-  </joint>
-</gazebo>
+<link name="{{ gps_name }}_link">
+  <pose>{{ pos_x }} {{ pos_y }} {{ pos_z }} 0 0 0</pose>
+  <inertial>
+    <pose>0 0 0 0 0 0</pose>
+    <mass>0.01</mass>
+    <inertia>
+      <ixx>2.1733e-6</ixx>
+      <ixy>0</ixy>
+      <ixz>0</ixz>
+      <iyy>2.1733e-6</iyy>
+      <iyz>0</iyz>
+      <izz>1.8e-7</izz>
+    </inertia>
+  </inertial>
+  <sensor name="gps" type="gps">
+    <pose>0 0 0 0 0 0</pose>
+    <plugin name="gps_plugin" filename="libgazebo_gps_plugin.so">
+      <robotNamespace>{{ namespace }}</robotNamespace>
+      <gpsNoise>{{ gps_noise }}</gpsNoise>
+      <gpsXYRandomWalk>{{ gps_xy_random_walk }}</gpsXYRandomWalk>
+      <gpsZRandomWalk>{{ gps_z_random_walk }}</gpsZRandomWalk>
+      <gpsXYNoiseDensity>{{ gps_xy_noise_density }}</gpsXYNoiseDensity>
+      <gpsZNoiseDensity>{{ gps_z_noise_density }}</gpsZNoiseDensity>
+      <gpsVXYNoiseDensity>{{ gps_vxy_noise_density }}</gpsVXYNoiseDensity>
+      <gpsVZNoiseDensity>{{ gps_vz_noise_density }}</gpsVZNoiseDensity>
+      <update_rate>{{ update_rate }}</update_rate>
+      <topic>{{ gps_name }}</topic>
+    </plugin>
+  </sensor>
+</link>
+<joint name="{{ gps_name }}_joint" type="fixed">
+  <parent>{{ parent_link }}</parent>
+  <child>{{ gps_name }}_link</child>
+</joint>
 {%- endmacro -%}
 <!--}-->
 
 <!-- Macro to add the magnetometer_plugin{-->
 {%- macro magnetometer_plugin_macro(namespace, pub_rate, noise_density, random_walk, bias_correlation_time, mag_topic) -%}
-<gazebo>
-  <plugin name="magnetometer_plugin" filename="libMRSGazeboMagnetometerPlugin.so">
-    <robotNamespace>{{ namespace }}</robotNamespace>
-    <pubRate>{{ pub_rate }}</pubRate>
-    <noiseDensity>{{ noise_density }}</noiseDensity>
-    <randomWalk>{{ random_walk }}</randomWalk>
-    <biasCorrelationTime>{{ bias_correlation_time }}</biasCorrelationTime>
-    <magTopic>{{ mag_topic }}</magTopic>
-  </plugin>
-</gazebo>
+<plugin name="magnetometer_plugin" filename="libMRSGazeboMagnetometerPlugin.so">
+  <robotNamespace>{{ namespace }}</robotNamespace>
+  <pubRate>{{ pub_rate }}</pubRate>
+  <noiseDensity>{{ noise_density }}</noiseDensity>
+  <randomWalk>{{ random_walk }}</randomWalk>
+  <biasCorrelationTime>{{ bias_correlation_time }}</biasCorrelationTime>
+  <magTopic>{{ mag_topic }}</magTopic>
+</plugin>
 {%- endmacro -%}
 <!--}-->
 
 <!-- Macro to add the groundtruth_plugin{-->
 {%- macro groundtruth_plugin_macro(namespace, home_latitude, home_longitude, home_altitude) -%}
-<gazebo>
-  <plugin name="groundtruth_plugin" filename="libgazebo_groundtruth_plugin.so">
-    <robotNamespace>{{ namespace }}</robotNamespace>
-    <homeLatitude>{{ home_latitude }}</homeLatitude>
-    <homeLongitude>{{ home_longitude }}</homeLongitude>
-    <homeAltitude>{{ home_altitude }}</homeAltitude>
-  </plugin>
-</gazebo>
+<plugin name="groundtruth_plugin" filename="libgazebo_groundtruth_plugin.so">
+  <robotNamespace>{{ namespace }}</robotNamespace>
+  <homeLatitude>{{ home_latitude }}</homeLatitude>
+  <homeLongitude>{{ home_longitude }}</homeLongitude>
+  <homeAltitude>{{ home_altitude }}</homeAltitude>
+</plugin>
 {%- endmacro -%}
 <!--}-->
 
 <!-- Macro to add the barometer_plugin{-->
 {%- macro barometer_plugin_macro(namespace, pub_rate, baro_topic, baro_drift_pa_per_sec) -%}
-<gazebo>
-  <plugin name="barometer_plugin" filename="libgazebo_barometer_plugin.so">
-    <robotNamespace>{{ namespace }}</robotNamespace>
-    <pubRate>{{ pub_rate }}</pubRate>
-    <baroTopic>{{ baro_topic }}</baroTopic>
-    <baroDriftPaPerSec>{{ baro_drift_pa_per_sec }}</baroDriftPaPerSec>
-  </plugin>
-</gazebo>
+<plugin name="barometer_plugin" filename="libgazebo_barometer_plugin.so">
+  <robotNamespace>{{ namespace }}</robotNamespace>
+  <pubRate>{{ pub_rate }}</pubRate>
+  <baroTopic>{{ baro_topic }}</baroTopic>
+  <baroDriftPaPerSec>{{ baro_drift_pa_per_sec }}</baroDriftPaPerSec>
+</plugin>
 {%- endmacro -%}
 <!--}-->
 
 <!-- Macro to add the mavlink_interface_plugin{-->
 {%- macro mavlink_interface_macro(namespace, mavlink_addr, mavlink_udp_port, mavlink_tcp_port, serial_enabled, serial_device, baudrate, qgc_addr, qgc_udp_port, sdk_addr, sdk_udp_port, hil_mode, hil_state_level, vehicle_is_tailsitter, send_vision_estimation, send_odometry, enable_lockstep, use_tcp) -%}
-<gazebo>
-  <plugin name="mavlink_interface" filename="libgazebo_mavlink_interface.so">
-    <robotNamespace>{{ namespace }}</robotNamespace>
-    <imuSubTopic>/imu</imuSubTopic>
-    <magSubTopic>/mag</magSubTopic>
-    <baroSubTopic>/baro</baroSubTopic>
-    <mavlink_addr>{{ mavlink_addr }}</mavlink_addr>
-    <mavlink_udp_port>{{ mavlink_udp_port }}</mavlink_udp_port>
-    <mavlink_tcp_port>{{ mavlink_tcp_port }}</mavlink_tcp_port>
-    <serialEnabled>{{ serial_enabled }}</serialEnabled>
-    <serialDevice>{{ serial_device }}</serialDevice>
-    <baudRate>{{ baudrate }}</baudRate>
-    <qgc_addr>{{ qgc_addr }}</qgc_addr>
-    <qgc_udp_port>{{ qgc_udp_port }}</qgc_udp_port>
-    <sdk_addr>{{ sdk_addr }}</sdk_addr>
-    <sdk_udp_port>{{ sdk_udp_port }}</sdk_udp_port>
-    <hil_mode>{{ hil_mode }}</hil_mode>
-    <hil_state_level>{{ hil_state_level }}</hil_state_level>
-    <vehicle_is_tailsitter>{{ vehicle_is_tailsitter }}</vehicle_is_tailsitter>
-    <send_vision_estimation>{{ send_vision_estimation }}</send_vision_estimation>
-    <send_odometry>{{ send_odometry }}</send_odometry>
-    <enable_lockstep>{{ enable_lockstep }}</enable_lockstep>
-    <use_tcp>{{ use_tcp }}</use_tcp>
-    <motorSpeedCommandPubTopic>/gazebo/command/motor_speed</motorSpeedCommandPubTopic>
-    <control_channels>
-      <channel name="rotor1">
-        <input_index>0</input_index>
-        <input_offset>0</input_offset>
-        <input_scaling>1</input_scaling>
-        <zero_position_disarmed>0</zero_position_disarmed>
-        <zero_position_armed>0.15</zero_position_armed>
-        <joint_control_type>velocity</joint_control_type>
-      </channel>
-      <channel name="rotor2">
-        <input_index>1</input_index>
-        <input_offset>0</input_offset>
-        <input_scaling>1</input_scaling>
-        <zero_position_disarmed>0</zero_position_disarmed>
-        <zero_position_armed>0.15</zero_position_armed>
-        <joint_control_type>velocity</joint_control_type>
-      </channel>
-      <channel name="rotor3">
-        <input_index>2</input_index>
-        <input_offset>0</input_offset>
-        <input_scaling>1</input_scaling>
-        <zero_position_disarmed>0</zero_position_disarmed>
-        <zero_position_armed>0.15</zero_position_armed>
-        <joint_control_type>velocity</joint_control_type>
-      </channel>
-      <channel name="rotor4">
-        <input_index>3</input_index>
-        <input_offset>0</input_offset>
-        <input_scaling>1</input_scaling>
-        <zero_position_disarmed>0</zero_position_disarmed>
-        <zero_position_armed>0.15</zero_position_armed>
-        <joint_control_type>velocity</joint_control_type>
-      </channel>
-      <channel name="rotor5">
-        <input_index>4</input_index>
-        <input_offset>0</input_offset>
-        <input_scaling>1</input_scaling>
-        <zero_position_disarmed>0</zero_position_disarmed>
-        <zero_position_armed>0.15</zero_position_armed>
-        <joint_control_type>velocity</joint_control_type>
-      </channel>
-      <channel name="rotor6">
-        <input_index>5</input_index>
-        <input_offset>0</input_offset>
-        <input_scaling>1</input_scaling>
-        <zero_position_disarmed>0</zero_position_disarmed>
-        <zero_position_armed>0.15</zero_position_armed>
-        <joint_control_type>velocity</joint_control_type>
-      </channel>
-      <channel name="rotor7">
-        <input_index>6</input_index>
-        <input_offset>0</input_offset>
-        <input_scaling>1</input_scaling>
-        <zero_position_disarmed>0</zero_position_disarmed>
-        <zero_position_armed>0.15</zero_position_armed>
-        <joint_control_type>velocity</joint_control_type>
-      </channel>
-      <channel name="rotor8">
-        <input_index>7</input_index>
-        <input_offset>0</input_offset>
-        <input_scaling>1</input_scaling>
-        <zero_position_disarmed>0</zero_position_disarmed>
-        <zero_position_armed>0.15</zero_position_armed>
-        <joint_control_type>velocity</joint_control_type>
-      </channel>
-    </control_channels>
-  </plugin>
-</gazebo>
+<plugin name="mavlink_interface" filename="libgazebo_mavlink_interface.so">
+  <robotNamespace>{{ namespace }}</robotNamespace>
+  <imuSubTopic>/imu</imuSubTopic>
+  <magSubTopic>/mag</magSubTopic>
+  <baroSubTopic>/baro</baroSubTopic>
+  <mavlink_addr>{{ mavlink_addr }}</mavlink_addr>
+  <mavlink_udp_port>{{ mavlink_udp_port }}</mavlink_udp_port>
+  <mavlink_tcp_port>{{ mavlink_tcp_port }}</mavlink_tcp_port>
+  <serialEnabled>{{ serial_enabled }}</serialEnabled>
+  <serialDevice>{{ serial_device }}</serialDevice>
+  <baudRate>{{ baudrate }}</baudRate>
+  <qgc_addr>{{ qgc_addr }}</qgc_addr>
+  <qgc_udp_port>{{ qgc_udp_port }}</qgc_udp_port>
+  <sdk_addr>{{ sdk_addr }}</sdk_addr>
+  <sdk_udp_port>{{ sdk_udp_port }}</sdk_udp_port>
+  <hil_mode>{{ hil_mode }}</hil_mode>
+  <hil_state_level>{{ hil_state_level }}</hil_state_level>
+  <vehicle_is_tailsitter>{{ vehicle_is_tailsitter }}</vehicle_is_tailsitter>
+  <send_vision_estimation>{{ send_vision_estimation }}</send_vision_estimation>
+  <send_odometry>{{ send_odometry }}</send_odometry>
+  <enable_lockstep>{{ enable_lockstep }}</enable_lockstep>
+  <use_tcp>{{ use_tcp }}</use_tcp>
+  <motorSpeedCommandPubTopic>/gazebo/command/motor_speed</motorSpeedCommandPubTopic>
+  <control_channels>
+    <channel name="rotor1">
+      <input_index>0</input_index>
+      <input_offset>0</input_offset>
+      <input_scaling>1</input_scaling>
+      <zero_position_disarmed>0</zero_position_disarmed>
+      <zero_position_armed>0.15</zero_position_armed>
+      <joint_control_type>velocity</joint_control_type>
+    </channel>
+    <channel name="rotor2">
+      <input_index>1</input_index>
+      <input_offset>0</input_offset>
+      <input_scaling>1</input_scaling>
+      <zero_position_disarmed>0</zero_position_disarmed>
+      <zero_position_armed>0.15</zero_position_armed>
+      <joint_control_type>velocity</joint_control_type>
+    </channel>
+    <channel name="rotor3">
+      <input_index>2</input_index>
+      <input_offset>0</input_offset>
+      <input_scaling>1</input_scaling>
+      <zero_position_disarmed>0</zero_position_disarmed>
+      <zero_position_armed>0.15</zero_position_armed>
+      <joint_control_type>velocity</joint_control_type>
+    </channel>
+    <channel name="rotor4">
+      <input_index>3</input_index>
+      <input_offset>0</input_offset>
+      <input_scaling>1</input_scaling>
+      <zero_position_disarmed>0</zero_position_disarmed>
+      <zero_position_armed>0.15</zero_position_armed>
+      <joint_control_type>velocity</joint_control_type>
+    </channel>
+    <channel name="rotor5">
+      <input_index>4</input_index>
+      <input_offset>0</input_offset>
+      <input_scaling>1</input_scaling>
+      <zero_position_disarmed>0</zero_position_disarmed>
+      <zero_position_armed>0.15</zero_position_armed>
+      <joint_control_type>velocity</joint_control_type>
+    </channel>
+    <channel name="rotor6">
+      <input_index>5</input_index>
+      <input_offset>0</input_offset>
+      <input_scaling>1</input_scaling>
+      <zero_position_disarmed>0</zero_position_disarmed>
+      <zero_position_armed>0.15</zero_position_armed>
+      <joint_control_type>velocity</joint_control_type>
+    </channel>
+    <channel name="rotor7">
+      <input_index>6</input_index>
+      <input_offset>0</input_offset>
+      <input_scaling>1</input_scaling>
+      <zero_position_disarmed>0</zero_position_disarmed>
+      <zero_position_armed>0.15</zero_position_armed>
+      <joint_control_type>velocity</joint_control_type>
+    </channel>
+    <channel name="rotor8">
+      <input_index>7</input_index>
+      <input_offset>0</input_offset>
+      <input_scaling>1</input_scaling>
+      <zero_position_disarmed>0</zero_position_disarmed>
+      <zero_position_armed>0.15</zero_position_armed>
+      <joint_control_type>velocity</joint_control_type>
+    </channel>
+  </control_channels>
+</plugin>
 {%- endmacro -%}
 <!--}-->
 
@@ -508,17 +494,17 @@ limitations under the License.
 <!-- Macro to add an IMU. -->
 {%- macro imu_plugin_macro(namespace, imu_suffix, parent_link, imu_topic, mass_imu_sensor, gyroscope_noise_density, gyroscope_random_walk, gyroscope_bias_correlation_time, gyroscope_turn_on_bias_sigma, accelerometer_noise_density, accelerometer_random_walk, accelerometer_bias_correlation_time, accelerometer_turn_on_bias_sigma, x, y, z, roll, pitch, yaw, ixx, ixy, ixz, iyy, iyz, izz) -%}
 <!-- IMU link -->
-<link name="{{ namespace  }} }}/imu{{ imu_suffix }}_link">
+<link name="imu{{ imu_suffix }}_link">
   <inertial>
     <mass>{{ mass_imu_sensor }}</mass>
     {{ inertia_macro(ixx, ixy, ixz, iyy, iyz, izz) }}
   </inertial>
 </link>
 <!-- IMU joint -->
-<joint name="{{ namespace }}/imu{{ imu_suffix }}_joint" type="revolute">
+<joint name="imu{{ imu_suffix }}_joint" type="revolute">
   {{ pose_macro(x, y, z, roll, pitch, yaw) }}
   <parent>{{ parent_link }}</parent>
-  <child>"{{ namespace }}/imu{{ imu_suffix }}_link"</child>
+  <child>imu{{ imu_suffix }}_link</child>
   <axis>
     <xyz>0 0 1</xyz>
     <limit>
@@ -530,23 +516,21 @@ limitations under the License.
     <use_parent_model_frame>1</use_parent_model_frame>
   </axis>
 </joint>
-<gazebo>
-  <plugin filename="libgazebo_imu_plugin.so" name="rotors_gazebo_imu{{ imu_suffix }}_plugin">
-  <!-- A good description of the IMU parameters can be found in the kalibr documentation:
-       https://github.com/ethz-asl/kalibr/wiki/IMU-Noise-Model-and-Intrinsics -->
-    <robotNamespace>{{ namespace }}</robotNamespace> <!-- (string, required): ros namespace in which the messages are published -->
-    <linkName>{{ namespace }}/imu{{ imu_suffix }}_link</linkName> <!-- (string, required): name of the body which holds the IMU sensor -->
-    <imuTopic>{{ imu_topic }}</imuTopic> <!-- (string): name of the sensor output topic and prefix of service names (defaults to imu) -->
-    <gyroscopeNoiseDensity>{{ gyroscope_noise_density }}</gyroscopeNoiseDensity> <!-- Gyroscope noise density (two-sided spectrum) [rad/s/sqrt(Hz)] -->
-    <gyroscopeRandomWalk>{{ gyroscope_random_walk }}</gyroscopeRandomWalk> <!-- Gyroscope bias random walk [rad/s/s/sqrt(Hz)] -->
-    <gyroscopeBiasCorrelationTime>{{ gyroscope_bias_correlation_time }}</gyroscopeBiasCorrelationTime> <!-- Gyroscope bias correlation time constant [s] -->
-    <gyroscopeTurnOnBiasSigma>{{ gyroscope_turn_on_bias_sigma }}</gyroscopeTurnOnBiasSigma> <!-- Gyroscope turn on bias standard deviation [rad/s] -->
-    <accelerometerNoiseDensity>{{ accelerometer_noise_density }}</accelerometerNoiseDensity> <!-- Accelerometer noise density (two-sided spectrum) [m/s^2/sqrt(Hz)] -->
-    <accelerometerRandomWalk>{{ accelerometer_random_walk }}</accelerometerRandomWalk> <!-- Accelerometer bias random walk. [m/s^2/s/sqrt(Hz)] -->
-    <accelerometerBiasCorrelationTime>{{ accelerometer_bias_correlation_time }}</accelerometerBiasCorrelationTime> <!-- Accelerometer bias correlation time constant [s] -->
-    <accelerometerTurnOnBiasSigma>{{ accelerometer_turn_on_bias_sigma }}</accelerometerTurnOnBiasSigma> <!-- Accelerometer turn on bias standard deviation [m/s^2] -->
-  </plugin>
-</gazebo>
+<plugin filename="libgazebo_imu_plugin.so" name="rotors_gazebo_imu{{ imu_suffix }}_plugin">
+<!-- A good description of the IMU parameters can be found in the kalibr documentation:
+     https://github.com/ethz-asl/kalibr/wiki/IMU-Noise-Model-and-Intrinsics -->
+  <robotNamespace>{{ namespace }}</robotNamespace> <!-- (string, required): ros namespace in which the messages are published -->
+  <linkName>imu{{ imu_suffix }}_link</linkName> <!-- (string, required): name of the body which holds the IMU sensor -->
+  <imuTopic>{{ imu_topic }}</imuTopic> <!-- (string): name of the sensor output topic and prefix of service names (defaults to imu) -->
+  <gyroscopeNoiseDensity>{{ gyroscope_noise_density }}</gyroscopeNoiseDensity> <!-- Gyroscope noise density (two-sided spectrum) [rad/s/sqrt(Hz)] -->
+  <gyroscopeRandomWalk>{{ gyroscope_random_walk }}</gyroscopeRandomWalk> <!-- Gyroscope bias random walk [rad/s/s/sqrt(Hz)] -->
+  <gyroscopeBiasCorrelationTime>{{ gyroscope_bias_correlation_time }}</gyroscopeBiasCorrelationTime> <!-- Gyroscope bias correlation time constant [s] -->
+  <gyroscopeTurnOnBiasSigma>{{ gyroscope_turn_on_bias_sigma }}</gyroscopeTurnOnBiasSigma> <!-- Gyroscope turn on bias standard deviation [rad/s] -->
+  <accelerometerNoiseDensity>{{ accelerometer_noise_density }}</accelerometerNoiseDensity> <!-- Accelerometer noise density (two-sided spectrum) [m/s^2/sqrt(Hz)] -->
+  <accelerometerRandomWalk>{{ accelerometer_random_walk }}</accelerometerRandomWalk> <!-- Accelerometer bias random walk. [m/s^2/s/sqrt(Hz)] -->
+  <accelerometerBiasCorrelationTime>{{ accelerometer_bias_correlation_time }}</accelerometerBiasCorrelationTime> <!-- Accelerometer bias correlation time constant [s] -->
+  <accelerometerTurnOnBiasSigma>{{ accelerometer_turn_on_bias_sigma }}</accelerometerTurnOnBiasSigma> <!-- Accelerometer turn on bias standard deviation [m/s^2] -->
+</plugin>
 {%- endmacro -%}
 <!--}-->
 
@@ -561,44 +545,40 @@ limitations under the License.
   <child>{{ namespace }}/{{ sensor_name }}_link</child>
 </joint>
 
-<gazebo reference="{{ namespace }}/{{ sensor_name }}_link">
-  <sensor name="{{ sensor_name }}" type="imu">
-    <always_on>true</always_on>
-    <update_rate>{{ update_rate }}</update_rate>
-    <visualize>true</visualize>
-    <topic>__default_topic__</topic>
-    <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
-      <topicName>{{ topic_name }}</topicName>
-      <bodyName>{{ namespace }}/{{ sensor_name }}_link</bodyName>
-      <updateRateHZ>{{ imu_rate }}</updateRateHZ>
-      <gaussianNoise>{{ imu_noise_mean }}</gaussianNoise>
-      <xyzOffset>0 0 0</xyzOffset>
-      <rpyOffset>0 0 0</rpyOffset>
-      <frameName>{{ parent_link }}</frameName>
-      <initialOrientationAsReference>false</initialOrientationAsReference>
-    </plugin>
-    <pose>0 0 0 0 0 0</pose>
-  </sensor>
-</gazebo>
+<sensor name="{{ sensor_name }}" type="imu">
+  <always_on>true</always_on>
+  <update_rate>{{ update_rate }}</update_rate>
+  <visualize>true</visualize>
+  <topic>__default_topic__</topic>
+  <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+    <topicName>{{ topic_name }}</topicName>
+    <bodyName>{{ namespace }}/{{ sensor_name }}_link</bodyName>
+    <updateRateHZ>{{ imu_rate }}</updateRateHZ>
+    <gaussianNoise>{{ imu_noise_mean }}</gaussianNoise>
+    <xyzOffset>0 0 0</xyzOffset>
+    <rpyOffset>0 0 0</rpyOffset>
+    <frameName>{{ parent_link }}</frameName>
+    <initialOrientationAsReference>false</initialOrientationAsReference>
+  </plugin>
+  <pose>0 0 0 0 0 0</pose>
+</sensor>
 {%- endmacro -%}
 <!--}-->
 
 <!-- Macro to add the wind_plugin{-->
 {%- macro wind_plugin_macro(namespace, xyz_offset, wind_direction, wind_force_mean, wind_gust_direction, wind_gust_duration, wind_gust_start, wind_gust_force_mean) -%}
-<gazebo>
-  <plugin filename="libgazebo_wind_plugin.so" name="wind_plugin">
-    <frameId>base_link</frameId>
-    <linkName>base_link</linkName>
-    <robotNamespace>{{ namespace }}</robotNamespace>
-    <xyzOffset>{{ xyz_offset }}</xyzOffset> <!-- [m] [m] [m] -->
-    <windDirection>{{ wind_direction }}</windDirection>
-    <windForceMean>{{ wind_force_mean }}</windForceMean> <!-- [N] -->
-    <windGustDirection>{{ wind_gust_direction }}</windGustDirection>
-    <windGustDuration>{{ wind_gust_duration }}</windGustDuration> <!-- [s] -->
-    <windGustStart>{{ wind_gust_start }}</windGustStart> <!-- [s] -->
-    <windGustForceMean>{{ wind_gust_force_mean }}</windGustForceMean> <!-- [N] -->
-  </plugin>
-</gazebo>
+<plugin filename="libgazebo_wind_plugin.so" name="wind_plugin">
+  <frameId>base_link</frameId>
+  <linkName>base_link</linkName>
+  <robotNamespace>{{ namespace }}</robotNamespace>
+  <xyzOffset>{{ xyz_offset }}</xyzOffset> <!-- [m] [m] [m] -->
+  <windDirection>{{ wind_direction }}</windDirection>
+  <windForceMean>{{ wind_force_mean }}</windForceMean> <!-- [N] -->
+  <windGustDirection>{{ wind_gust_direction }}</windGustDirection>
+  <windGustDuration>{{ wind_gust_duration }}</windGustDuration> <!-- [s] -->
+  <windGustStart>{{ wind_gust_start }}</windGustStart> <!-- [s] -->
+  <windGustForceMean>{{ wind_gust_force_mean }}</windGustForceMean> <!-- [N] -->
+</plugin>
 {%- endmacro -%}
 <!--}-->
 
@@ -627,18 +607,16 @@ limitations under the License.
     <use_parent_model_frame>1</use_parent_model_frame>
   </axis>
 </joint>
-<gazebo>
-  <plugin filename="libgazebo_ros_p3d.so" name="odometry_sensor{{ odometry_sensor_suffix }}">
-    <alwaysOn>true</alwaysOn>
-    <updateRate>{{ frame_rate }}</updateRate>
-    <bodyName>{{ namespace }}/odometry_sensor{{ odometry_sensor_suffix }}_link</bodyName>
-    <topicName>{{ topic_name }}</topicName>
-    <gaussianNoise>{{ noise }}</gaussianNoise>
-    <frameName>{{ frame_name }}</frameName>
-    <xyzOffset>{{ xyz_offset }}</xyzOffset>
-    <rpyOffset>{{ rpy_offset }}</rpyOffset>
-  </plugin>
-</gazebo>
+<plugin filename="libgazebo_ros_p3d.so" name="odometry_sensor{{ odometry_sensor_suffix }}">
+  <alwaysOn>true</alwaysOn>
+  <updateRate>{{ frame_rate }}</updateRate>
+  <bodyName>{{ namespace }}/odometry_sensor{{ odometry_sensor_suffix }}_link</bodyName>
+  <topicName>{{ topic_name }}</topicName>
+  <gaussianNoise>{{ noise }}</gaussianNoise>
+  <frameName>{{ frame_name }}</frameName>
+  <xyzOffset>{{ xyz_offset }}</xyzOffset>
+  <rpyOffset>{{ rpy_offset }}</rpyOffset>
+</plugin>
 {%- endmacro -%}
 <!--}-->
 
@@ -646,57 +624,60 @@ limitations under the License.
 {%- macro rangefinder_macro(namespace, parent_link, rangefinder_suffix, parent_frame_name, rangefinder_frame_name, topic, frame_rate, fov, min_distance, max_distance, resolution, noise, x, y, z, roll, pitch, yaw, name, color) -%}
 <link name="{{ namespace }}/{{ name }}_link">
   {{ pose_macro(x, y, z, roll, pitch, yaw) }}
+  <visual name="{{ namespace }}/{{ name }}_link_visual">
+  <material>
+      <script>
+        <name>Gazebo/{{ color }}</name>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+      </script>
+    </material>
+  </visual>
 </link>
 
 <joint name="{{ namespace }}/{{ name }}_joint" type="fixed">
   <parent>{{ parent_link }}</parent>
   <child>{{ namespace }}/{{ name }}_link</child>
 </joint>
-<gazebo reference="{{ namespace }}/{{ name }}_link">
-  <sensor name="{{ name }}" type='ray'>
-    <update_rate>{{ frame_rate }}</update_rate>
-    <ray>
-      <scan>
-        <horizontal>
-          <samples>5</samples>
-          <resolution>1</resolution>
-          <min_angle>-{{ fov/2 }}</min_angle>
-          <max_angle>{{ fov/2 }}</max_angle>
-        </horizontal>
-        <vertical>
-          <samples>5</samples>
-          <resolution>1</resolution>
-          <min_angle>-{{ fov/2 }}</min_angle>
-          <max_angle>{{ fov/2 }}</max_angle>
-        </vertical>
-      </scan>
-      <range>
-        <min>{{ min_distance }}</min>
-        <max>{{ max_distance }}</max>
-        <resolution>{{ resolution }}</resolution>
-      </range>
-    </ray>
-    <plugin name='mrs_gazebo_rangefinder' filename='libMRSGazeboRangefinderPlugin.so'>
-      <gaussianNoise>{{ noise }}</gaussianNoise>
-      <alwaysOn>true</alwaysOn>
-      <updateRate>{{ frame_rate }}</updateRate>
-      <topicName>{{ topic }}</topicName>
-      <frameName>{{ rangefinder_frame_name }}</frameName>
-      <fov>{{ fov }}</fov>
-      <radiation>radiation</radiation>
-      <parentFrameName>{{ parent_frame_name }}</parentFrameName>
-      <x>{{ x }}</x>
-      <y>{{ y }}</y>
-      <z>{{ z }}</z>
-      <roll>{{ roll }}</roll>
-      <pitch>{{ pitch }}</pitch>
-      <yaw>{{ yaw }}</yaw>
-    </plugin>
-  </sensor>
-</gazebo>
-<gazebo reference="{{ namespace }}/{{ name }}_link">
-  <material>Gazebo/{{ color }}</material>
-</gazebo>
+<sensor name="{{ name }}" type='ray'>
+  <update_rate>{{ frame_rate }}</update_rate>
+  <ray>
+    <scan>
+      <horizontal>
+        <samples>5</samples>
+        <resolution>1</resolution>
+        <min_angle>-{{ fov/2 }}</min_angle>
+        <max_angle>{{ fov/2 }}</max_angle>
+      </horizontal>
+      <vertical>
+        <samples>5</samples>
+        <resolution>1</resolution>
+        <min_angle>-{{ fov/2 }}</min_angle>
+        <max_angle>{{ fov/2 }}</max_angle>
+      </vertical>
+    </scan>
+    <range>
+      <min>{{ min_distance }}</min>
+      <max>{{ max_distance }}</max>
+      <resolution>{{ resolution }}</resolution>
+    </range>
+  </ray>
+  <plugin name='mrs_gazebo_rangefinder' filename='libMRSGazeboRangefinderPlugin.so'>
+    <gaussianNoise>{{ noise }}</gaussianNoise>
+    <alwaysOn>true</alwaysOn>
+    <updateRate>{{ frame_rate }}</updateRate>
+    <topicName>{{ topic }}</topicName>
+    <frameName>{{ rangefinder_frame_name }}</frameName>
+    <fov>{{ fov }}</fov>
+    <radiation>radiation</radiation>
+    <parentFrameName>{{ parent_frame_name }}</parentFrameName>
+    <x>{{ x }}</x>
+    <y>{{ y }}</y>
+    <z>{{ z }}</z>
+    <roll>{{ roll }}</roll>
+    <pitch>{{ pitch }}</pitch>
+    <yaw>{{ yaw }}</yaw>
+  </plugin>
+</sensor>
 {%- endmacro -%}
 <!--}-->
 
@@ -706,6 +687,14 @@ limitations under the License.
 <!-- visual links and joints {-->
 <link name="{{ namespace }}/camera_{{ camera_suffix }}_link">
   <!-- <xacro:insert_block name="visual_body" /> -->
+  <visual name="{{ namespace }}/camera_{{ camera_suffix }}_link_visual">
+  <material>
+      <script>
+        <name>Gazebo/{{ color }}</name>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+      </script>
+    </material>
+  </visual>
 </link>
 
 <link name="{{ namespace }}/camera_{{ camera_suffix }}_infra1_link">
@@ -716,6 +705,14 @@ limitations under the License.
 
 <link name="{{ namespace }}/camera_{{ camera_suffix }}_glass_link">
   <!-- <xacro:insert_block name="visual_glass" /> -->
+  <visual name="{{ namespace }}/camera_{{ camera_suffix }}_link_visual">
+  <material>
+      <script>
+        <name>Gazebo/{{ color }}</name>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+      </script>
+    </material>
+  </visual>
 </link>
 
 <joint name="{{ namespace }}/camera_{{ camera_suffix }}_joint" type="fixed">
@@ -744,61 +741,52 @@ limitations under the License.
 <!--}-->
 
 <!-- sensor {-->
-<gazebo reference="{{ namespace }}/camera_{{ camera_suffix }}_link">
-  <sensor type="depth" name="{{ namespace }}_camera_{{ camera_suffix }}">
-    <update_rate>30.0</update_rate>
-    <camera name="head">
-      <horizontal_fov>{{ horizontal_fov }}</horizontal_fov>
-      <image>
-        <width>{{ image_width }}</width>
-        <height>{{ image_height }}</height>
-      </image>
-      <clip>
-        <near>{{ min_distance }}</near>
-        <far>{{ max_distance }}</far>
-      </clip>
-      <noise>
-        <type>gaussian</type>
-        <mean>{{ noise_mean }}</mean>
-        <stddev>{{ noise_stddev }}</stddev>
-      </noise>
-    </camera>
+<sensor type="depth" name="{{ namespace }}_camera_{{ camera_suffix }}">
+  <update_rate>30.0</update_rate>
+  <camera name="head">
+    <horizontal_fov>{{ horizontal_fov }}</horizontal_fov>
+    <image>
+      <width>{{ image_width }}</width>
+      <height>{{ image_height }}</height>
+    </image>
+    <clip>
+      <near>{{ min_distance }}</near>
+      <far>{{ max_distance }}</far>
+    </clip>
+    <noise>
+      <type>gaussian</type>
+      <mean>{{ noise_mean }}</mean>
+      <stddev>{{ noise_stddev }}</stddev>
+    </noise>
+  </camera>
 
-    <plugin name="{{ namespace }}_camera_{{ camera_suffix }}_controller" filename="libgazebo_ros_depth_camera.so">
-      <baseline>0.2</baseline>
-      <alwaysOn>true</alwaysOn>
-      <updateRate>30.0</updateRate>
-      <cameraName>{{ camera_suffix }}</cameraName>
-      <imageTopicName>image_raw</imageTopicName>
-      <cameraInfoTopicName>camera_info</cameraInfoTopicName>
-      <depthImageTopicName>depth/image_raw</depthImageTopicName>
-      <depthImageInfoTopicName>depth_info</depthImageInfoTopicName>
-      <depthImageCameraInfoTopicName>depth_camera_info</depthImageCameraInfoTopicName>
-      <pointCloudTopicName>depth_PCL</pointCloudTopicName>
-      <frameName>/{{ frame_id }}</frameName>
-      <pointCloudCutoff>0.5</pointCloudCutoff>
-      <distortionK1>0</distortionK1>
-      <distortionK2>0</distortionK2>
-      <distortionK3>0</distortionK3>
-      <distortionT1>0</distortionT1>
-      <distortionT2>0</distortionT2>
-      <CxPrime>0</CxPrime>
-      <Cx>0</Cx>
-      <Cy>0</Cy>
-      <focalLength>0</focalLength>
-      <hackBaseline>0</hackBaseline>
-    </plugin>
-  </sensor>
-</gazebo>
+  <plugin name="{{ namespace }}_camera_{{ camera_suffix }}_controller" filename="libgazebo_ros_depth_camera.so">
+    <baseline>0.2</baseline>
+    <alwaysOn>true</alwaysOn>
+    <updateRate>30.0</updateRate>
+    <cameraName>{{ camera_suffix }}</cameraName>
+    <imageTopicName>image_raw</imageTopicName>
+    <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+    <depthImageTopicName>depth/image_raw</depthImageTopicName>
+    <depthImageInfoTopicName>depth_info</depthImageInfoTopicName>
+    <depthImageCameraInfoTopicName>depth_camera_info</depthImageCameraInfoTopicName>
+    <pointCloudTopicName>depth_PCL</pointCloudTopicName>
+    <frameName>/{{ frame_id }}</frameName>
+    <pointCloudCutoff>0.5</pointCloudCutoff>
+    <distortionK1>0</distortionK1>
+    <distortionK2>0</distortionK2>
+    <distortionK3>0</distortionK3>
+    <distortionT1>0</distortionT1>
+    <distortionT2>0</distortionT2>
+    <CxPrime>0</CxPrime>
+    <Cx>0</Cx>
+    <Cy>0</Cy>
+    <focalLength>0</focalLength>
+    <hackBaseline>0</hackBaseline>
+  </plugin>
+</sensor>
 <!--}-->
-
-<gazebo reference="{{ namespace }}/camera_{{ camera_suffix }}_link">
-  <material>Gazebo/White</material>
-</gazebo>
-
-<gazebo reference="{{ namespace }}/camera_{{ camera_suffix }}_glass_link">
-  <material>Gazebo/DarkGrey</material>
-</gazebo>
+  
 {%- endmacro -%}
 <!--}-->
 
@@ -806,6 +794,14 @@ limitations under the License.
 {%- macro camera_macro(namespace, parent_link, camera_suffix, camera_frame_name, sensor_base_frame_name, frame_rate, parent_frame_name, horizontal_fov, image_width, image_height, min_distance, max_distance, x, y, z, roll, pitch, yaw, noise_mean, noise_stddev) -%}
 <link name="{{ namespace }}/camera_{{ camera_suffix }}_link">
   {{ pose_macro(x, y, z, roll, pitch, yaw) }}
+  <visual name="{{ namespace }}/camera_{{ camera_suffix }}_link_visual">
+  <material>
+      <script>
+        <name>Gazebo/{{ color }}</name>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+      </script>
+    </material>
+  </visual>
 </link>
 
 <joint name="{{ namespace }}/camera_{{ camera_suffix }}_joint" type="fixed">
@@ -813,55 +809,50 @@ limitations under the License.
   <child>{{ namespace }}/camera_{{ camera_suffix }}_link</child>
 </joint>
 
-<gazebo reference="{{ namespace }}/camera_{{ camera_suffix }}_link">
-  <sensor type="camera" name="{{ namespace }}_camera_{{ camera_suffix }}">
-    <update_rate>{{ frame_rate }}</update_rate>
-    <camera name="head">
-      <horizontal_fov>{{ horizontal_fov }}</horizontal_fov>
-      <image>
-        <width>{{ image_width }}</width>
-        <height>{{ image_height }}</height>
-      </image>
-      <clip>
-        <near>{{ min_distance }}</near>
-        <far>{{ max_distance }}</far>
-      </clip>
-      <noise>
-        <type>gaussian</type>
-        <!-- Noise is sampled independently per pixel on each frame.
-        That pixel's noise value is added to each of its color
-        channels, which at that point lie in the range [0,1]. -->
-        <mean>{{ noise_mean }}</mean>
-        <stddev>{{ noise_stddev }}</stddev>
-      </noise>
-    </camera>
-    <plugin name="{{ namespace }}_camera_{{ camera_suffix }}_controller" filename="libMRSGazeboCameraPlugin.so">
-      <alwaysOn>true</alwaysOn>
-      <updateRate>{{ frame_rate }}</updateRate>
-      <cameraName>{{ camera_suffix }}</cameraName>
-      <imageTopicName>image_raw</imageTopicName>
-      <cameraInfoTopicName>camera_info</cameraInfoTopicName>
-      <frameName>/{{ camera_frame_name }}</frameName>
-      <hackBaseline>0.0</hackBaseline>
-      <distortionK1>0.0</distortionK1>
-      <distortionK2>0.0</distortionK2>
-      <distortionK3>0.0</distortionK3>
-      <distortionT1>0.0</distortionT1>
-      <distortionT2>0.0</distortionT2>
-      <parentFrameName>{{ parent_frame_name }}</parentFrameName>
-      <sensorBaseFrameName>{{ sensor_base_frame_name }}</sensorBaseFrameName>
-      <x>{{ x }}</x>
-      <y>{{ y }}</y>
-      <z>{{ z }}</z>
-      <roll>{{ roll }}</roll>
-      <pitch>{{ pitch }}</pitch>
-      <yaw>{{ yaw }}</yaw>
-    </plugin>
-  </sensor>
-</gazebo>
-<gazebo reference="{{ namespace }}/camera_{{ camera_suffix }}_link">
-  <material>Gazebo/DarkGrey</material>
-</gazebo>
+<sensor type="camera" name="{{ namespace }}_camera_{{ camera_suffix }}">
+  <update_rate>{{ frame_rate }}</update_rate>
+  <camera name="head">
+    <horizontal_fov>{{ horizontal_fov }}</horizontal_fov>
+    <image>
+      <width>{{ image_width }}</width>
+      <height>{{ image_height }}</height>
+    </image>
+    <clip>
+      <near>{{ min_distance }}</near>
+      <far>{{ max_distance }}</far>
+    </clip>
+    <noise>
+      <type>gaussian</type>
+      <!-- Noise is sampled independently per pixel on each frame.
+      That pixel's noise value is added to each of its color
+      channels, which at that point lie in the range [0,1]. -->
+      <mean>{{ noise_mean }}</mean>
+      <stddev>{{ noise_stddev }}</stddev>
+    </noise>
+  </camera>
+  <plugin name="{{ namespace }}_camera_{{ camera_suffix }}_controller" filename="libMRSGazeboCameraPlugin.so">
+    <alwaysOn>true</alwaysOn>
+    <updateRate>{{ frame_rate }}</updateRate>
+    <cameraName>{{ camera_suffix }}</cameraName>
+    <imageTopicName>image_raw</imageTopicName>
+    <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+    <frameName>/{{ camera_frame_name }}</frameName>
+    <hackBaseline>0.0</hackBaseline>
+    <distortionK1>0.0</distortionK1>
+    <distortionK2>0.0</distortionK2>
+    <distortionK3>0.0</distortionK3>
+    <distortionT1>0.0</distortionT1>
+    <distortionT2>0.0</distortionT2>
+    <parentFrameName>{{ parent_frame_name }}</parentFrameName>
+    <sensorBaseFrameName>{{ sensor_base_frame_name }}</sensorBaseFrameName>
+    <x>{{ x }}</x>
+    <y>{{ y }}</y>
+    <z>{{ z }}</z>
+    <roll>{{ roll }}</roll>
+    <pitch>{{ pitch }}</pitch>
+    <yaw>{{ yaw }}</yaw>
+  </plugin>
+</sensor>
 {%- endmacro -%}
 <!--}-->
 
@@ -869,6 +860,14 @@ limitations under the License.
 {%- macro fisheye_macro(namespace, parent_link, camera_suffix, camera_frame_name, sensor_base_frame_name, frame_rate, parent_frame_name, horizontal_fov, image_width, image_height, min_distance, max_distance, lens_type, lens_c1, lens_c2, lens_f, lens_fun, lens_scale, lens_cutoff_angle, lens_texture_size, x, y, z, roll, pitch, yaw, noise_mean, noise_stddev) -%}
 <link name="{{ namespace }}/camera_{{ camera_suffix }}_link">
   {{ pose_macro(x, y, z, roll, pitch, yaw) }}
+  <visual name="{{ namespace }}/camera_{{ camera_suffix }}_link_visual">
+  <material>
+      <script>
+        <name>Gazebo/{{ color }}</name>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+      </script>
+    </material>
+  </visual>
 </link>
 
 <joint name="{{ namespace }}/camera_{{ camera_suffix }}_joint" type="fixed">
@@ -876,67 +875,62 @@ limitations under the License.
   <child>{{ namespace }}/camera_{{ camera_suffix }}_link</child>
 </joint>
 
-<gazebo reference="{{ namespace }}/camera_{{ camera_suffix }}_link">
-  <sensor type="wideanglecamera" name="{{ namespace }}_camera_{{ camera_suffix }}">
-    <update_rate>{{ frame_rate }}</update_rate>
-    <camera name="head">
-      <horizontal_fov>{{ horizontal_fov }}</horizontal_fov>
-      <image>
-        <width>{{ image_width }}</width>
-        <height>{{ image_height }}</height>
-      </image>
-      <clip>
-        <near>{{ min_distance }}</near>
-        <far>{{ max_distance }}</far>
-      </clip>
-      <noise>
-        <type>gaussian</type>
-        <!-- Noise is sampled independently per pixel on each frame.
-        That pixel's noise value is added to each of its color
-        channels, which at that point lie in the range [0,1]. -->
-        <mean>{{ noise_mean }}</mean>
-        <stddev>{{ noise_stddev }}</stddev>
-      </noise>
-      <lens>
-        <type>{{ lens_type }}</type>
-        <custom_function>
-          <c1>{{ lens_c1 }}</c1>
-          <c2>{{ lens_c2 }}</c2>
-          <f>{{ lens_f }}</f>
-          <fun>{{ lens_fun }}</fun>
-        </custom_function>
-        <scale_to_hfov>{{ lens_scale }}</scale_to_hfov>
-        <cutoff_angle>{{ lens_cutoff_angle }}</cutoff_angle>
-        <env_texture_size>{{ lens_texture_size }}</env_texture_size>
-      </lens>
-    </camera>
-    <plugin name="{{ namespace }}_camera_{{ camera_suffix }}_controller" filename="libMRSGazeboCameraPlugin.so">
-      <alwaysOn>true</alwaysOn>
-      <updateRate>{{ frame_rate }}</updateRate>
-      <cameraName>{{ camera_suffix }}</cameraName>
-      <imageTopicName>camera/image_raw</imageTopicName>
-      <cameraInfoTopicName>camera/camera_info</cameraInfoTopicName>
-      <frameName>/{{ camera_frame_name }}</frameName>
-      <hackBaseline>0.0</hackBaseline>
-      <distortionK1>0.0</distortionK1>
-      <distortionK2>0.0</distortionK2>
-      <distortionK3>0.0</distortionK3>
-      <distortionT1>0.0</distortionT1>
-      <distortionT2>0.0</distortionT2>
-      <parentFrameName>{{ parent_frame_name }}</parentFrameName>
-      <sensorBaseFrameName>{{ sensor_base_frame_name }}</sensorBaseFrameName>
-      <x>{{ x }}</x>
-      <y>{{ y }}</y>
-      <z>{{ z }}</z>
-      <roll>{{ roll }}</roll>
-      <pitch>{{ pitch }}</pitch>
-      <yaw>{{ yaw }}</yaw>
-    </plugin>
-  </sensor>
-</gazebo>
-<gazebo reference="{{ namespace }}/camera_{{ camera_suffix }}_link">
-  <material>Gazebo/DarkGrey</material>
-</gazebo>
+<sensor type="wideanglecamera" name="{{ namespace }}_camera_{{ camera_suffix }}">
+  <update_rate>{{ frame_rate }}</update_rate>
+  <camera name="head">
+    <horizontal_fov>{{ horizontal_fov }}</horizontal_fov>
+    <image>
+      <width>{{ image_width }}</width>
+      <height>{{ image_height }}</height>
+    </image>
+    <clip>
+      <near>{{ min_distance }}</near>
+      <far>{{ max_distance }}</far>
+    </clip>
+    <noise>
+      <type>gaussian</type>
+      <!-- Noise is sampled independently per pixel on each frame.
+      That pixel's noise value is added to each of its color
+      channels, which at that point lie in the range [0,1]. -->
+      <mean>{{ noise_mean }}</mean>
+      <stddev>{{ noise_stddev }}</stddev>
+    </noise>
+    <lens>
+      <type>{{ lens_type }}</type>
+      <custom_function>
+        <c1>{{ lens_c1 }}</c1>
+        <c2>{{ lens_c2 }}</c2>
+        <f>{{ lens_f }}</f>
+        <fun>{{ lens_fun }}</fun>
+      </custom_function>
+      <scale_to_hfov>{{ lens_scale }}</scale_to_hfov>
+      <cutoff_angle>{{ lens_cutoff_angle }}</cutoff_angle>
+      <env_texture_size>{{ lens_texture_size }}</env_texture_size>
+    </lens>
+  </camera>
+  <plugin name="{{ namespace }}_camera_{{ camera_suffix }}_controller" filename="libMRSGazeboCameraPlugin.so">
+    <alwaysOn>true</alwaysOn>
+    <updateRate>{{ frame_rate }}</updateRate>
+    <cameraName>{{ camera_suffix }}</cameraName>
+    <imageTopicName>camera/image_raw</imageTopicName>
+    <cameraInfoTopicName>camera/camera_info</cameraInfoTopicName>
+    <frameName>/{{ camera_frame_name }}</frameName>
+    <hackBaseline>0.0</hackBaseline>
+    <distortionK1>0.0</distortionK1>
+    <distortionK2>0.0</distortionK2>
+    <distortionK3>0.0</distortionK3>
+    <distortionT1>0.0</distortionT1>
+    <distortionT2>0.0</distortionT2>
+    <parentFrameName>{{ parent_frame_name }}</parentFrameName>
+    <sensorBaseFrameName>{{ sensor_base_frame_name }}</sensorBaseFrameName>
+    <x>{{ x }}</x>
+    <y>{{ y }}</y>
+    <z>{{ z }}</z>
+    <roll>{{ roll }}</roll>
+    <pitch>{{ pitch }}</pitch>
+    <yaw>{{ yaw }}</yaw>
+  </plugin>
+</sensor>
 {%- endmacro -%}
     <!--}-->
 

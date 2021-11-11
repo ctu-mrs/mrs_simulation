@@ -7,7 +7,7 @@
   {# ||                    parameters definition                     || #}
   {# ================================================================== #}
   
-  {%- set namespace = "uav1" -%} {# DELETE THIS #}
+  {%- set namespace = "uav1" -%} {# TODO DELETE THIS #}
   
   {#-  Robot parameters and arguments -#}
   {%- set mass = 2.00 -%} {# [kg] #}
@@ -168,77 +168,25 @@
   {{ components.mavlink_interface_macro(namespace, mavlink_addr, mavlink_udp_port, mavlink_tcp_port, serial_enabled, serial_device, serial_baudrate, qgc_addr, qgc_udp_port, sdk_addr, sdk_udp_port, hil_mode, hil_state_level, 0, send_vision_estimation, serial_enabled, use_lockstep, use_tcp) }}
   <!--}-->
 
-<!--  <!-1- GPS {-1->-->
-<!--  <xacro:gps_macro-->
-<!--    gps_name="gps0"-->
-<!--    pos_x="0.0"-->
-<!--    pos_y="0.0"-->
-<!--    pos_z="0.0"-->
-<!--    gps_noise="true"-->
-<!--    gps_xy_random_walk="2.0"-->
-<!--    gps_z_random_walk="4.0"-->
-<!--    gps_xy_noise_density="2.0e-4"-->
-<!--    gps_z_noise_density="4.0e-4"-->
-<!--    gps_vxy_noise_density="0.2"-->
-<!--    gps_vz_noise_density="0.4"-->
-<!--    update_rate="10"-->
-<!--    namespace="${namespace}"-->
-<!--    parent_link="base_link">-->
-<!--  </xacro:gps_macro>-->
-<!--  <!-1-}-1->-->
+  <!-- GPS {-->
+  {{ components.gps_macro("gps0", 0, 0, 0, namespace, true, 2.0, 4.0, "2.0e-4", "4.0e-4", 10, 0.2, 0.4, "base_link") }}
+  <!--}-->
+    
+  <!-- Magnetometer {-->
+  {{ components.magnetometer_plugin_macro(namespace, 100, 0.0004, 0.0000064, 600, "/mag") }}
+  <!--}-->
 
-<!--  <!-1- Magnetometer {-1->-->
-<!--  <xacro:magnetometer_plugin_macro-->
-<!--    namespace="${namespace}"-->
-<!--    pub_rate="100"-->
-<!--    noise_density="0.0004"-->
-<!--    random_walk="0.0000064"-->
-<!--    bias_correlation_time="600"-->
-<!--    mag_topic="/mag"-->
-<!--    >-->
-<!--  </xacro:magnetometer_plugin_macro>-->
-<!--  <!-1-}-1->-->
+  <!-- Groundtruth {-->
+  {{ components.groundtruth_plugin_macro(namespace, 0, 0, 0) }}
+  <!--}-->
 
-<!--   <!-1- Groundtruth {-1->-->
-<!--  <xacro:groundtruth_plugin_macro-->
-<!--    namespace="${namespace}"-->
-<!--    home_latitude="0.0"-->
-<!--    home_longitude="0.0"-->
-<!--    home_altitude="0.0"-->
-<!--    >-->
-<!--  </xacro:groundtruth_plugin_macro>-->
-<!--  <!-1-}-1->-->
+  <!-- Barometer {-->
+  {{ components.barometer_plugin_macro(namespace, 50, "/baro", 0) }}
+  <!--}-->
 
-<!-- <!-1- Barometer {-1->-->
-<!--  <xacro:barometer_plugin_macro-->
-<!--  namespace="${namespace}"-->
-<!--  pub_rate="50"-->
-<!--  baro_topic="/baro"-->
-<!--  baro_drift_pa_per_sec="0"-->
-<!--  >-->
-<!--  </xacro:barometer_plugin_macro>-->
-<!--  <!-1-}-1->-->
-
-<!--  <!-1- IMU (ADIS16448) {-1->-->
-<!--  <xacro:imu_plugin_macro-->
-<!--    namespace="${namespace}"-->
-<!--    imu_suffix=""-->
-<!--    parent_link="base_link"-->
-<!--    imu_topic="/imu"-->
-<!--    mass_imu_sensor="0.015"-->
-<!--    gyroscope_noise_density="0.00018665"-->
-<!--    gyroscope_random_walk="0.000038785"-->
-<!--    gyroscope_bias_correlation_time="1000.0"-->
-<!--    gyroscope_turn_on_bias_sigma="0.0087"-->
-<!--    accelerometer_noise_density="0.00186"-->
-<!--    accelerometer_random_walk="0.006"-->
-<!--    accelerometer_bias_correlation_time="300.0"-->
-<!--    accelerometer_turn_on_bias_sigma="0.1960"-->
-<!--    >-->
-<!--  <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />-->
-<!--  <origin xyz="0 0 0" rpy="0 0 0" />-->
-<!--  </xacro:imu_plugin_macro>-->
-<!--  <!-1-}-1->-->
+  <!-- IMU (ADIS16448) {-->
+  {{ components.imu_plugin_macro(namespace, "", "base_link", "/imu", 0.015, 0.00018665, 0.000038785, 1000.0, 0.0087, 0.00186, 0.006, 300.0, 0.1960, 0, 0, 0, 0, 0, 0, 0.00001, 0, 0, 0.00001, 0, 0.00001) }}
+  <!--}-->
 
 
   </model>
