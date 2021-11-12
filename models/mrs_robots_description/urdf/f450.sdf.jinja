@@ -12,7 +12,7 @@
   {%- set enable_rangefinder_up = true -%} {# TODO DELETE THIS #}
   
   {#-  Robot parameters and arguments -#}
-  {%- set mass = 2.00 -%} {# [kg] #}
+  {%- set mass = 1.7 -%} {# [kg] #}
   {%- set body_radius = 0.2 -%} {# [m] #}
   {%- set body_height = 0.1 -%} {# [m] #}
   {%- set mass_prop = 0.005 -%} {# [kg] #}
@@ -28,6 +28,7 @@
   {%- set leg_height = 0.17 -%} {# [m] #}
   {%- set pixhawk_offset = -0.0075 -%} {# [m] #}
   {%- set use_battery_mount = true -%} {# [bool] #}
+  {%- set root = "base_link" -%}
   
   {#- Motor constants -#}
   {%- set rotor_velocity_slowdown_sim = 0.0159236 -%}
@@ -40,8 +41,8 @@
   {%- set rolling_moment_coefficient = "1.0E-6" -%}
   
   {#- Inertia constants -#}
-  {%- set inertia_body_radius = 0.225 -%} {# [m] #}
-  {%- set inertia_body_height = 0.15 -%} {# [m] #}
+  {%- set inertia_body_radius = 0.2 -%} {# [m] #}
+  {%- set inertia_body_height = 0.05 -%} {# [m] #}
   
   {#- Meshes -#}
   {#- Drone parts -#}
@@ -91,77 +92,81 @@
   <!-- ================================================================== -->
   <!-- ||                    bare body definitions                     || -->
   <!-- ================================================================== -->
-  
-  <!-- Instantiate multirotor_base_macro {-->
-  {{ components.multirotor_base_without_mesh_macro(namespace, mass, body_radius, body_height, rotor_velocity_slowdown_sim, body_ixx, body_ixy, body_ixz, body_iyy, body_iyz, body_izz) }}
+
+  <link name="{{ root }}">
+
+  <!-- Body physics {-->
+  {{ components.multirotor_physics_macro(namespace, mass, body_radius, body_height, rotor_velocity_slowdown_sim, body_ixx, body_ixy, body_ixz, body_iyy, body_iyz, body_izz) }}
   <!--}-->
   
-  <!-- Body parts {-->
+  <!-- Body visuals {-->
   
   <!-- Boards {-->
-  {{ components.visual_macro(namespace, "lower_central_board", central_board_mesh_bottom, mesh_scale, "DarkGrey", "base_link", 0, 0, -body_height / 2, 0, 0, 0) }}
+  {{ components.visual_macro(namespace, "lower_central_board", central_board_mesh_bottom, mesh_scale, "DarkGrey", root, 0, 0, - body_height / 2, 0, 0, 0) }}
   
-  {{ components.visual_macro(namespace, "upper_central_board", central_board_mesh_top, mesh_scale, "DarkGrey", "base_link", 0, 0, arm_height - body_height / 2, 0, 0, 0) }}
+  {{ components.visual_macro(namespace, "upper_central_board", central_board_mesh_top, mesh_scale, "DarkGrey", root , 0, 0, arm_height - body_height / 2, 0, 0, 0) }}
   <!--}-->
     
   <!-- Arms {-->
-  {{ components.visual_macro(namespace, "front_right_arm", arm_mesh_file, mesh_scale, "White", "base_link", board_radius * components.sin45, -board_radius * components.sin45, arm_height - body_height / 2, 0, 0, components.rad(-45)) }}
+  {{ components.visual_macro(namespace, "front_right_arm", arm_mesh_file, mesh_scale, "White", root, board_radius * components.sin45, -board_radius * components.sin45, arm_height - body_height / 2, 0, 0, components.rad(-45)) }}
   
-  {{ components.visual_macro(namespace, "front_left_arm", arm_mesh_file, mesh_scale, "White", "base_link", board_radius * components.sin45, board_radius * components.sin45, arm_height - body_height / 2, 0, 0, components.rad(45)) }}
+  {{ components.visual_macro(namespace, "front_left_arm", arm_mesh_file, mesh_scale, "White", root, board_radius * components.sin45, board_radius * components.sin45, arm_height - body_height / 2, 0, 0, components.rad(45)) }}
   
-  {{ components.visual_macro(namespace, "back_right_arm", arm_mesh_file, mesh_scale, "Red", "base_link", -board_radius * components.sin45, -board_radius * components.sin45, arm_height - body_height / 2, 0, 0, components.rad(-135)) }}
+  {{ components.visual_macro(namespace, "back_right_arm", arm_mesh_file, mesh_scale, "Red", root, -board_radius * components.sin45, -board_radius * components.sin45, arm_height - body_height / 2, 0, 0, components.rad(-135)) }}
   
-  {{ components.visual_macro(namespace, "back_left_arm", arm_mesh_file, mesh_scale, "Red", "base_link", -board_radius * components.sin45, board_radius * components.sin45, arm_height - body_height / 2, 0, 0, components.rad(135)) }}
+  {{ components.visual_macro(namespace, "back_left_arm", arm_mesh_file, mesh_scale, "Red", root, -board_radius * components.sin45, board_radius * components.sin45, arm_height - body_height / 2, 0, 0, components.rad(135)) }}
   <!--}-->
 
   <!-- intel nuc {-->
-  {{ components.visual_macro(namespace, "NUC", nuc_mesh_file, mesh_scale_milimeters, "DarkGrey", "base_link", 0, 0, 0.023, 0, 0, 0) }}
+  {{ components.visual_macro(namespace, "NUC", nuc_mesh_file, mesh_scale_milimeters, "DarkGrey", root, 0, 0, 0.023, 0, 0, 0) }}
   <!--}-->
   
   <!-- pixhawk {-->
-  {{ components.visual_macro(namespace, "pixhawk", pixhawk_mesh_file, mesh_scale, "DarkGrey", "base_link", 0, 0, -body_height / 2 - pixhawk_offset, 0, 0, 0) }}
+  {{ components.visual_macro(namespace, "pixhawk", pixhawk_mesh_file, mesh_scale, "DarkGrey", root, 0, 0, -body_height / 2 - pixhawk_offset, 0, 0, 0) }}
   <!--}-->
 
   <!-- legs {-->
-  {{ components.leg_macro(namespace, "front_right_leg", leg_mesh_file, mesh_scale_milimeters, "White", "base_link", (arm_length - leg_offset_r) * components.sin45, -(arm_length - leg_offset_r) * components.sin45, arm_height - body_height/2 - leg_offset_z, 0, 0, components.rad(135), leg_height, leg_offset_r) }}
+  {{ components.leg_macro(namespace, "front_right_leg", leg_mesh_file, mesh_scale_milimeters, "White", root, (arm_length - leg_offset_r) * components.sin45, -(arm_length - leg_offset_r) * components.sin45, arm_height - body_height/2 - leg_offset_z, 0, 0, components.rad(135), leg_height, leg_offset_r) }}
     
-  {{ components.leg_macro(namespace, "front_left_leg", leg_mesh_file, mesh_scale_milimeters, "White", "base_link", (arm_length - leg_offset_r) * components.sin45, (arm_length - leg_offset_r) * components.sin45, arm_height - body_height/2 - leg_offset_z, 0, 0, components.rad(-135), leg_height, leg_offset_r) }}
+  {{ components.leg_macro(namespace, "front_left_leg", leg_mesh_file, mesh_scale_milimeters, "White", root, (arm_length - leg_offset_r) * components.sin45, (arm_length - leg_offset_r) * components.sin45, arm_height - body_height/2 - leg_offset_z, 0, 0, components.rad(-135), leg_height, leg_offset_r) }}
     
-  {{ components.leg_macro(namespace, "back_right_leg", leg_mesh_file, mesh_scale_milimeters, "Red", "base_link", -(arm_length - leg_offset_r) * components.sin45, -(arm_length - leg_offset_r) * components.sin45, arm_height - body_height/2 - leg_offset_z, 0, 0, components.rad(45), leg_height, leg_offset_r) }}
+  {{ components.leg_macro(namespace, "back_right_leg", leg_mesh_file, mesh_scale_milimeters, "Red", root, -(arm_length - leg_offset_r) * components.sin45, -(arm_length - leg_offset_r) * components.sin45, arm_height - body_height/2 - leg_offset_z, 0, 0, components.rad(45), leg_height, leg_offset_r) }}
     
-  {{ components.leg_macro(namespace, "back_left_leg", leg_mesh_file, mesh_scale_milimeters, "Red", "base_link", -(arm_length - leg_offset_r) * components.sin45, (arm_length - leg_offset_r) * components.sin45, arm_height - body_height/2 - leg_offset_z, 0, 0, components.rad(-45), leg_height, leg_offset_r) }}
+  {{ components.leg_macro(namespace, "back_left_leg", leg_mesh_file, mesh_scale_milimeters, "Red", root, -(arm_length - leg_offset_r) * components.sin45, (arm_length - leg_offset_r) * components.sin45, arm_height - body_height/2 - leg_offset_z, 0, 0, components.rad(-45), leg_height, leg_offset_r) }}
   <!--}-->
 
   <!-- motors {-->
-  {{ components.visual_macro(namespace, "front_right_motor", motor_mesh_file, mesh_scale, "Black", "base_link", arm_length * components.sin45, -arm_length * components.sin45, arm_height - body_height / 2, 0, 0, 0) }}
+  {{ components.visual_macro(namespace, "front_right_motor", motor_mesh_file, mesh_scale, "Black", root, arm_length * components.sin45, -arm_length * components.sin45, arm_height - body_height / 2, 0, 0, 0) }}
     
-    {{ components.visual_macro(namespace, "front_left_motor", motor_mesh_file, mesh_scale, "Black", "base_link", arm_length * components.sin45, arm_length * components.sin45, arm_height - body_height / 2, 0, 0, 0) }}
+    {{ components.visual_macro(namespace, "front_left_motor", motor_mesh_file, mesh_scale, "Black", root, arm_length * components.sin45, arm_length * components.sin45, arm_height - body_height / 2, 0, 0, 0) }}
     
-    {{ components.visual_macro(namespace, "back_right_motor", motor_mesh_file, mesh_scale, "Black", "base_link", -arm_length * components.sin45, -arm_length * components.sin45, arm_height - body_height / 2, 0, 0, 0) }}
+    {{ components.visual_macro(namespace, "back_right_motor", motor_mesh_file, mesh_scale, "Black", root, -arm_length * components.sin45, -arm_length * components.sin45, arm_height - body_height / 2, 0, 0, 0) }}
     
-    {{ components.visual_macro(namespace, "back_left_motor", motor_mesh_file, mesh_scale, "Black", "base_link", -arm_length * components.sin45, arm_length * components.sin45, arm_height - body_height / 2, 0, 0, 0) }}
-  <!--}-->
-
-  <!-- propellers {-->
-  {{ components.prop_macro(namespace, "ccw", rotor_velocity_slowdown_sim, motor_constant, moment_constant, "base_link", mass_prop, radius_prop, time_constant_up, time_constant_down, max_rot_velocity, 0, rotor_drag_coefficient, rolling_moment_coefficient, "White", prop_mesh_file, mesh_scale_prop_ccw, arm_length * components.sin45, -arm_length * components.sin45, arm_height + prop_offset_top - body_height/2, 0, 0, 0, prop_ixx, prop_ixy, prop_ixz, prop_iyy, prop_iyz, prop_izz) }}
-    
-  {{ components.prop_macro(namespace, "ccw", rotor_velocity_slowdown_sim, motor_constant, moment_constant, "base_link", mass_prop, radius_prop, time_constant_up, time_constant_down, max_rot_velocity, 1, rotor_drag_coefficient, rolling_moment_coefficient, "White", prop_mesh_file, mesh_scale_prop_ccw, -arm_length * components.sin45, arm_length * components.sin45, arm_height + prop_offset_top - body_height/2, 0, 0, 0, prop_ixx, prop_ixy, prop_ixz, prop_iyy, prop_iyz, prop_izz) }}
-    
-  {{ components.prop_macro(namespace, "cw", rotor_velocity_slowdown_sim, motor_constant, moment_constant, "base_link", mass_prop, radius_prop, time_constant_up, time_constant_down, max_rot_velocity, 2, rotor_drag_coefficient, rolling_moment_coefficient, "White", prop_mesh_file, mesh_scale_prop_cw, arm_length * components.sin45, arm_length * components.sin45, arm_height + prop_offset_top - body_height/2, 0, 0, 0, prop_ixx, prop_ixy, prop_ixz, prop_iyy, prop_iyz, prop_izz) }}
-    
-  {{ components.prop_macro(namespace, "cw", rotor_velocity_slowdown_sim, motor_constant, moment_constant, "base_link", mass_prop, radius_prop, time_constant_up, time_constant_down, max_rot_velocity, 3, rotor_drag_coefficient, rolling_moment_coefficient, "White", prop_mesh_file, mesh_scale_prop_cw, -arm_length * components.sin45, -arm_length * components.sin45, arm_height + prop_offset_top - body_height/2, 0, 0, 0, prop_ixx, prop_ixy, prop_ixz, prop_iyy, prop_iyz, prop_izz) }}
+    {{ components.visual_macro(namespace, "back_left_motor", motor_mesh_file, mesh_scale, "Black", root, -arm_length * components.sin45, arm_length * components.sin45, arm_height - body_height / 2, 0, 0, 0) }}
   <!--}-->
 
   {% if use_battery_mount %}
   <!-- battery mount and battery {-->
-    {{ components.visual_macro(namespace, "battery_mount", battery_mount_mesh, mesh_scale_milimeters, "DarkGrey", "base_link", 0.003, 0, -body_height / 2 - 0.029, 0, 0, components.rad(180)) }}
+    {{ components.visual_macro(namespace, "battery_mount", battery_mount_mesh, mesh_scale_milimeters, "DarkGrey", root, 0.003, 0, -body_height / 2 - 0.029, 0, 0, components.rad(180)) }}
 
-    {{ components.colored_box(namespace, "battery", 0.13, 0.042, 0.044, "Grey", "base_link", 0.003, 0, -body_height / 2 - 0.027, 0, 0, components.rad(180)) }}
+    {{ components.colored_box(namespace, "battery", 0.13, 0.042, 0.044, "Grey", root, 0.003, 0, -body_height / 2 - 0.027, 0, 0, components.rad(180)) }}
   <!--}-->
   {% endif %}
     
   <!--}-->
 
+  </link>
+
+  <!-- Propellers {-->
+  {{ components.prop_macro(namespace, "ccw", rotor_velocity_slowdown_sim, motor_constant, moment_constant, root, mass_prop, radius_prop, time_constant_up, time_constant_down, max_rot_velocity, 0, rotor_drag_coefficient, rolling_moment_coefficient, "White", prop_mesh_file, mesh_scale_prop_ccw, arm_length * components.sin45, -arm_length * components.sin45, arm_height + prop_offset_top - body_height/2, 0, 0, 0, prop_ixx, prop_ixy, prop_ixz, prop_iyy, prop_iyz, prop_izz) }}
+    
+  {{ components.prop_macro(namespace, "ccw", rotor_velocity_slowdown_sim, motor_constant, moment_constant, root, mass_prop, radius_prop, time_constant_up, time_constant_down, max_rot_velocity, 1, rotor_drag_coefficient, rolling_moment_coefficient, "White", prop_mesh_file, mesh_scale_prop_ccw, -arm_length * components.sin45, arm_length * components.sin45, arm_height + prop_offset_top - body_height/2, 0, 0, 0, prop_ixx, prop_ixy, prop_ixz, prop_iyy, prop_iyz, prop_izz) }}
+    
+  {{ components.prop_macro(namespace, "cw", rotor_velocity_slowdown_sim, motor_constant, moment_constant, root, mass_prop, radius_prop, time_constant_up, time_constant_down, max_rot_velocity, 2, rotor_drag_coefficient, rolling_moment_coefficient, "White", prop_mesh_file, mesh_scale_prop_cw, arm_length * components.sin45, arm_length * components.sin45, arm_height + prop_offset_top - body_height/2, 0, 0, 0, prop_ixx, prop_ixy, prop_ixz, prop_iyy, prop_iyz, prop_izz) }}
+    
+  {{ components.prop_macro(namespace, "cw", rotor_velocity_slowdown_sim, motor_constant, moment_constant, root, mass_prop, radius_prop, time_constant_up, time_constant_down, max_rot_velocity, 3, rotor_drag_coefficient, rolling_moment_coefficient, "White", prop_mesh_file, mesh_scale_prop_cw, -arm_length * components.sin45, -arm_length * components.sin45, arm_height + prop_offset_top - body_height/2, 0, 0, 0, prop_ixx, prop_ixy, prop_ixz, prop_iyy, prop_iyz, prop_izz) }}
+  <!--}-->
+  
   <!-- ================================================================== -->
   <!-- ||                compulsory sensor definitions                 || -->
   <!-- ================================================================== -->
@@ -172,7 +177,7 @@
   <!--}-->
 
   <!-- GPS {-->
-  {{ components.gps_macro("gps0", 0, 0, 0, namespace, true, 2.0, 4.0, "2.0e-4", "4.0e-4", 10, 0.2, 0.4, "base_link") }}
+  {{ components.gps_macro("gps0", 0, 0, 0, namespace, true, 2.0, 4.0, "2.0e-4", "4.0e-4", 10, 0.2, 0.4, root) }}
   <!--}-->
     
   <!-- Magnetometer {-->
@@ -188,7 +193,7 @@
   <!--}-->
 
   <!-- IMU (ADIS16448) {-->
-  {{ components.imu_plugin_macro(namespace, "", "base_link", "/imu", 0.015, 0.00018665, 0.000038785, 1000.0, 0.0087, 0.00186, 0.006, 300.0, 0.1960, 0, 0, 0, 0, 0, 0, 0.00001, 0, 0, 0.00001, 0, 0.00001) }}
+  {{ components.imu_plugin_macro(namespace, "", root, "/imu", 0.015, 0.00018665, 0.000038785, 1000.0, 0.0087, 0.00186, 0.006, 300.0, 0.1960, 0, 0, 0, 0, 0, 0, 0.00001, 0, 0, 0.00001, 0, 0.00001) }}
   <!--}-->
 
   <!-- ================================================================== -->
@@ -219,13 +224,13 @@
 
   {% if enable_rangefinder %}
   <!-- Garmin {-->
-  {{ components.garmin_macro(namespace, "base_link", "", -0.077, 0, -0.069, 0, components.rad(90), 0) }}
+  {{ components.garmin_macro(namespace, root, "", -0.077, 0, -0.069, 0, components.rad(90), 0) }}
   <!--}-->
   {% endif %}
     
   {% if enable_rangefinder_up %}
   <!-- Garmin Up {-->
-  {{ components.garmin_macro(namespace, "base_link", "_up", -0.077, 0, -0.033, 0, components.rad(-90), 0) }}
+  {{ components.garmin_macro(namespace, root, "_up", -0.077, 0, -0.033, 0, components.rad(-90), 0) }}
   <!--}-->
   {% endif %}
 

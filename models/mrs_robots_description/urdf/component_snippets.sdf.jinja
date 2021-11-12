@@ -140,92 +140,47 @@ limitations under the License.
 
 <!-- Visual macro (generic mesh) {-->
 {%- macro visual_macro(robot_namespace, name, mesh_file, mesh_scale, color, parent, x, y, z, roll, pitch, yaw) -%}
-<link name="{{ name }}_link">
-  <inertial>
-    <mass>0.0001</mass>  <!-- [kg] -->
-    {{ inertia_macro("1e-7",0,0,"1e-7",0,"1e-7") }}
-  </inertial>
-  {{ pose_macro(x, y, z, roll, pitch, yaw) }}
-  <visual name="{{ name }}_link_visual">
-    <geometry>
-      <mesh>
-        <uri>{{ mesh_file }}</uri>
-        <scale>{{ mesh_scale }}</scale>
-      </mesh>
-    </geometry>
-    <material>
-      <script>
-        <name>Gazebo/{{ color }}</name>
-        <uri>file://media/materials/scripts/gazebo.material</uri>
-      </script>
-    </material>
-  </visual>
-</link>
-
-<joint name="{{ name }}_joint" type="fixed">
-  <parent>{{ parent }}</parent>
-  <child>{{ name }}_link</child>
-</joint>
+<visual name="{{ name }}_visual">
+{{ pose_macro(x, y, z, roll, pitch, yaw) }}
+  <geometry>
+    <mesh>
+      <uri>{{ mesh_file }}</uri>
+      <scale>{{ mesh_scale }}</scale>
+    </mesh>
+  </geometry>
+  <material>
+    <script>
+      <name>Gazebo/{{ color }}</name>
+      <uri>file://media/materials/scripts/gazebo.material</uri>
+    </script>
+  </material>
+</visual>
 {%- endmacro -%}
 <!--}-->
 
 <!-- Leg macro {-->
 {%- macro leg_macro(robot_namespace, name, mesh_file, mesh_scale, color, parent, x, y, z, roll, pitch, yaw, collision_height, collision_radius) -%}
-<link name="{{ name }}_link">
-  <inertial>
-    <mass>0.005</mass>  <!-- [kg] -->
-    {{ inertia_macro("1e-4",0,0,"1e-4",0,"1e-4") }}
-  </inertial>
+{{ visual_macro(robot_namespace, name, mesh_file, mesh_scale, color, parent, x, y, z, roll, pitch, yaw) }}
+<collision name="{{ name }}_link_collision">
   {{ pose_macro(x, y, z, roll, pitch, yaw) }}
-  <visual name="{{ name }}_link_visual">
-    <geometry>
-      <mesh>
-        <uri>{{ mesh_file }}</uri>
-        <scale>{{ mesh_scale }}</scale>
-      </mesh>
-    </geometry>
-    <material>
-      <script>
-        <name>Gazebo/{{ color }}</name>
-        <uri>file://media/materials/scripts/gazebo.material</uri>
-      </script>
-    </material>
-  </visual>
-  <collision name="{{ name }}_link_collision">
-    {{ pose_macro(0.005, 0, 0, 0, 0, 0) }}
-    <geometry>
-      <cylinder>
-        <length>{{ collision_height }}</length>
-        <radius>{{ collision_radius }}</radius>
-      </cylinder>
-    </geometry>
-    <surface>
-      <contact>
-        <ode>
-          <min_depth>0.001</min_depth>
-          <max_vel>0.0</max_vel>
-          <kp>10000</kp>
-          <kd>1</kd>
-          <soft_erp>0.2</soft_erp>
-        </ode>
-      </contact>
-      <friction>
-        <ode>
-          <mu>1</mu>
-          <mu2>1</mu2>
-          <slip1>0</slip1>
-          <slip2>0</slip2>
-          <fdir1>0 0 0</fdir1>
-        </ode>
-      </friction>
-    </surface>
-  </collision>
-</link>
-
-<joint name="{{ name }}_joint" type="fixed">
-  <parent>{{ parent }}</parent>
-  <child>{{ name }}_link</child>
-</joint>
+  <geometry>
+    <cylinder>
+      <length>{{ collision_height }}</length>
+      <radius>{{ collision_radius }}</radius>
+    </cylinder>
+  </geometry>
+  <surface>
+    <contact>
+      <ode>
+        <min_depth>0.001</min_depth>
+        <max_vel>0.0</max_vel>
+      </ode>
+    </contact>
+    <friction>
+      <ode/>
+    </friction>
+  </surface>
+</collision>
 {%- endmacro -%}
 <!--}-->
 
@@ -260,22 +215,10 @@ limitations under the License.
     </geometry>
     <surface>
       <contact>
-        <ode>
-          <min_depth>0.001</min_depth>
-          <max_vel>0.0</max_vel>
-          <kp>300</kp>
-          <kd>1</kd>
-          <soft_erp>0.2</soft_erp>
-        </ode>
+        <ode/>
       </contact>
       <friction>
-        <ode>
-          <mu>1</mu>
-          <mu2>1</mu2>
-          <slip1>0</slip1>
-          <slip2>0</slip2>
-          <fdir1>0 0 0</fdir1>
-        </ode>
+        <ode/>
       </friction>
     </surface>
   </collision>
@@ -308,48 +251,42 @@ limitations under the License.
       <lower>-1e+16</lower>
       <upper>1e+16</upper>
     </limit>
+    <dynamics>
+      <spring_reference>0</spring_reference>
+      <spring_stiffness>0</spring_stiffness>
+    </dynamics>
     <use_parent_model_frame>1</use_parent_model_frame>
   </axis>
 </joint>
 {%- endmacro -%}
 <!--}-->
 
-<!-- Multirotor base without mesh {-->
-{%- macro multirotor_base_without_mesh_macro(robot_namespace, mass, body_radius, body_height, rotor_velocity_slowdown_sim, ixx, ixy, ixz, iyy, iyz, izz) -%}
-<link name="base_link">
-  <inertial>
-    <mass>{{ mass }}</mass>  <!-- [kg] -->
-    {{ inertia_macro(ixx, ixy, ixz, iyy, iyz, izz) }}
-  </inertial>
-  <collision name="base_link_collision">
-    <geometry>
-      <cylinder>
-        <length>{{ body_height }}</length>
-        <radius>{{ body_radius }}</radius>
-      </cylinder>
-    </geometry>
-    <surface>
-      <contact>
-        <ode>
-          <min_depth>0.001</min_depth>
-          <max_vel>0.0</max_vel>
-          <kp>10000</kp>
-          <kd>1</kd>
-          <soft_erp>0.2</soft_erp>
-        </ode>
-      </contact>
-      <friction>
-        <ode>
-          <mu>1</mu>
-          <mu2>1</mu2>
-          <slip1>0</slip1>
-          <slip2>0</slip2>
-          <fdir1>0 0 0</fdir1>
-        </ode>
-      </friction>
-    </surface>
-  </collision>
-</link>
+<!-- Multirotor physics macro {-->
+{%- macro multirotor_physics_macro(robot_namespace, mass, body_radius, body_height, rotor_velocity_slowdown_sim, ixx, ixy, ixz, iyy, iyz, izz) -%}
+<inertial>
+  <mass>{{ mass }}</mass>  <!-- [kg] -->
+  {{ inertia_macro(ixx, ixy, ixz, iyy, iyz, izz) }}
+</inertial>
+<collision name="base_link_collision">
+  {{ pose_macro(0, 0, - body_height / 2, 0, 0, 0) }}
+  <geometry>
+    <cylinder>
+      <length>{{ body_height }}</length>
+      <radius>{{ body_radius }}</radius>
+    </cylinder>
+  </geometry>
+  <surface>
+    <contact>
+      <ode>
+        <min_depth>0.001</min_depth>
+        <max_vel>0.0</max_vel>
+      </ode>
+    </contact>
+    <friction>
+      <ode/>
+    </friction>
+  </surface>
+</collision>
 
 <plugin filename="libgazebo_multirotor_base_plugin.so" name="rosbag">
   <robotNamespace>{{ robot_namespace }}</robotNamespace>
@@ -371,7 +308,7 @@ limitations under the License.
   <pose>{{ pos_x }} {{ pos_y }} {{ pos_z }} 0 0 0</pose>
   <inertial>
     <pose>0 0 0 0 0 0</pose>
-    <mass>0.01</mass>
+    <mass>0.001</mass>
     <inertia>
       <ixx>2.1733e-6</ixx>
       <ixy>0</ixy>
