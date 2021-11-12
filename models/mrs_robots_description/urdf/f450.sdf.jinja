@@ -7,7 +7,9 @@
   {# ||                    parameters definition                     || #}
   {# ================================================================== #}
   
-  {%- set namespace = "uav1" -%} {# TODO DELETE THIS #}
+  {%- set namespace = "uav0" -%} {# TODO DELETE THIS #}
+  {%- set enable_rangefinder = true -%} {# TODO DELETE THIS #}
+  {%- set enable_rangefinder_up = true -%} {# TODO DELETE THIS #}
   
   {#-  Robot parameters and arguments -#}
   {%- set mass = 2.00 -%} {# [kg] #}
@@ -150,12 +152,13 @@
   {{ components.prop_macro(namespace, "cw", rotor_velocity_slowdown_sim, motor_constant, moment_constant, "base_link", mass_prop, radius_prop, time_constant_up, time_constant_down, max_rot_velocity, 3, rotor_drag_coefficient, rolling_moment_coefficient, "White", prop_mesh_file, mesh_scale_prop_cw, -arm_length * components.sin45, -arm_length * components.sin45, arm_height + prop_offset_top - body_height/2, 0, 0, 0, prop_ixx, prop_ixy, prop_ixz, prop_iyy, prop_iyz, prop_izz) }}
   <!--}-->
 
-  {%- if use_battery_mount -%}
+  {% if use_battery_mount %}
   <!-- battery mount and battery {-->
-    {{ components.visual_macro(namespace, "battery_mount", battery_mount_mesh, mesh_scale_milimeters, "DarkGrey", "base_link", 0, 0, -body_height / 2 - 0.027, 0, 0, 0) }}
-    {{ components.colored_box(namespace, "battery", 0.13, 0.042, 0.044, "Grey", "base_link", 0, 0, -body_height / 2 - 0.025, 0, 0, 0) }}
+    {{ components.visual_macro(namespace, "battery_mount", battery_mount_mesh, mesh_scale_milimeters, "DarkGrey", "base_link", 0.003, 0, -body_height / 2 - 0.029, 0, 0, components.rad(180)) }}
+
+    {{ components.colored_box(namespace, "battery", 0.13, 0.042, 0.044, "Grey", "base_link", 0.003, 0, -body_height / 2 - 0.027, 0, 0, components.rad(180)) }}
   <!--}-->
-  {%- endif -%}
+  {% endif %}
     
   <!--}-->
 
@@ -187,6 +190,60 @@
   <!-- IMU (ADIS16448) {-->
   {{ components.imu_plugin_macro(namespace, "", "base_link", "/imu", 0.015, 0.00018665, 0.000038785, 1000.0, 0.0087, 0.00186, 0.006, 300.0, 0.1960, 0, 0, 0, 0, 0, 0, 0.00001, 0, 0, 0.00001, 0, 0.00001) }}
   <!--}-->
+
+  <!-- ================================================================== -->
+  <!-- ||                  optional sensor definitions                 || -->
+  <!-- ================================================================== -->
+
+  <!-- Ground truth {-->
+  <!-- <xacro:if value="${optionals['enable_ground_truth']}"> -->
+  <!--   <!-1- Mount a generic odometry sensor providing ground truth. -1-> -->
+  <!--   <xacro:odometry_plugin_macro -->
+  <!--     namespace="${namespace}" -->
+  <!--     odometry_sensor_suffix="_ground_truth" -->
+  <!--     parent_link="base_link" -->
+  <!--     topic_name="ground_truth" -->
+  <!--     frame_name="world" -->
+  <!--     mass_odometry_sensor="0.00001" -->
+  <!--     noise="0" -->
+  <!--     frame_rate="150" -->
+  <!--     xyz_offset="0 0 0" -->
+  <!--     rpy_offset="0 0 0"> -->
+  <!--   <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" /> <!-1- [kg.m^2] [kg.m^2] [kg.m^2] [kg.m^2] [kg.m^2] [kg.m^2] -1-> -->
+  <!--   <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" /> -->
+  <!--   </xacro:odometry_plugin_macro> -->
+  <!-- </xacro:if> -->
+  <!--}-->
+
+  <!-- ======================= rangefinder sensors ======================-->
+
+  {% if enable_rangefinder %}
+  <!-- Garmin {-->
+  {{ components.garmin_macro(namespace, "base_link", "", -0.077, 0, -0.069, 0, components.rad(90), 0) }}
+  <!--}-->
+  {% endif %}
+    
+  {% if enable_rangefinder_up %}
+  <!-- Garmin Up {-->
+  {{ components.garmin_macro(namespace, "base_link", "_up", -0.077, 0, -0.033, 0, components.rad(-90), 0) }}
+  <!--}-->
+  {% endif %}
+
+  <!-- Teraranger One {-->
+  <!-- <xacro:if value="${optionals['enable_teraranger']}"> -->
+  <!--   <xacro:teraranger_macro -->
+  <!--     namespace="${namespace}" -->
+  <!--     parent_link="base_link" -->
+  <!--     x="0.08" -->
+  <!--     y="0" -->
+  <!--     z="-0.05" -->
+  <!--     roll="0" -->
+  <!--     pitch="${rad90}" -->
+  <!--     yaw="0" -->
+  <!--     > -->
+  <!--   </xacro:teraranger_macro> -->
+  <!-- </xacro:if> -->
+<!--}-->
 
 
   </model>

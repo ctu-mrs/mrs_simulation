@@ -112,8 +112,8 @@ limitations under the License.
 {%- macro colored_box(robot_namespace, name, size_x, size_y, size_z, color, parent, x, y, z, roll, pitch, yaw) -%}
 <link name="{{ name }}_link">
   <inertial>
-    <mass>0.001</mass>  <!-- [kg] -->
-    {{ inertia_macro(0.001,0,0,0.001,0,0.001) }}
+    <mass>0.0001</mass>  <!-- [kg] -->
+    {{ inertia_macro("1e-7",0,0,"1e-7",0,"1e-7") }}
   </inertial>
   {{ pose_macro(x, y, z, roll, pitch, yaw) }}
   <visual name="{{ name }}_link_visual">
@@ -142,8 +142,8 @@ limitations under the License.
 {%- macro visual_macro(robot_namespace, name, mesh_file, mesh_scale, color, parent, x, y, z, roll, pitch, yaw) -%}
 <link name="{{ name }}_link">
   <inertial>
-    <mass>0.001</mass>  <!-- [kg] -->
-    {{ inertia_macro(0.001,0,0,0.001,0,0.001) }}
+    <mass>0.0001</mass>  <!-- [kg] -->
+    {{ inertia_macro("1e-7",0,0,"1e-7",0,"1e-7") }}
   </inertial>
   {{ pose_macro(x, y, z, roll, pitch, yaw) }}
   <visual name="{{ name }}_link_visual">
@@ -173,8 +173,8 @@ limitations under the License.
 {%- macro leg_macro(robot_namespace, name, mesh_file, mesh_scale, color, parent, x, y, z, roll, pitch, yaw, collision_height, collision_radius) -%}
 <link name="{{ name }}_link">
   <inertial>
-    <mass>0.05</mass>  <!-- [kg] -->
-    {{ inertia_macro(0.01,0,0,0.01,0,0.01) }}
+    <mass>0.005</mass>  <!-- [kg] -->
+    {{ inertia_macro("1e-4",0,0,"1e-4",0,"1e-4") }}
   </inertial>
   {{ pose_macro(x, y, z, roll, pitch, yaw) }}
   <visual name="{{ name }}_link_visual">
@@ -204,8 +204,20 @@ limitations under the License.
         <ode>
           <min_depth>0.001</min_depth>
           <max_vel>0.0</max_vel>
+          <kp>10000</kp>
+          <kd>1</kd>
+          <soft_erp>0.2</soft_erp>
         </ode>
       </contact>
+      <friction>
+        <ode>
+          <mu>1</mu>
+          <mu2>1</mu2>
+          <slip1>0</slip1>
+          <slip2>0</slip2>
+          <fdir1>0 0 0</fdir1>
+        </ode>
+      </friction>
     </surface>
   </collision>
 </link>
@@ -246,6 +258,26 @@ limitations under the License.
         <radius>{{ radius }}</radius>
       </cylinder>
     </geometry>
+    <surface>
+      <contact>
+        <ode>
+          <min_depth>0.001</min_depth>
+          <max_vel>0.0</max_vel>
+          <kp>300</kp>
+          <kd>1</kd>
+          <soft_erp>0.2</soft_erp>
+        </ode>
+      </contact>
+      <friction>
+        <ode>
+          <mu>1</mu>
+          <mu2>1</mu2>
+          <slip1>0</slip1>
+          <slip2>0</slip2>
+          <fdir1>0 0 0</fdir1>
+        </ode>
+      </friction>
+    </surface>
   </collision>
 </link>
 
@@ -301,8 +333,20 @@ limitations under the License.
         <ode>
           <min_depth>0.001</min_depth>
           <max_vel>0.0</max_vel>
+          <kp>10000</kp>
+          <kd>1</kd>
+          <soft_erp>0.2</soft_erp>
         </ode>
       </contact>
+      <friction>
+        <ode>
+          <mu>1</mu>
+          <mu2>1</mu2>
+          <slip1>0</slip1>
+          <slip2>0</slip2>
+          <fdir1>0 0 0</fdir1>
+        </ode>
+      </friction>
     </surface>
   </collision>
 </link>
@@ -620,24 +664,8 @@ limitations under the License.
 {%- endmacro -%}
 <!--}-->
 
-<!-- Macro to add the rangefinder_plugin {-->
-{%- macro rangefinder_macro(namespace, parent_link, rangefinder_suffix, parent_frame_name, rangefinder_frame_name, topic, frame_rate, fov, min_distance, max_distance, resolution, noise, x, y, z, roll, pitch, yaw, name, color) -%}
-<link name="{{ namespace }}/{{ name }}_link">
-  {{ pose_macro(x, y, z, roll, pitch, yaw) }}
-  <visual name="{{ namespace }}/{{ name }}_link_visual">
-  <material>
-      <script>
-        <name>Gazebo/{{ color }}</name>
-        <uri>file://media/materials/scripts/gazebo.material</uri>
-      </script>
-    </material>
-  </visual>
-</link>
-
-<joint name="{{ namespace }}/{{ name }}_joint" type="fixed">
-  <parent>{{ parent_link }}</parent>
-  <child>{{ namespace }}/{{ name }}_link</child>
-</joint>
+<!-- Macro to add a rangefinder sensor plugin {-->
+{%- macro rangefinder_sensor_macro(name, parent_frame_name, rangefinder_frame_name, topic, frame_rate, fov, min_distance, max_distance, resolution, noise, x, y, z, roll, pitch, yaw) -%}
 <sensor name="{{ name }}" type='ray'>
   <update_rate>{{ frame_rate }}</update_rate>
   <ray>
@@ -934,4 +962,75 @@ limitations under the License.
 {%- endmacro -%}
     <!--}-->
 
-  <!--}-->
+<!--}-->
+
+<!-- ================================================================== -->
+<!-- ||                      sensor definitions                      || -->
+<!-- ================================================================== -->
+
+<!-- ======================= rangefinder sensors ======================-->
+
+<!-- Macro to add a garmin {-->
+<!-- Orientation empty for down looking garmin, _up for upward looking sensor -->
+{%- macro garmin_macro(namespace, parent_link, orientation, x, y, z, yaw, pitch, roll) -%}
+<link name="{{ namespace }}/garmin{{ orientation }}_link">
+  {{ pose_macro(x, y, z, roll, pitch, yaw) }}
+  <visual name="{{ namespace }}/garmin{{ orientation }}_link_visual">
+    <origin xyz="0.015 0 0" rpy="0 0 0" />
+    <geometry>
+      <mesh>
+        <uri>model://mrs_robots_description/meshes/sensors/garmin_lidar_v3.stl</uri>
+        <scale>0.001 0.001 0.001</scale>
+      </mesh>
+    </geometry>
+    <material>
+      <script>
+        <name>Gazebo/DarkGrey</name>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+      </script>
+    </material>
+  </visual>
+  {{ rangefinder_sensor_macro("garmin" + orientation, namespace + "/fcu", namespace + "/garmin" + orientation, "garmin" + orientation + "/range", 100, 0.03, 0.1, 40.0, 0.005, 0.01, x, y, z, roll, pitch, yaw) }}
+</link>
+
+<joint name="{{ namespace }}/garmin{{ orientation }}_joint" type="fixed">
+  <parent>{{ parent_link }}</parent>
+  <child>{{ namespace }}/garmin{{ orientation }}_link</child>
+</joint>
+{%- endmacro -%}
+<!--}-->
+
+<!--<!-1- Macro to add a Teraranger One {-1->-->
+<!--<xacro:macro name="teraranger_macro" params="namespace parent_link x y z yaw pitch roll">-->
+<!--  <xacro:rangefinder_macro-->
+<!--    namespace="${namespace}"-->
+<!--    name="teraranger"-->
+<!--    color="Yellow"-->
+<!--    parent_link="${parent_link}"-->
+<!--    frame_rate="100"-->
+<!--    rangefinder_suffix="teraranger"-->
+<!--    rangefinder_frame_name="${nacamespace}/teraranger"-->
+<!--    parent_frame_name="${namespace}/fcu"-->
+<!--    topic="teraranger/range"-->
+<!--    fov="0.03"-->
+<!--    min_distance="0.1"-->
+<!--    max_distance="14"-->
+<!--    resolution= "0.005"-->
+<!--    noise="0.04"-->
+<!--    x="${x}"-->
+<!--    y="${y}"-->
+<!--    z="${z}"-->
+<!--    yaw="${yaw}"-->
+<!--    pitch="${pitch}"-->
+<!--    roll="${roll}"-->
+<!--    >-->
+<!--    <visual>-->
+<!--      <origin xyz="0 0 0" rpy="0 -${rad90} 0" />-->
+<!--      <geometry>-->
+<!--        <box size=".027 .033 0.015" />-->
+<!--      </geometry>-->
+<!--    </visual>-->
+<!--  </xacro:rangefinder_macro>-->
+<!--</xacro:macro>-->
+<!--<!-1-}-1->-->
+
