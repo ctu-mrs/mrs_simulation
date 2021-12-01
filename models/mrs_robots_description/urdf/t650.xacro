@@ -1282,19 +1282,19 @@
   </xacro:if>
   <!--}-->
 
-  <!-- UVDAR mount {-->
-  <xacro:if value="${optionals['enable_uv_camera']}">
-    <xacro:visual_macro
-      robot_namespace="${namespace}"
-      name="uvdar_mount"
-      mesh_file="${uvdar_mount_mesh}"
-      mesh_scale="${mesh_scale_milimeters}"
-      parent="base_link"
-      color="DarkGrey">
-    <origin xyz="0.025 0 0.043" rpy="0 0 0" />
-    </xacro:visual_macro>
-  </xacro:if>
-  <!--}-->
+  <!--<!-1- Downward UVDAR mount {-1->-->
+  <!--<xacro:if value="${optionals['enable_uv_camera']}">-->
+  <!--  <xacro:visual_macro-->
+  <!--    robot_namespace="${namespace}"-->
+  <!--    name="uvdar_mount"-->
+  <!--    mesh_file="${uvdar_mount_mesh}"-->
+  <!--    mesh_scale="${mesh_scale_milimeters}"-->
+  <!--    parent="base_link"-->
+  <!--    color="DarkGrey">-->
+  <!--  <origin xyz="0.025 0 0.043" rpy="0 0 0" />-->
+  <!--  </xacro:visual_macro>-->
+  <!--</xacro:if>-->
+  <!--<!-1-}-1->-->
 
   <!-- ========================== other sensors ========================= -->
 
@@ -1489,6 +1489,23 @@
   </xacro:if>
   <!--}-->
 
+  <!--}-->
+
+  <!-- Downward UV cameras {-->
+  <xacro:if value="${optionals['enable_downward_uv_camera']}">
+
+    <xacro:uvcam_macro
+      namespace="${namespace}"
+      parent_link="base_link"
+      number="1"
+      frame_rate="60"
+      camera_publish_topic="/${namespace}/uvdar_bluefox_bottom/image_raw"
+      calibration_file="${optionals['uvcam_calib_file']}"
+      occlusions="${optionals['uvcam_occlusions']}">
+    <origin xyz="0.0 0.0 -0.10" rpy="0 ${rad90} 0" />
+    </xacro:uvcam_macro>
+
+  </xacro:if>
   <!--}-->
 
 </robot>
