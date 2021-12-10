@@ -1716,8 +1716,9 @@ limitations under the License.
     <!--}-->
 
     <gazebo>
-      <plugin name="${camera_suffix}_plugin" filename="libMRSGazeboRealsensePlugin.so">
+      <plugin name="realsense_${camera_suffix}_plugin" filename="libMRSGazeboRealsensePlugin.so">
         <realsense_namespace>${realsense_namespace}</realsense_namespace>
+        <camera_suffix>${camera_suffix}</camera_suffix>
         <useRealistic>${enable_realistic_realsense}</useRealistic>
         <noisePerMeter>0.2</noisePerMeter>
         <minNoiseDistance>4.0</minNoiseDistance>
