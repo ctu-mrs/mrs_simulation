@@ -597,7 +597,7 @@
       namespace="${namespace}"
       realsense_namespace=""
       parent_link="base_link"
-      camera_suffix=""
+      camera_suffix="realsense_front"
       parent_frame_name="${namespace}/fcu"
       enable_realistic_realsense="${optionals['use_realistic_realsense']}"
       x="0.07"
