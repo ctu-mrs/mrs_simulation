@@ -1679,10 +1679,10 @@ limitations under the License.
 
   <!-- Macro to add an Intel Realsense D435 {-->
   <xacro:macro name="realsense_macro"
-    params="namespace realsense_namespace parent_link parent_frame_name camera_suffix x y z roll pitch yaw enable_realistic_realsense">
+    params="namespace camera_name parent_link parent_frame_name camera_suffix x y z roll pitch yaw enable_realistic_realsense">
 
     <!-- visual links and joints {-->
-    <link name="${realsense_namespace}/camera_${camera_suffix}">
+    <link name="${camera_name}/camera${camera_suffix}">
       <visual>
         <origin xyz="0.0 0.0 0" rpy="-${rad90} 0 -${rad90}" />
         <geometry>
@@ -1692,7 +1692,7 @@ limitations under the License.
       </visual>
     </link>
 
-    <link name="${realsense_namespace}/camera_${camera_suffix}_glass_link">
+    <link name="${camera_name}/camera${camera_suffix}_glass_link">
       <visual>
         <origin xyz="0.0 0.0 0" rpy="-${rad90} 0 -${rad90}" />
         <geometry>
@@ -1702,22 +1702,23 @@ limitations under the License.
       </visual>
     </link>
 
-    <joint name="${realsense_namespace}/camera_${camera_suffix}_joint" type="fixed">
+    <joint name="${camera_name}/camera${camera_suffix}_joint" type="fixed">
       <origin xyz="${x} ${y} ${z}" rpy="${roll} ${pitch} ${yaw}"/>
       <parent link="${parent_link}" />
-      <child link="${realsense_namespace}/camera_${camera_suffix}" />
+      <child link="${camera_name}/camera${camera_suffix}" />
     </joint>
 
-    <joint name="${realsense_namespace}/camera_${camera_suffix}_glass_joint" type="fixed">
+    <joint name="${camera_name}/camera${camera_suffix}_glass_joint" type="fixed">
       <origin xyz="0 0 0 " rpy="0 0 0"/>
-      <parent link="${realsense_namespace}/camera_${camera_suffix}" />
-      <child link="${realsense_namespace}/camera_${camera_suffix}_glass_link" />
+      <parent link="${camera_name}/camera${camera_suffix}" />
+      <child link="${camera_name}/camera${camera_suffix}_glass_link" />
     </joint>
     <!--}-->
 
     <gazebo>
-      <plugin name="${camera_suffix}_plugin" filename="libMRSGazeboRealsensePlugin.so">
-        <realsense_namespace>${realsense_namespace}</realsense_namespace>
+      <plugin name="${camera_name}${camera_suffix}_plugin" filename="libMRSGazeboRealsensePlugin.so">
+        <camera_name>${camera_name}</camera_name>
+        <camera_suffix>${camera_suffix}</camera_suffix>
         <useRealistic>${enable_realistic_realsense}</useRealistic>
         <noisePerMeter>0.2</noisePerMeter>
         <minNoiseDistance>4.0</minNoiseDistance>
@@ -1737,13 +1738,13 @@ limitations under the License.
     </gazebo>
 
     <!-- sensors {-->
-    <gazebo reference="${realsense_namespace}/camera_${camera_suffix}">
+    <gazebo reference="${camera_name}/camera${camera_suffix}">
 
       <!-- rgb camera {-->
-      <sensor name="${namespace}/${realsense_namespace}/color" type="camera">
+      <sensor name="${namespace}/${camera_name}${camera_suffix}_color" type="camera">
         <!-- <pose frame="">0 -0.046 0.004 0 0 0</pose> -->
         <pose frame="">0 0 -0.0115 0 0 0</pose>
-        <camera name="${realsense_namespace}/camera_${camera_suffix}">
+        <camera name="${camera_name}${camera_suffix}/camera">
           <!-- <horizontal_fov>1.211259</horizontal_fov> -->
           <horizontal_fov>1.211259</horizontal_fov>
           <image>
@@ -1768,11 +1769,11 @@ limitations under the License.
       <!--}-->
 
       <!-- infra stereo {-->
-      <sensor name="${namespace}/${realsense_namespace}/infra_stereo" type="multicamera">
+      <sensor name="${namespace}/${camera_name}${camera_suffix}_infra_stereo" type="multicamera">
         <always_on>1</always_on>
         <update_rate>30</update_rate>
         <visualize>0</visualize>
-        <camera name="${namespace}/${realsense_namespace}/infra1">
+        <camera name="${namespace}/${camera_name}${camera_suffix}/infra1">
           <!-- <horizontal_fov>1.7523106</horizontal_fov> -->
           <horizontal_fov>1.211259</horizontal_fov>
           <image>
@@ -1790,7 +1791,7 @@ limitations under the License.
             <stddev>0.005</stddev>
           </noise>
         </camera>
-        <camera name="${namespace}/${realsense_namespace}/infra2">
+        <camera name="${namespace}/${camera_name}${camera_suffix}/infra2">
           <pose>0 0.05 0 0 0 0</pose>
           <!-- <horizontal_fov>1.7523106</horizontal_fov> -->
           <horizontal_fov>1.211259</horizontal_fov>
@@ -1814,10 +1815,10 @@ limitations under the License.
 
       <!-- (unused) infra2 {-->
         <!-- <sensor name="infra2" type="camera"> -->
-        <!-- <parent link="${realsense_namespace}/camera_${camera_suffix}"/> -->
+        <!-- <parent link="${camera_name}${camera_suffix}_camera_${camera_suffix}"/> -->
         <!-- <pose>0 -1.0325 0 0 0 0</pose> -->
-        <!--   <pose frame="${realsense_namespace}/camera_${camera_suffix}_infra2">0 -1.0325 0 0 0 0</pose> -->
-        <!--   <camera name="${realsense_namespace}/camera_${camera_suffix}_infra2"> -->
+        <!--   <pose frame="${camera_name}${camera_suffix}/camera_infra2">0 -1.0325 0 0 0 0</pose> -->
+        <!--   <camera name="${camera_name}${camera_suffix}/camera_${camera_suffix}_infra2"> -->
           <!-- <horizontal_fov>1.7523106</horizontal_fov> -->
           <!--     <horizontal_fov>1.211259</horizontal_fov> -->
           <!--     <image> -->
@@ -1842,9 +1843,9 @@ limitations under the License.
           <!--}-->
 
       <!-- aligned depth to color {-->
-        <sensor name="${namespace}/${realsense_namespace}/aligned_depth_to_color" type="depth">
+        <sensor name="${namespace}/${camera_name}${camera_suffix}_aligned_depth_to_color" type="depth">
         <pose>0 -0.0115 0.0 0 0 0</pose>
-        <camera name="${realsense_namespace}/camera_${camera_suffix}">
+        <camera name="${camera_name}/camera${camera_suffix}">
           <horizontal_fov>1.211259</horizontal_fov>
           <image>
             <xacro:if value="${enable_realistic_realsense}">
@@ -1875,10 +1876,11 @@ limitations under the License.
     </gazebo>
     <!--}-->
 
-    <gazebo reference="${realsense_namespace}/camera_${camera_suffix}">
+    <gazebo reference="${camera_name}/camera${camera_suffix}">
       <material>Gazebo/White</material>
     </gazebo>
-    <gazebo reference="${realsense_namespace}/camera_${camera_suffix}_glass_link">
+
+    <gazebo reference="${camera_name}/camera${camera_suffix}_glass_link">
       <material>Gazebo/BlackTransparent</material>
     </gazebo>
 
