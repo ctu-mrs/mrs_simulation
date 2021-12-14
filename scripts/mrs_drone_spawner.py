@@ -8,6 +8,8 @@ import sys
 import tempfile
 import threading
 import yaml
+import math
+import random
 
 from utils import print_error, print_info, print_ok, is_number, rinfo, rwarn, rerr
 
@@ -452,22 +454,48 @@ class MrsDroneSpawner():
     # #{ get_spawn_poses_from_ids
     def get_spawn_poses_from_ids(self, ids):
         spawn_poses = {}
+        uav_spacing = 5.0
+        circle_diameter = 0.0
+        total_positions_in_current_circle = 0;
+        angle_increment = 0;
+        remaining_positions_in_current_circle = 1;
+        circle_perimeter= math.pi*circle_diameter
+        random_angle_offset = 0
+        random_x_offset = round(random.uniform(-5,5), 2)
+        random_y_offset = round(random.uniform(-5,5), 2)
+
         for ID in ids:
-            inteam_id = ID % 100
-            x = 0
-            y = 29.45
+            if remaining_positions_in_current_circle == 0:
+                circle_diameter = circle_diameter + uav_spacing
+                circle_perimeter= math.pi*circle_diameter
+                total_positions_in_current_circle = math.floor(circle_perimeter/uav_spacing)
+                remaining_positions_in_current_circle = total_positions_in_current_circle
+                angle_increment = (math.pi*2)/total_positions_in_current_circle
+                random_angle_offset = round(random.uniform(-math.pi,math.pi), 2)
+
+            x = round(math.sin(angle_increment*remaining_positions_in_current_circle + random_angle_offset)*circle_diameter,2) + random_x_offset
+            y = round(math.cos(angle_increment*remaining_positions_in_current_circle + random_angle_offset)*circle_diameter,2) + random_y_offset
             z = 0.3
-            heading = 0
+            heading = round(random.uniform(-math.pi,math.pi), 2)
+            remaining_positions_in_current_circle = remaining_positions_in_current_circle - 1
 
-            if ( inteam_id > 1 ):
-                y -= 8*((inteam_id)//2)
+            # inteam_id = ID % 100
+            # x = 0
+            # y = 29.45
+            # z = 0.3
+            # heading = 0
 
-            if( inteam_id % 2 == 0 ):
-                x += 4
-            if( inteam_id % 2 == 1 ):
-                x -= 4
+            # if ( inteam_id > 1 ):
+            #     y -= 8*((inteam_id)//2)
+
+            # if( inteam_id % 2 == 0 ):
+            #     x += 4
+            # if( inteam_id % 2 == 1 ):
+            #     x -= 4
 
             spawn_poses[ID] = {'x': x, 'y': y, 'z': z, 'heading': heading}
+        print("spawn poses len: " + str(len(spawn_poses)))
+        print("spawn poses: " + str(spawn_poses))
         return spawn_poses
     # #}
 
