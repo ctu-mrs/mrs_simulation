@@ -1426,7 +1426,6 @@
       robot_namespace="${namespace}"
       name="whycon_box"
       mesh_scale="2 2 2"
-      mesh_file="${box_mesh_file}"
       parent="base_link">
       <origin xyz="0 0 0.25" rpy="0 0 0" />
     </xacro:box_macro>
