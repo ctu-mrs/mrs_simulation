@@ -43,22 +43,23 @@
 
   <!-- Robot parameters and arguments {-->
   <xacro:property name="mass" value="7.00" /> <!-- [kg] -->
-  <xacro:property name="body_radius" value="0.29" /> <!-- [m] -->
-  <xacro:property name="body_height" value="0.45" /> <!-- [m] -->
+  <xacro:property name="body_radius" value="0.47" /> <!-- [m] -->
+  <xacro:property name="body_height" value="0.155" /> <!-- [m] -->
+  <xacro:property name="body_center_z" value="-0.0195" /> <!-- [m] -->
+  <xacro:property name="legs_width" value="0.43" /> <!-- [m] -->
+  <xacro:property name="legs_height" value="0.12" /> <!-- [m] -->
   <xacro:property name="mass_rotor" value="0.005" /> <!-- [kg] -->
   <xacro:property name="radius_rotor" value="0.165" /> <!-- [m] -->
   <xacro:property name="rotor_offset_top" value="0.0235" /> <!-- [m] -->
-  <xacro:property name="arm_length" value="0.29" /> <!-- [m] -->
-  <xacro:property name="arm_height" value="0.015" /> <!-- [m] -->
-  <xacro:property name="board_radius" value="0.065" /> <!-- [m] -->
-  <xacro:property name="board_height" value="0.002" /> <!-- [m] -->
-  <xacro:property name="holder_offset" value="0.02" /> <!-- [m] -->
-  <xacro:property name="leg_offset_z" value="0.098" /> <!-- [m] -->
-  <!-- <xacro:property name="leg_offset_z" value="0.133" /> -->
-  <xacro:property name="leg_offset_r" value="0.0072" /> <!-- [m] -->
-  <xacro:property name="pixhawk_offset" value="0.0075" /> <!-- [m] -->
+  <xacro:property name="arm_length_x" value="0.1911" /> <!-- [m] -->
+  <xacro:property name="arm_length_y" value="0.2109" /> <!-- [m] -->
+  <xacro:property name="arm_height" value="0.016" /> <!-- [m] -->
+  <xacro:property name="arm_offset_z" value="0.015" /> <!-- [m] -->
+  <xacro:property name="motor_to_mount" value="0.0095" /> <!-- [m] -->
+  <xacro:property name="motor_z_offset" value="-0.01875" /> <!-- [m] -->
+  <xacro:property name="motor_height" value="0.0235" /> <!-- [m] -->
+  <xacro:property name="pixhawk_offset" value="0.008" /> <!-- [m] -->
 
-  <xacro:arg name="use_battery_mount" default="true" /> <!-- [m] -->
   <!--}-->
 
   <!-- Motor constants {-->
@@ -77,25 +78,14 @@
   <xacro:property name="inertia_body_height" value="0.20" /> <!-- [m] -->
   <!--}-->
 
-  <!-- TODO -->
   <!-- Meshes {-->
   <!-- drone parts -->
-  <xacro:property name="central_board_mesh_top" value="package://mrs_robots_description/meshes/dji/f450/dji_f450_central_top.dae" />
-  <xacro:property name="central_board_mesh_bottom" value="package://mrs_robots_description/meshes/dji/f450/dji_f450_central_bottom.dae" />
-  <xacro:property name="arm_mesh_file" value="package://mrs_robots_description/meshes/dji/f450/dji_f450_arm.dae" />
-  <xacro:property name="leg_mesh_file" value="package://mrs_robots_description/meshes/dji/f450/dji_f450_leg_170mm.dae"/>
-  <!-- <xacro:property name="leg_mesh_file" value="package://mrs_robots_description/meshes/dji/f450/dji_f450_leg_240mm.dae"/> -->
-  <xacro:property name="rotor_mesh_file" value="package://mrs_robots_description/meshes/dji/f450/dji_f450_rotor.dae" />
-  <xacro:property name="prop_mesh_file" value="package://mrs_robots_description/meshes/dji/f450/dji_f450_prop.dae"/>
+  <xacro:property name="frame_legless_sensorless_file" value="package://mrs_robots_description/meshes/custom/naki/NAKI_legless_frame.dae" />
+  <xacro:property name="legs_file" value="package://mrs_robots_description/meshes/custom/naki/NAKI_legs.dae" />
+  <xacro:property name="rotor_mesh_file" value="package://mrs_robots_description/meshes/custom/naki/dji_f450_rotor.dae" />
+  <xacro:property name="prop_mesh_file" value="package://mrs_robots_description/meshes/custom/naki/NAKI_propeller.dae"/>
+  <xacro:property name="sony_camera_mesh_file" value="package://mrs_robots_description/meshes/custom/naki/NAKI_sony_alpha_6500_w_gimbal_mount.dae"/>
   <xacro:property name="pixhawk_mesh_file" value="package://mrs_robots_description/meshes/sensors/pixhawk.dae" />
-  <xacro:property name="nuc_mesh_file" value="package://mrs_robots_description/meshes/dji/f450/dji_f450_nuc.dae" />
-
-  <!-- holders -->
-  <xacro:property name="battery_mount_mesh" value="package://mrs_robots_description/meshes/dji/f450/dji_f450_battery_mount.dae" />
-  <xacro:property name="ouster_mount_mesh" value="package://mrs_robots_description/meshes/dji/f450/dji_f450_ouster_mount.dae" />
-  <xacro:property name="garmin_mount_mesh" value="package://mrs_robots_description/meshes/dji/f450/dji_f450_garmin_mount.dae" />
-  <xacro:property name="rplidar_mount_mesh" value="package://mrs_robots_description/meshes/dji/f450/dji_f450_rplidar_mount.dae" />
-  <xacro:property name="realsense_front_mount_mesh" value="package://mrs_robots_description/meshes/dji/f450/dji_f450_realsense_front_pitched_0_mount.dae" />
 
   <!-- scales -->
   <xacro:property name="mesh_scale" value="1 1 1"/>
@@ -130,172 +120,69 @@
   </xacro:property>
 
   <!-- Instantiate multirotor_base_macro {-->
-  <xacro:multirotor_base_without_mesh_macro
+  <xacro:multirotor_base_without_mesh_with_collision_macro
     robot_namespace="${namespace}"
     mass="${mass}"
-    body_radius="${body_radius}"
-    body_height="${body_height}"
     >
     <xacro:insert_block name="body_inertia" />
-  </xacro:multirotor_base_without_mesh_macro>
+    <collision>
+      <origin xyz="0 0 ${body_center_z}" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="${body_radius}" length="${body_height}" />
+      </geometry>
+    </collision>
+  </xacro:multirotor_base_without_mesh_with_collision_macro>
+
   <!--}-->
+
   <!--}-->
 
   <!-- Body parts {-->
 
   <!-- Boards {-->
-  <xacro:visual_macro
-    robot_namespace="${namespace}"
-    name="lower_central_board"
-    mesh_file="${central_board_mesh_bottom}"
-    mesh_scale="${mesh_scale}"
-    parent="base_link"
-    color="DarkGrey">
-    <origin xyz="0 0 -${body_height/2}" rpy="0 0 0" />
-  </xacro:visual_macro>
 
-  <xacro:visual_macro
+  <xacro:textured_visual_macro
     robot_namespace="${namespace}"
-    name="upper_central_board"
-    mesh_file="${central_board_mesh_top}"
+    name="frame_legless_sensorless_file"
+    mesh_file="${frame_legless_sensorless_file}"
     mesh_scale="${mesh_scale}"
-    parent="base_link"
-    color="DarkGrey">
-    <origin xyz="0 0 ${arm_height - body_height/2}" rpy="0 0 0" />
-  </xacro:visual_macro>
-  <!--}-->
+    parent="base_link">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </xacro:textured_visual_macro>
 
-  <!-- Arms {-->
-  <xacro:visual_macro
+  <xacro:textured_visual_macro_with_collision
     robot_namespace="${namespace}"
-    name="front_right_arm"
-    mesh_file="${arm_mesh_file}"
+    name="legs_file"
+    mesh_file="${legs_file}"
     mesh_scale="${mesh_scale}"
-    parent="base_link"
-    color="White">
-    <origin xyz="${board_radius * sin45} -${board_radius * sin45} ${arm_height - body_height/2}" rpy="0 0 -${rad45}" />
-  </xacro:visual_macro>
+    parent="base_link">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <collision>
+      <!-- Is blocking garmin -->
+      <!-- <origin xyz="0 0 -${body_height/2 + legs_height/2}" rpy="0 0 0"/> -->
+      <!-- <geometry> -->
+        <!-- <box size="${legs_width} ${legs_width} ${legs_height}" /> -->
+      <!-- </geometry> -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="${legs_file}" scale="${mesh_scale}" />
+      </geometry>
+    </collision>
+  </xacro:textured_visual_macro_with_collision>
 
-  <xacro:visual_macro
-    robot_namespace="${namespace}"
-    name="front_left_arm"
-    mesh_file="${arm_mesh_file}"
-    mesh_scale="${mesh_scale}"
-    parent="base_link"
-    color="White">
-    <origin xyz="${board_radius * sin45} ${board_radius * sin45} ${arm_height - body_height/2}" rpy="0 0 ${rad45}" />
-  </xacro:visual_macro>
-
-  <xacro:visual_macro
-    robot_namespace="${namespace}"
-    name="back_right_arm"
-    mesh_file="${arm_mesh_file}"
-    mesh_scale="${mesh_scale}"
-    parent="base_link"
-    color="Red">
-    <origin xyz="-${board_radius * sin45} -${board_radius * sin45} ${arm_height - body_height/2}" rpy="0 0 -${rad135}" />
-  </xacro:visual_macro>
-
-  <xacro:visual_macro
-    robot_namespace="${namespace}"
-    name="back_left_arm"
-    mesh_file="${arm_mesh_file}"
-    mesh_scale="${mesh_scale}"
-    parent="base_link"
-    color="Red">
-    <origin xyz="-${board_radius * sin45} ${board_radius * sin45} ${arm_height - body_height/2}" rpy="0 0 ${rad135}" />
-  </xacro:visual_macro>
-  <!--}-->
-
-  <!-- intel nuc {-->
-  <xacro:visual_macro
-    robot_namespace="${namespace}"
-    name="NUC"
-    mesh_file="${nuc_mesh_file}"
-    mesh_scale="${mesh_scale_milimeters}"
-    parent="base_link"
-    color="DarkGrey">
-    <origin xyz="0 0 0.023" rpy="0 0 0" />
-  </xacro:visual_macro>
   <!--}-->
 
   <!-- pixhawk {-->
-  <xacro:visual_macro
-    robot_namespace="${namespace}"
-    name="pixhawk"
-    mesh_file="${pixhawk_mesh_file}"
-    mesh_scale="${mesh_scale}"
-    parent="base_link"
-    color="DarkGrey">
-    <origin xyz="0 0 -${body_height/2 - pixhawk_offset}" rpy="0 0 0" />
-  </xacro:visual_macro>
-  <!--}-->
-
-  <!-- legs {-->
-  <xacro:leg_macro
-    robot_namespace="${namespace}"
-    name="front_right_leg"
-    mesh_file="${leg_mesh_file}"
-    mesh_scale="${mesh_scale_milimeters}"
-    parent="base_link"
-    color="White">
-    <origin xyz="${(arm_length - leg_offset_r) * sin45} -${(arm_length - leg_offset_r) * sin45} ${arm_height - body_height/2 - leg_offset_z}" rpy="0 0 ${rad135}" />
-    <collision>
-      <geometry>
-        <cylinder length="0.170" radius="${leg_offset_r}" />
-        <!-- <cylinder length="0.240" radius="${leg_offset_r}" /> -->
-      </geometry>
-    </collision>
-  </xacro:leg_macro>
-
-  <xacro:leg_macro
-    robot_namespace="${namespace}"
-    name="front_left_leg"
-    mesh_file="${leg_mesh_file}"
-    mesh_scale="${mesh_scale_milimeters}"
-    parent="base_link"
-    color="White">
-    <origin xyz="${(arm_length - leg_offset_r) * sin45} ${(arm_length - leg_offset_r) * sin45} ${arm_height - body_height/2 - leg_offset_z}" rpy="0 0 -${rad135}" />
-    <collision>
-      <geometry>
-        <cylinder length="0.170" radius="${leg_offset_r}" />
-        <!-- <cylinder length="0.240" radius="${leg_offset_r}" /> -->
-      </geometry>
-    </collision>
-  </xacro:leg_macro>
-
-  <xacro:leg_macro
-    robot_namespace="${namespace}"
-    name="rear_left_leg"
-    mesh_file="${leg_mesh_file}"
-    mesh_scale="${mesh_scale_milimeters}"
-    parent="base_link"
-    color="White">
-    <origin xyz="-${(arm_length - leg_offset_r) * sin45} ${(arm_length - leg_offset_r) * sin45} ${arm_height - body_height/2 - leg_offset_z}" rpy="0 0 -${rad45}" />
-    <collision>
-      <geometry>
-        <cylinder length="0.170" radius="${leg_offset_r}" />
-        <!-- <cylinder length="0.240" radius="${leg_offset_r}" /> -->
-      </geometry>
-    </collision>
-  </xacro:leg_macro>
-
-  <xacro:leg_macro
-    robot_namespace="${namespace}"
-    name="rear_right_leg"
-    mesh_file="${leg_mesh_file}"
-    mesh_scale="${mesh_scale_milimeters}"
-    parent="base_link"
-    color="White">
-    <origin xyz="-${(arm_length - leg_offset_r) * sin45} -${(arm_length - leg_offset_r) * sin45} ${arm_height - body_height/2 - leg_offset_z}" rpy="0 0 ${rad45}" />
-    <collision>
-      <geometry>
-        <cylinder length="0.170" radius="${leg_offset_r}" />
-        <!-- <cylinder length="0.240" radius="${leg_offset_r}" /> -->
-      </geometry>
-    </collision>
-  </xacro:leg_macro>
-  <!--}-->
+   <xacro:visual_macro 
+     robot_namespace="${namespace}" 
+     name="pixhawk" 
+     mesh_file="${pixhawk_mesh_file}" 
+     mesh_scale="${mesh_scale}" 
+     parent="base_link" 
+     color="DarkGrey"> 
+     <origin xyz="0 0 ${pixhawk_offset}" rpy="0 0 0" /> 
+   </xacro:visual_macro> 
+  <!-- } -->
 
   <!-- Rotors {-->
   <xacro:visual_macro
@@ -305,7 +192,7 @@
     mesh_scale="${mesh_scale}"
     parent="base_link"
     color="Black">
-    <origin xyz="${arm_length * sin45} -${arm_length * sin45} ${arm_height - body_height/2}" rpy="0 0 0" />
+  <origin xyz="${arm_length_x} -${arm_length_y} ${motor_z_offset + motor_to_mount}" rpy="0 0 0" />
   </xacro:visual_macro>
 
   <xacro:visual_macro
@@ -315,7 +202,7 @@
     mesh_scale="${mesh_scale}"
     parent="base_link"
     color="Black">
-    <origin xyz="-${arm_length * sin45} -${arm_length * sin45} ${arm_height - body_height/2}" rpy="0 0 0" />
+  <origin xyz="-${arm_length_x} ${arm_length_y} ${motor_z_offset + motor_to_mount}" rpy="0 0 0" />
   </xacro:visual_macro>
 
   <xacro:visual_macro
@@ -325,7 +212,7 @@
     mesh_scale="${mesh_scale}"
     parent="base_link"
     color="Black">
-    <origin xyz="${arm_length * sin45} ${arm_length * sin45} ${arm_height - body_height/2}" rpy="0 0 0" />
+  <origin xyz="${arm_length_x} ${arm_length_y} ${motor_z_offset + motor_to_mount}" rpy="0 0 0" />
   </xacro:visual_macro>
 
   <xacro:visual_macro
@@ -335,7 +222,7 @@
     mesh_scale="${mesh_scale}"
     parent="base_link"
     color="Black">
-    <origin xyz="-${arm_length * sin45} ${arm_length * sin45} ${arm_height - body_height/2}" rpy="0 0 0" />
+  <origin xyz="-${arm_length_x} -${arm_length_y} ${motor_z_offset + motor_to_mount}" rpy="0 0 0" />
   </xacro:visual_macro>
 
   <xacro:visual_macro
@@ -345,7 +232,7 @@
     mesh_scale="${mesh_scale}"
     parent="base_link"
     color="Black">
-    <origin xyz="${arm_length * sin45} -${arm_length * sin45} ${-arm_height - body_height/2}" rpy="0 ${rad180} 0" />
+  <origin xyz="${arm_length_x} -${arm_length_y} ${motor_z_offset - motor_to_mount}" rpy="0 ${rad180} 0" />
   </xacro:visual_macro>
 
   <xacro:visual_macro
@@ -355,7 +242,7 @@
     mesh_scale="${mesh_scale}"
     parent="base_link"
     color="Black">
-    <origin xyz="-${arm_length * sin45} -${arm_length * sin45} ${-arm_height - body_height/2}" rpy="0 ${rad180} 0" />
+  <origin xyz="-${arm_length_x} ${arm_length_y} ${motor_z_offset - motor_to_mount}" rpy="0 ${rad180} 0" />
   </xacro:visual_macro>
 
   <xacro:visual_macro
@@ -365,7 +252,7 @@
     mesh_scale="${mesh_scale}"
     parent="base_link"
     color="Black">
-    <origin xyz="${arm_length * sin45} ${arm_length * sin45} ${-arm_height - body_height/2}" rpy="0 ${rad180} 0" />
+  <origin xyz="${arm_length_x} ${arm_length_y} ${motor_z_offset - motor_to_mount}" rpy="0 ${rad180} 0" />
   </xacro:visual_macro>
 
   <xacro:visual_macro
@@ -375,7 +262,7 @@
     mesh_scale="${mesh_scale}"
     parent="base_link"
     color="Black">
-    <origin xyz="-${arm_length * sin45} ${arm_length * sin45} ${-arm_height - body_height/2}" rpy="0 ${rad180} 0" />
+  <origin xyz="-${arm_length_x} -${arm_length_y} ${motor_z_offset - motor_to_mount}" rpy="0 ${rad180} 0" />
   </xacro:visual_macro>
 
   <!--}-->
@@ -399,7 +286,7 @@
     mesh_file="${prop_mesh_file}"
     mesh_scale="${mesh_scale_prop_ccw}"
     color="White">
-    <origin xyz="${arm_length * sin45} -${arm_length * sin45} ${arm_height + rotor_offset_top - body_height/2}"  rpy="0 0 0" />
+    <origin xyz="${arm_length_x} -${arm_length_y} ${motor_z_offset + motor_to_mount + motor_height}" rpy="0 0 0" />
     <xacro:insert_block name="rotor_inertia" />
   </xacro:vertical_rotor>
 
@@ -421,7 +308,7 @@
     mesh_file="${prop_mesh_file}"
     mesh_scale="${mesh_scale_prop_ccw}"
     color="White">
-    <origin xyz="-${arm_length * sin45} ${arm_length * sin45} ${arm_height + rotor_offset_top - body_height/2}" rpy="0 0 0" />
+    <origin xyz="-${arm_length_x} ${arm_length_y} ${motor_z_offset + motor_to_mount + motor_height}" rpy="0 0 0" />
     <xacro:insert_block name="rotor_inertia" />
   </xacro:vertical_rotor>
 
@@ -443,7 +330,7 @@
     mesh_file="${prop_mesh_file}"
     mesh_scale="${mesh_scale_prop_cw}"
     color="White">
-    <origin xyz="${arm_length * sin45} ${arm_length * sin45} ${arm_height + rotor_offset_top - body_height/2}" rpy="0 0 0" />
+    <origin xyz="${arm_length_x} ${arm_length_y} ${motor_z_offset + motor_to_mount + motor_height}" rpy="0 0 0" />
     <xacro:insert_block name="rotor_inertia" />
   </xacro:vertical_rotor>
 
@@ -465,14 +352,14 @@
     mesh_file="${prop_mesh_file}"
     mesh_scale="${mesh_scale_prop_cw}"
     color="White">
-    <origin xyz="-${arm_length * sin45} -${arm_length * sin45} ${arm_height + rotor_offset_top - body_height/2}" rpy="0 0 0" />
+    <origin xyz="-${arm_length_x} -${arm_length_y} ${motor_z_offset + motor_to_mount + motor_height}" rpy="0 0 0" />
     <xacro:insert_block name="rotor_inertia" />
   </xacro:vertical_rotor>
 
   <xacro:vertical_rotor
     robot_namespace="${namespace}"
     suffix="bottom_front_right"
-    direction="cw"
+    direction="ccw"
     motor_constant="${motor_constant}"
     moment_constant="${moment_constant}"
     parent="base_link"
@@ -487,14 +374,14 @@
     mesh_file="${prop_mesh_file}"
     mesh_scale="${mesh_scale_prop_ccw}"
     color="White">
-    <origin xyz="${arm_length * sin45} -${arm_length * sin45} ${-arm_height - rotor_offset_top - body_height/2}"  rpy="0 0 0" />
+    <origin xyz="${arm_length_x} -${arm_length_y} ${motor_z_offset - motor_to_mount - motor_height}" rpy="${rad180} 0 0" />
     <xacro:insert_block name="rotor_inertia" />
   </xacro:vertical_rotor>
 
   <xacro:vertical_rotor
     robot_namespace="${namespace}"
     suffix="bottom_back_left"
-    direction="cw"
+    direction="ccw"
     motor_constant="${motor_constant}"
     moment_constant="${moment_constant}"
     parent="base_link"
@@ -509,14 +396,14 @@
     mesh_file="${prop_mesh_file}"
     mesh_scale="${mesh_scale_prop_ccw}"
     color="White">
-    <origin xyz="-${arm_length * sin45} ${arm_length * sin45} ${-arm_height - rotor_offset_top - body_height/2}" rpy="0 0 0" />
+    <origin xyz="-${arm_length_x} ${arm_length_y} ${motor_z_offset - motor_to_mount - motor_height}" rpy="${rad180} 0 0" />
     <xacro:insert_block name="rotor_inertia" />
   </xacro:vertical_rotor>
 
   <xacro:vertical_rotor
     robot_namespace="${namespace}"
     suffix="bottom_front_left"
-    direction="ccw"
+    direction="cw"
     motor_constant="${motor_constant}"
     moment_constant="${moment_constant}"
     parent="base_link"
@@ -531,14 +418,14 @@
     mesh_file="${prop_mesh_file}"
     mesh_scale="${mesh_scale_prop_cw}"
     color="White">
-    <origin xyz="${arm_length * sin45} ${arm_length * sin45} ${-arm_height - rotor_offset_top - body_height/2}" rpy="0 0 0" />
+    <origin xyz="${arm_length_x} ${arm_length_y} ${motor_z_offset - motor_to_mount - motor_height}" rpy="${rad180} 0 0" />
     <xacro:insert_block name="rotor_inertia" />
   </xacro:vertical_rotor>
 
   <xacro:vertical_rotor
     robot_namespace="${namespace}"
     suffix="bottom_back_right"
-    direction="ccw"
+    direction="cw"
     motor_constant="${motor_constant}"
     moment_constant="${moment_constant}"
     parent="base_link"
@@ -553,35 +440,10 @@
     mesh_file="${prop_mesh_file}"
     mesh_scale="${mesh_scale_prop_cw}"
     color="White">
-    <origin xyz="-${arm_length * sin45} -${arm_length * sin45} ${-arm_height - rotor_offset_top - body_height/2}" rpy="0 0 0" />
+    <origin xyz="-${arm_length_x} -${arm_length_y} ${motor_z_offset - motor_to_mount - motor_height}" rpy="${rad180} 0 0" />
     <xacro:insert_block name="rotor_inertia" />
   </xacro:vertical_rotor>
 
-  <!--}-->
-
-  <!-- Battery mount and battery{-->
-  <xacro:if value="$(arg use_battery_mount)">
-    <xacro:visual_macro
-      robot_namespace="${namespace}"
-      name="battery_mount"
-      mesh_file="${battery_mount_mesh}"
-      mesh_scale="${mesh_scale_milimeters}"
-      parent="base_link"
-      color="DarkGrey">
-      <origin xyz="0.0 0 -${body_height/2 + 0.027}" rpy="0 0 -${rad90}" />
-    </xacro:visual_macro>
-
-    <xacro:visual_macro_common_geometry_type
-      robot_namespace="${namespace}"
-      name="battery"
-      parent="base_link"
-      color="Grey">
-      <origin xyz="0 0 -${body_height/2 + 0.024}" rpy="0 0 -${rad90}" />
-      <geometry>
-        <box size="0.13 0.042 0.044" />
-      </geometry>
-    </xacro:visual_macro_common_geometry_type>
-  </xacro:if>
   <!--}-->
 
   <!--}-->
@@ -714,6 +576,8 @@
   </xacro:if>
   <!--}-->
 
+  <!-- ====================== Documentation sensors ==================== -->
+
   <!-- ======================= rangefinder sensors ======================-->
 
   <!-- Garmin {-->
@@ -722,9 +586,9 @@
       namespace="${namespace}"
       parent_link="base_link"
       orientation=""
-      x="-0.057"
+      x="0.0775"
       y="0"
-      z="-0.20"
+      z="-0.039"
       roll="0"
       pitch="${rad90}"
       yaw="0"
@@ -739,9 +603,9 @@
       namespace="${namespace}"
       parent_link="base_link"
       orientation="_up"
-      x="-0.07"
+      x="0.0775"
       y="0"
-      z="-${arm_height + 0.01}"
+      z="0"
       roll="0"
       pitch="-${rad90}"
       yaw="0"
@@ -758,7 +622,7 @@
       namespace="${namespace}"
       x="0.0"
       y="0.0"
-      z="0.1"
+      z="0.09"
       roll="0"
       pitch="0"
       yaw="0"
@@ -858,7 +722,7 @@
     sensor_name="os"
     x="0"
     y="0"
-    z="0.066"
+    z="0.0611"
     roll="0"
     pitch="0"
     yaw="0"
@@ -887,9 +751,9 @@
       parent_link="base_link"
       parent_frame_name="${namespace}/fcu"
       enable_realistic_realsense="${optionals['use_realistic_realsense']}"
-      x="0.155"
+      x="0.2255"
       y="0"
-      z="-0.089"
+      z="-0.0155"
       roll="0"
       pitch="0"
       yaw="0">
@@ -900,23 +764,26 @@
   <!--} Realsense placements-->
 
   <!-- Servo camera {-->
-  <xacro:if value="${optionals['enable_servo_camera']}">
-    <xacro:servo_camera_macro
-      namespace="${namespace}"
-      name="servo_camera_macro"
-      parent="base_link"
-      offset_x="0.2"
-      offset_y="0.0"
-      offset_z="-0.10"
-      offset_roll="0.0"
-      offset_yaw="0.0"
-      offset_pitch="0.0"
-      max_pitch_rate="0.1"
-      camera_type="servo_camera"
-      update_rate="30.0"
-      compensate_tilt="true">
-    </xacro:servo_camera_macro>
-  </xacro:if>
+  <xacro:servo_camera_macro
+    namespace="${namespace}"
+    name="servo_camera_macro"
+    parent="base_link"
+    offset_x="0.2278"
+    offset_y="0.0"
+    offset_z="-0.1378"
+    offset_roll="0.0"
+    offset_yaw="0.0"
+    offset_pitch="0.0"
+    max_pitch_rate="0.1"
+    camera_type="servo_camera"
+    update_rate="5.0"
+    compensate_tilt="true">
+    <visual>
+      <geometry>
+        <mesh filename="${sony_camera_mesh_file}" scale="${mesh_scale}" />
+      </geometry>
+    </visual>
+  </xacro:servo_camera_macro>
   <!--}-->
 
   <!-- ========================== other sensors ========================= -->
@@ -946,62 +813,6 @@
   <!-- ================================================================== -->
 
   <!-- ============================= holders ============================ -->
-
-  <!-- Ouster mount {-->
-  <xacro:if value="${(optionals['enable_ouster'] == 'true')}">
-    <xacro:visual_macro
-      robot_namespace="${namespace}"
-      name="ouster_mount"
-      mesh_file="${ouster_mount_mesh}"
-      mesh_scale="${mesh_scale_milimeters}"
-      parent="base_link"
-      color="DarkGrey">
-    <origin xyz="0.0 0 0.061" rpy="0 0 0" />
-    </xacro:visual_macro>
-  </xacro:if>
-  <!--}-->
-
-  <!-- Rplidar mount {-->
-  <xacro:if value="${(optionals['enable_rplidar'] == 'true')}">
-    <xacro:visual_macro
-      robot_namespace="${namespace}"
-      name="rplidar_mount"
-      mesh_file="${rplidar_mount_mesh}"
-      mesh_scale="${mesh_scale_milimeters}"
-      parent="base_link"
-      color="DarkGrey">
-    <origin xyz="0.0 0 0.068" rpy="0 0 ${rad90}" />
-    </xacro:visual_macro>
-  </xacro:if>
-  <!--}-->
-
-  <!-- Garmin mount {-->
-  <xacro:if value="${optionals['enable_rangefinder']}">
-    <xacro:visual_macro
-      robot_namespace="${namespace}"
-      name="garmin_mount"
-      mesh_file="${garmin_mount_mesh}"
-      mesh_scale="${mesh_scale_milimeters}"
-      parent="base_link"
-      color="DarkGrey">
-      <origin xyz="-0.055 0 -${arm_height + 0.016}" rpy="${rad90} 0 ${rad90}" />
-    </xacro:visual_macro>
-  </xacro:if>
-  <!--}-->
-
-  <!-- Realsense front mount {-->
-  <xacro:if value="${optionals['enable_realsense_front']}">
-    <xacro:visual_macro
-      robot_namespace="${namespace}"
-      name="realsense_front_mount"
-      mesh_file="${realsense_front_mount_mesh}"
-      mesh_scale="${mesh_scale_milimeters}"
-      parent="base_link"
-      color="DarkGrey">
-      <origin xyz="0.153 0 -0.089" rpy="0 0 0" />
-    </xacro:visual_macro>
-  </xacro:if>
-  <!--}-->
 
   <!-- ========================== other sensors ========================= -->
 
