@@ -59,6 +59,10 @@
   <xacro:property name="motor_z_offset" value="-0.01875" /> <!-- [m] -->
   <xacro:property name="motor_height" value="0.0235" /> <!-- [m] -->
   <xacro:property name="pixhawk_offset" value="0.008" /> <!-- [m] -->
+  
+  <xacro:property name="ultrasonic_x" value="0.3173" /> <!-- [m] -->
+  <xacro:property name="ultrasonic_y" value="0.3390" /> <!-- [m] -->
+  <xacro:property name="ultrasonic_yaw" value="0.822463619" /> <!-- [rad] -->
 
   <!--}-->
 
@@ -447,6 +451,8 @@
   <!--}-->
 
   <!--}-->
+  
+  <!--}-->
 
   <!-- ================================================================== -->
   <!-- ||                compulsory sensor definitions                 || -->
@@ -576,8 +582,6 @@
   </xacro:if>
   <!--}-->
 
-  <!-- ====================== Documentation sensors ==================== -->
-
   <!-- ======================= rangefinder sensors ======================-->
 
   <!-- Garmin {-->
@@ -611,6 +615,95 @@
       yaw="0"
       >
     </xacro:garmin_macro>
+  </xacro:if>
+  <!--}-->
+
+  <!-- Ultrasonic sensors {-->
+  <xacro:if value="${optionals['enable_omni_ultrasounds']}">
+
+    <!-- Down -->
+    <xacro:ultrasonic_sensor_macro
+      namespace="${namespace}"
+      parent_link="base_link"
+      suffix="_down"
+      x="0.02"
+      y="0.0"
+      z="-0.1535"
+      roll="0"
+      pitch="${rad90}"
+      yaw="0"
+      >
+    </xacro:ultrasonic_sensor_macro>
+
+    <!-- Up -->
+    <xacro:ultrasonic_sensor_macro
+      namespace="${namespace}"
+      parent_link="base_link"
+      suffix="_up"
+      x="-0.1686"
+      y="0"
+      z="0.001"
+      roll="0"
+      pitch="-${rad90}"
+      yaw="0"
+      >
+    </xacro:ultrasonic_sensor_macro>
+
+    <!-- Front left -->
+    <xacro:ultrasonic_sensor_macro
+      namespace="${namespace}"
+      parent_link="base_link"
+      suffix="_fl"
+      x="${ultrasonic_x}"
+      y="${ultrasonic_y}"
+      z="-0.019"
+      roll="0"
+      pitch="0"
+      yaw="${ultrasonic_yaw}"
+      >
+    </xacro:ultrasonic_sensor_macro>
+
+    <!-- Front right -->
+    <xacro:ultrasonic_sensor_macro
+      namespace="${namespace}"
+      parent_link="base_link"
+      suffix="_fr"
+      x="${ultrasonic_x}"
+      y="-${ultrasonic_y}"
+      z="-0.019"
+      roll="0"
+      pitch="0"
+      yaw="-${ultrasonic_yaw}"
+      >
+    </xacro:ultrasonic_sensor_macro>
+
+    <!-- Back left -->
+    <xacro:ultrasonic_sensor_macro
+      namespace="${namespace}"
+      parent_link="base_link"
+      suffix="_bl"
+      x="-${ultrasonic_x}"
+      y="${ultrasonic_y}"
+      z="-0.019"
+      roll="0"
+      pitch="0"
+      yaw="${ultrasonic_yaw + rad90}"
+      >
+    </xacro:ultrasonic_sensor_macro>
+
+    <!-- Back right -->
+    <xacro:ultrasonic_sensor_macro
+      namespace="${namespace}"
+      parent_link="base_link"
+      suffix="_br"
+      x="-${ultrasonic_x}"
+      y="-${ultrasonic_y}"
+      z="-0.019"
+      roll="0"
+      pitch="0"
+      yaw="-${ultrasonic_yaw + rad90}"
+      >
+    </xacro:ultrasonic_sensor_macro>
   </xacro:if>
   <!--}-->
 

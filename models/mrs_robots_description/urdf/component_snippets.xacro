@@ -843,7 +843,7 @@ limitations under the License.
 
   <!-- Macro to add the rangefinder_plugin {-->
   <xacro:macro name="rangefinder_macro"
-    params="namespace parent_link rangefinder_suffix parent_frame_name rangefinder_frame_name topic
+    params="namespace parent_link parent_frame_name rangefinder_frame_name topic
     frame_rate fov min_distance max_distance resolution noise
     x y z roll pitch yaw
     *visual name color">
@@ -1174,7 +1174,6 @@ limitations under the License.
       color="DarkGrey"
       parent_link="${parent_link}"
       frame_rate="100"
-      rangefinder_suffix="garmin${orientation}"
       rangefinder_frame_name="${namespace}/garmin${orientation}"
       parent_frame_name="${namespace}/fcu"
       topic="garmin/range${orientation}"
@@ -1209,8 +1208,7 @@ limitations under the License.
       color="Yellow"
       parent_link="${parent_link}"
       frame_rate="100"
-      rangefinder_suffix="teraranger"
-      rangefinder_frame_name="${nacamespace}/teraranger"
+      rangefinder_frame_name="${namespace}/teraranger"
       parent_frame_name="${namespace}/fcu"
       topic="teraranger/range"
       fov="0.03"
@@ -1229,6 +1227,39 @@ limitations under the License.
         <origin xyz="0 0 0" rpy="0 -${rad90} 0" />
         <geometry>
           <box size=".027 .033 0.015" />
+        </geometry>
+      </visual>
+    </xacro:rangefinder_macro>
+  </xacro:macro>
+  <!--}-->
+
+  <!-- Macro to add a URM37 ultrasound {-->
+  <xacro:macro name="ultrasonic_sensor_macro" params="namespace parent_link suffix x y z yaw pitch roll">
+    <xacro:rangefinder_macro
+      namespace="${namespace}"
+      name="ultrasonic${suffix}"
+      color="DarkGrey"
+      parent_link="${parent_link}"
+      frame_rate="40"
+      rangefinder_frame_name="${namespace}/ultrasonic${suffix}"
+      parent_frame_name="${namespace}/fcu"
+      topic="ultrasonic${suffix}/range"
+      fov="0.698131701"
+      min_distance="0.04"
+      max_distance="5.0"
+      resolution= "0.01"
+      noise="0.04"
+      x="${x}"
+      y="${y}"
+      z="${z}"
+      yaw="${yaw}"
+      pitch="${pitch}"
+      roll="${roll}"
+      >
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://mrs_robots_description/meshes/sensors/ultrasonic_URM37.dae" scale="1 1 1" />
         </geometry>
       </visual>
     </xacro:rangefinder_macro>
