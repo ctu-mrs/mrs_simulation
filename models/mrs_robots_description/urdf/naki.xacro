@@ -900,6 +900,23 @@
     </xacro:light_macro>
   </xacro:if>
   <!--}-->
+  
+  <!-- Safety LED {-->
+  <xacro:if value="${optionals['enable_safety_led']}">
+    <xacro:safety_led_macro
+      namespace="${namespace}"
+      name="safety_led"
+      parent="base_link"
+      failure_duration_threshold="0.2"
+      x="-0.202"
+      y="0.0"
+      z="-0.0195"
+      roll="0.0"
+      pitch="0.0"
+      yaw="3.1415">
+    </xacro:safety_led_macro>
+  </xacro:if>
+  <!--}-->
 
   <!-- ================================================================== -->
   <!-- ||         other equipment definitions (holders, boxes ...)     || -->
