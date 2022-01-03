@@ -2681,7 +2681,7 @@ limitations under the License.
     <gazebo>
       <plugin name="safety_led_plugin" filename="libMRSSafetyLedPlugin.so">
         <model_name>safety_led</model_name>
-        <failure_duration_threshold>0.2</failure_duration_threshold>
+        <failure_duration_threshold>${failure_duration_threshold}</failure_duration_threshold>
         <model_spawn_delay>5.0</model_spawn_delay>
         <x>${x}</x>
         <y>${y}</y>

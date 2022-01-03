@@ -42,7 +42,7 @@
   <!-- ================================================================== -->
 
   <!-- Robot parameters and arguments {-->
-  <xacro:property name="mass" value="7.00" /> <!-- [kg] -->
+  <xacro:property name="mass" value="7.50" /> <!-- [kg] -->
   <xacro:property name="body_radius" value="0.47" /> <!-- [m] -->
   <xacro:property name="body_height" value="0.155" /> <!-- [m] -->
   <xacro:property name="body_center_z" value="-0.0195" /> <!-- [m] -->
@@ -93,8 +93,8 @@
 
   <!-- scales -->
   <xacro:property name="mesh_scale" value="1 1 1"/>
-  <xacro:property name="mesh_scale_prop_ccw" value="1 1 1"/>
-  <xacro:property name="mesh_scale_prop_cw" value="-1 1 1"/>
+  <xacro:property name="mesh_scale_prop_ccw" value="-1 1 1"/>
+  <xacro:property name="mesh_scale_prop_cw" value="1 1 1"/>
   <xacro:property name="mesh_scale_milimeters" value="0.001 0.001 0.001" />
   <!--}-->
 
@@ -363,7 +363,7 @@
   <xacro:vertical_rotor
     robot_namespace="${namespace}"
     suffix="bottom_front_right"
-    direction="ccw"
+    direction="cw"
     motor_constant="${motor_constant}"
     moment_constant="${moment_constant}"
     parent="base_link"
@@ -376,16 +376,16 @@
     rotor_drag_coefficient="${rotor_drag_coefficient}"
     rolling_moment_coefficient="${rolling_moment_coefficient}"
     mesh_file="${prop_mesh_file}"
-    mesh_scale="${mesh_scale_prop_ccw}"
+    mesh_scale="${mesh_scale_prop_cw}"
     color="White">
-    <origin xyz="${arm_length_x} -${arm_length_y} ${motor_z_offset - motor_to_mount - motor_height}" rpy="${rad180} 0 0" />
+    <origin xyz="${arm_length_x} -${arm_length_y} ${motor_z_offset - motor_to_mount - motor_height}" rpy="0 0 0" />
     <xacro:insert_block name="rotor_inertia" />
   </xacro:vertical_rotor>
 
   <xacro:vertical_rotor
     robot_namespace="${namespace}"
     suffix="bottom_back_left"
-    direction="ccw"
+    direction="cw"
     motor_constant="${motor_constant}"
     moment_constant="${moment_constant}"
     parent="base_link"
@@ -398,16 +398,16 @@
     rotor_drag_coefficient="${rotor_drag_coefficient}"
     rolling_moment_coefficient="${rolling_moment_coefficient}"
     mesh_file="${prop_mesh_file}"
-    mesh_scale="${mesh_scale_prop_ccw}"
+    mesh_scale="${mesh_scale_prop_cw}"
     color="White">
-    <origin xyz="-${arm_length_x} ${arm_length_y} ${motor_z_offset - motor_to_mount - motor_height}" rpy="${rad180} 0 0" />
+    <origin xyz="-${arm_length_x} ${arm_length_y} ${motor_z_offset - motor_to_mount - motor_height}" rpy="0 0 0" />
     <xacro:insert_block name="rotor_inertia" />
   </xacro:vertical_rotor>
 
   <xacro:vertical_rotor
     robot_namespace="${namespace}"
     suffix="bottom_front_left"
-    direction="cw"
+    direction="ccw"
     motor_constant="${motor_constant}"
     moment_constant="${moment_constant}"
     parent="base_link"
@@ -420,16 +420,16 @@
     rotor_drag_coefficient="${rotor_drag_coefficient}"
     rolling_moment_coefficient="${rolling_moment_coefficient}"
     mesh_file="${prop_mesh_file}"
-    mesh_scale="${mesh_scale_prop_cw}"
+    mesh_scale="${mesh_scale_prop_ccw}"
     color="White">
-    <origin xyz="${arm_length_x} ${arm_length_y} ${motor_z_offset - motor_to_mount - motor_height}" rpy="${rad180} 0 0" />
+    <origin xyz="${arm_length_x} ${arm_length_y} ${motor_z_offset - motor_to_mount - motor_height}" rpy="0 0 0" />
     <xacro:insert_block name="rotor_inertia" />
   </xacro:vertical_rotor>
 
   <xacro:vertical_rotor
     robot_namespace="${namespace}"
     suffix="bottom_back_right"
-    direction="cw"
+    direction="ccw"
     motor_constant="${motor_constant}"
     moment_constant="${moment_constant}"
     parent="base_link"
@@ -442,9 +442,9 @@
     rotor_drag_coefficient="${rotor_drag_coefficient}"
     rolling_moment_coefficient="${rolling_moment_coefficient}"
     mesh_file="${prop_mesh_file}"
-    mesh_scale="${mesh_scale_prop_cw}"
+    mesh_scale="${mesh_scale_prop_ccw}"
     color="White">
-    <origin xyz="-${arm_length_x} -${arm_length_y} ${motor_z_offset - motor_to_mount - motor_height}" rpy="${rad180} 0 0" />
+    <origin xyz="-${arm_length_x} -${arm_length_y} ${motor_z_offset - motor_to_mount - motor_height}" rpy="0 0 0" />
     <xacro:insert_block name="rotor_inertia" />
   </xacro:vertical_rotor>
 

@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# @name NAKI
+# @name NAKI II
 #
 # @type Octorotor Coaxial
 # @class Copter
@@ -19,5 +19,6 @@
 
 . ${R}etc/init.d/rc.mc_defaults
 
-set MAV_TYPE 14
 set MIXER octo_cox
+set MAV_TYPE 14
+set PWM_OUT 12345678
