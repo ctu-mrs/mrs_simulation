@@ -1592,7 +1592,7 @@ limitations under the License.
       <!-- topics -->
     <xacro:property name="topic_lidar" value="/${namespace}/${sensor_name}_cloud_nodelet/points" />
     <xacro:property name="topic_imu" value="/${namespace}/${sensor_name}_cloud_nodelet/imu" />
-    <xacro:property name="topic_diag" value="/${namespace}/${sensor_name}_cloud_nodelet/diag" />
+    <xacro:property name="topic_diag" value="/${namespace}/${sensor_name}_cloud_nodelet/is_alive" />
 
       <!-- tf from sensor to lidar -->
     <xacro:property name="lidar_x" value="0" />
