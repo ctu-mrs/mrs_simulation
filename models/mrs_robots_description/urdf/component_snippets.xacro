@@ -2203,40 +2203,85 @@ limitations under the License.
   <!--}-->
 
   <!-- Macro to add a camera mounted on virtual servo {-->
-  <xacro:macro name="servo_camera_macro" params="namespace name parent offset_x offset_y offset_z offset_yaw offset_roll offset_pitch update_rate max_pitch_rate camera_type compensate_tilt *visual">
+  <xacro:macro name="servo_camera_macro" params="namespace name parent offset_x offset_y offset_z offset_yaw offset_roll offset_pitch pitch_update_rate max_pitch min_pitch max_pitch_rate compensate_tilt parent_frame_name sensor_base_frame_name camera_frame_name camera_update_rate horizontal_fov img_width img_height *visual">
 
-      <joint name="${name}_joint" type="revolute">
-          <parent link="${parent}"/>
-          <child link="${name}_link"/>
-          <axis xyz="0 1 0"/>
-          <dynamics damping="0.05" friction="0.05"/>
-          <limit upper="1.57" lower="-1.57" effort="1" velocity="10" />
-          <origin xyz="${offset_x} ${offset_y} ${offset_z}" rpy="0.0 0.0 0.0"/>
-      </joint>
+    <joint name="${namespace}_servo_camera_joint" type="revolute">
+      <parent link="${parent}"/>
+      <child link="${namespace}_servo_camera_link"/>
+      <axis xyz="0 1 0"/>
+      <dynamics damping="0.05" friction="0.05"/>
+      <limit upper="1.57" lower="-1.57" effort="1" velocity="10" />
+      <origin xyz="${offset_x} ${offset_y} ${offset_z}" rpy="0.0 0.0 0.0"/>
+    </joint>
 
-      <link name="${name}_link">
-          <inertial>
-              <mass value="1e-3" />
-              <inertia ixx="1e-5" ixy="0.0" ixz="0.0" iyy="1e-5" iyz="0.0" izz="1e-5"/>
-          </inertial>
-          <xacro:insert_block name="visual" />
-      </link>
-      <gazebo>
-        <plugin name="servo_camera_plugin" filename="libMRSGazeboServoCameraPlugin.so">
-          <offset_x>${offset_x}</offset_x>
-          <offset_y>${offset_y}</offset_y>
-          <offset_z>${offset_z}</offset_z>
-          <offset_pitch>${offset_pitch}</offset_pitch>
-          <offset_yaw>${offset_yaw}</offset_yaw>
-          <offset_roll>${offset_roll}</offset_roll>
-          <spawning_frame>${parent}</spawning_frame>
-          <update_rate>${update_rate}</update_rate>
-          <max_pitch_rate>${max_pitch_rate}</max_pitch_rate>
-          <joint_name>${name}_joint</joint_name>
-          <camera_type>${camera_type}</camera_type>
-          <compensate_tilt>${compensate_tilt}</compensate_tilt>
+    <link name="${namespace}_servo_camera_link">
+      <inertial>
+        <mass value="1e-3" />
+        <inertia ixx="1e-5" ixy="0.0" ixz="0.0" iyy="1e-5" iyz="0.0" izz="1e-5"/>
+      </inertial>
+      <xacro:insert_block name="visual" />
+    </link>
+
+    <gazebo reference="${namespace}_servo_camera_link">
+
+      <sensor type="camera" name="servo_camera">
+        <update_rate>${camera_update_rate}</update_rate>
+        <camera name="head">
+          <horizontal_fov>${horizontal_fov}</horizontal_fov>
+          <image>
+            <width>${img_width}</width>
+            <height>${img_height}</height>
+          </image>
+          <clip>
+            <near>0.25</near>
+            <far>100</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+              <!-- Noise is sampled independently per pixel on each frame.
+                That pixel's noise value is added to each of its color
+              channels, which at that point lie in the range [0,1]. -->
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+        </camera>
+        <plugin name="${namespace}_servo_camera_controller" filename="libMRSGazeboCameraPlugin.so">
+          <alwaysOn>true</alwaysOn>
+          <updateRate>${camera_update_rate}</updateRate>
+          <cameraName>servo_camera</cameraName>
+          <imageTopicName>image_raw</imageTopicName>
+          <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+          <frameName>${camera_frame_name}</frameName>
+          <hackBaseline>0.0</hackBaseline>
+          <distortionK1>0.0</distortionK1>
+          <distortionK2>0.0</distortionK2>
+          <distortionK3>0.0</distortionK3>
+          <distortionT1>0.0</distortionT1>
+          <distortionT2>0.0</distortionT2>
+          <x>0.0</x>
+          <y>0.0</y>
+          <z>0.0</z>
+          <roll>0.0</roll>
+          <pitch>0.0</pitch>
+          <yaw>0.0</yaw>
+          <parentFrameName>${parent_frame_name}</parentFrameName>
+          <sensorBaseFrameName>${sensor_base_frame_name}</sensorBaseFrameName>
         </plugin>
-      </gazebo>
+      </sensor>
+    </gazebo>
+
+    <gazebo>
+      <plugin name="servo_camera_plugin" filename="libMRSGazeboServoCameraPlugin.so">
+        <spawning_frame>${parent}</spawning_frame>
+        <update_rate>${pitch_update_rate}</update_rate>
+        <max_pitch_rate>${max_pitch_rate}</max_pitch_rate>
+        <max_pitch>${max_pitch}</max_pitch>
+        <min_pitch>${min_pitch}</min_pitch>
+        <joint_name>${namespace}_servo_camera_joint</joint_name>
+        <compensate_tilt>${compensate_tilt}</compensate_tilt>
+      </plugin>
+    </gazebo>
+
   </xacro:macro>
   <!--}-->
 
