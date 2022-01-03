@@ -2203,15 +2203,41 @@ limitations under the License.
   <!--}-->
 
   <!-- Macro to add a camera mounted on virtual servo {-->
-  <xacro:macro name="servo_camera_macro" params="namespace name parent offset_x offset_y offset_z offset_yaw offset_roll offset_pitch pitch_update_rate max_pitch min_pitch max_pitch_rate compensate_tilt parent_frame_name sensor_base_frame_name camera_frame_name camera_update_rate horizontal_fov img_width img_height *visual">
+  <xacro:macro name="servo_camera_macro" params="namespace name parent offset_pitch_link_x offset_pitch_link_y offset_pitch_link_z offset_pitch_link_yaw offset_pitch_link_roll offset_pitch_link_pitch offset_roll_link_x offset_roll_link_y offset_roll_link_z offset_roll_link_yaw offset_roll_link_roll offset_roll_link_pitch tilt_update_rate max_pitch min_pitch max_pitch_rate max_roll min_roll max_roll_rate compensate_tilt_roll compensate_tilt_pitch parent_frame_name sensor_base_frame_name camera_frame_name camera_update_rate horizontal_fov img_width img_height roll_link_mesh_file pitch_link_mesh_file mesh_scale">
 
-    <joint name="${namespace}_servo_camera_joint" type="revolute">
+    <joint name="${namespace}_servo_camera_joint_roll" type="revolute">
       <parent link="${parent}"/>
+      <child link="${namespace}_servo_camera_gimbal_link"/>
+      <axis xyz="1 0 0"/>
+      <dynamics damping="0.05" friction="0.05"/>
+      <limit upper="0.5" lower="-0.5" effort="1" velocity="10" />
+      <origin xyz="${offset_roll_link_x} ${offset_roll_link_y} ${offset_roll_link_z}" rpy="${offset_roll_link_roll} ${offset_roll_link_pitch} ${offset_roll_link_yaw}"/>
+    </joint>
+
+    <link name="${namespace}_servo_camera_gimbal_link">
+      <inertial>
+        <mass value="1e-3" />
+        <inertia ixx="1e-5" ixy="0.0" ixz="0.0" iyy="1e-5" iyz="0.0" izz="1e-5"/>
+      </inertial>
+      <visual>
+        <geometry>
+          <xacro:if value="${roll_link_mesh_file == ''}">
+            <mesh filename="${roll_link_mesh_file}" scale="${mesh_scale}" />
+          </xacro:if>
+          <xacro:unless value="${roll_link_mesh_file == ''}">
+            <box size="0.01 0.01 0.01" />
+          </xacro:unless>
+        </geometry>
+      </visual>
+    </link>
+
+    <joint name="${namespace}_servo_camera_joint_pitch" type="revolute">
+      <parent link="${namespace}_servo_camera_gimbal_link"/>
       <child link="${namespace}_servo_camera_link"/>
       <axis xyz="0 1 0"/>
       <dynamics damping="0.05" friction="0.05"/>
       <limit upper="1.57" lower="-1.57" effort="1" velocity="10" />
-      <origin xyz="${offset_x} ${offset_y} ${offset_z}" rpy="0.0 0.0 0.0"/>
+      <origin xyz="${offset_pitch_link_x} ${offset_pitch_link_y} ${offset_pitch_link_z}" rpy="${offset_pitch_link_roll} ${offset_pitch_link_pitch} ${offset_pitch_link_yaw}"/>
     </joint>
 
     <link name="${namespace}_servo_camera_link">
@@ -2219,7 +2245,16 @@ limitations under the License.
         <mass value="1e-3" />
         <inertia ixx="1e-5" ixy="0.0" ixz="0.0" iyy="1e-5" iyz="0.0" izz="1e-5"/>
       </inertial>
-      <xacro:insert_block name="visual" />
+      <visual>
+        <geometry>
+          <xacro:if value="${pitch_link_mesh_file == ''}">
+            <box size="0.01 0.01 0.01" />
+          </xacro:if>
+          <xacro:unless value="${pitch_link_mesh_file == ''}">
+            <mesh filename="${pitch_link_mesh_file}" scale="${mesh_scale}" />
+          </xacro:unless>
+        </geometry>
+      </visual>
     </link>
 
     <gazebo reference="${namespace}_servo_camera_link">
@@ -2273,12 +2308,19 @@ limitations under the License.
     <gazebo>
       <plugin name="servo_camera_plugin" filename="libMRSGazeboServoCameraPlugin.so">
         <spawning_frame>${parent}</spawning_frame>
-        <update_rate>${pitch_update_rate}</update_rate>
+        <tilt_update_rate>${tilt_update_rate}</tilt_update_rate>
         <max_pitch_rate>${max_pitch_rate}</max_pitch_rate>
         <max_pitch>${max_pitch}</max_pitch>
         <min_pitch>${min_pitch}</min_pitch>
-        <joint_name>${namespace}_servo_camera_joint</joint_name>
-        <compensate_tilt>${compensate_tilt}</compensate_tilt>
+        <max_roll_rate>${max_roll_rate}</max_roll_rate>
+        <max_roll>${max_pitch}</max_roll>
+        <min_roll>${min_pitch}</min_roll>
+        <joint_name_pitch>${namespace}_servo_camera_joint_pitch</joint_name_pitch>
+        <joint_name_roll>${namespace}_servo_camera_joint_roll</joint_name_roll>
+        <parent_link_pitch>${namespace}_servo_camera_gimbal_link</parent_link_pitch>
+        <parent_link_roll>${parent}</parent_link_roll>
+        <compensate_tilt_roll>${compensate_tilt_roll}</compensate_tilt_roll>
+        <compensate_tilt_pitch>${compensate_tilt_pitch}</compensate_tilt_pitch>
       </plugin>
     </gazebo>
 

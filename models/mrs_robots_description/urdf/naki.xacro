@@ -89,6 +89,7 @@
   <xacro:property name="rotor_mesh_file" value="package://mrs_robots_description/meshes/custom/naki/dji_f450_rotor.dae" />
   <xacro:property name="prop_mesh_file" value="package://mrs_robots_description/meshes/custom/naki/NAKI_propeller.dae"/>
   <xacro:property name="sony_camera_mesh_file" value="package://mrs_robots_description/meshes/custom/naki/NAKI_sony_alpha_6500_w_gimbal_mount.dae"/>
+  <xacro:property name="gimbal_mesh_file" value="package://mrs_robots_description/meshes/custom/naki/NAKI_gimbal_movable_part.dae"/>
   <xacro:property name="pixhawk_mesh_file" value="package://mrs_robots_description/meshes/sensors/pixhawk.dae" />
 
   <!-- scales -->
@@ -864,26 +865,34 @@
     parent_frame_name="${namespace}/fcu"
     camera_frame_name="${namespace}/servo_camera_optical"
     sensor_base_frame_name="${namespace}/servo_camera"
-    offset_x="0.22597"
-    offset_y="0.00208"
-    offset_z="-0.1366"
-    offset_roll="0.0"
-    offset_yaw="0.0"
-    offset_pitch="0.0"
-    pitch_update_rate="5.0"
+    offset_pitch_link_x="0.12928"
+    offset_pitch_link_y="7.605e-5"
+    offset_pitch_link_z="-0.006051"
+    offset_pitch_link_roll="0.0"
+    offset_pitch_link_yaw="0.0"
+    offset_pitch_link_pitch="0.0"
+    offset_roll_link_x="0.0966901"
+    offset_roll_link_y="0.00200395"
+    offset_roll_link_z="-0.130549"
+    offset_roll_link_roll="0.0"
+    offset_roll_link_yaw="0.0"
+    offset_roll_link_pitch="0.0"
+    tilt_update_rate="5.0"
     min_pitch="-1.046"
     max_pitch="1.57"
-    max_pitch_rate="0.1"
+    min_roll="-0.6"
+    max_roll="0.6"
+    max_pitch_rate="0.2"
+    max_roll_rate="0.2"
     camera_update_rate="30"
     horizontal_fov="1.92"
     img_width="1920" 
     img_height="1080"
-    compensate_tilt="true">
-    <visual>
-      <geometry>
-        <mesh filename="${sony_camera_mesh_file}" scale="${mesh_scale}" />
-      </geometry>
-    </visual>
+    compensate_tilt_roll="true"
+    compensate_tilt_pitch="true"
+    pitch_link_mesh_file="${sony_camera_mesh_file}"
+    roll_link_mesh_file="${gimbal_mesh_file}"
+    mesh_scale="${mesh_scale}">
   </xacro:servo_camera_macro>
   <!--}-->
 
