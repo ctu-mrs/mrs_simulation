@@ -1117,6 +1117,11 @@
       camera_type="servo_camera"
       update_rate="30.0"
       compensate_tilt="true">
+      <visual>
+        <geometry>
+          <box size="0.01 0.01 0.01" />
+        </geometry>
+      </visual>
     </xacro:servo_camera_macro>
   </xacro:if>
   <!--}-->

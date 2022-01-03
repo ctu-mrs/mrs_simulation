@@ -135,6 +135,27 @@ limitations under the License.
   </xacro:macro>
   <!--}-->
 
+  <!-- Macro for visualization of textured mash with collision {-->
+  <xacro:macro name="textured_visual_macro_with_collision"
+    params="robot_namespace name mesh_file mesh_scale parent *origin *collision">
+    <joint name="${name}_joint" type="fixed">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent}" />
+      <child link="${name}_link" />
+    </joint>
+
+    <link name="${name}_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="${mesh_file}" scale="${mesh_scale}" />
+        </geometry>
+      </visual>
+      <xacro:insert_block name="collision" />
+    </link>
+  </xacro:macro>
+  <!--}-->
+
  <!-- Macro for visualization of mash with collision {-->
   <xacro:macro name="visual_macro_with_collision"
     params="robot_namespace name mesh_file mesh_scale color parent *origin *collision">
@@ -391,7 +412,7 @@ limitations under the License.
   </xacro:macro>
   <!--}-->
 
-  <!-- Macro for main multirotor without mesh for simplier physics{-->
+  <!-- Macro for main multirotor without mesh for simplier physics {-->
   <xacro:macro name="multirotor_base_without_mesh_macro"
     params="robot_namespace mass body_radius body_height *inertia">
     <link name="base_link"></link>
@@ -414,6 +435,52 @@ limitations under the License.
           <cylinder length="${body_height}" radius="${body_radius}" />
         </geometry>
       </collision>
+    </link>
+
+    <!-- attach multirotor_base_plugin to the base_link -->
+    <gazebo>
+      <plugin filename="libgazebo_multirotor_base_plugin.so" name="rosbag">
+        <robotNamespace>${robot_namespace}</robotNamespace>
+        <linkName>base_link</linkName>
+        <rotorVelocitySlowdownSim>${rotor_velocity_slowdown_sim}</rotorVelocitySlowdownSim>
+      </plugin>
+    </gazebo>
+    <gazebo reference="base_link">
+      <collision name='base_link_inertia_collision'>
+        <surface>
+          <contact>
+            <ode>
+              <min_depth>0.001</min_depth>
+              <max_vel>0.0</max_vel>
+            </ode>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+    </gazebo>
+  </xacro:macro>
+  <!--}-->
+
+  <!-- Macro for main multirotor without mesh for simplier physics with collision {-->
+  <xacro:macro name="multirotor_base_without_mesh_with_collision_macro"
+    params="robot_namespace mass *inertia *collision">
+    <link name="base_link"></link>
+
+    <joint name="base_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <parent link="base_link" />
+      <child link="base_link_inertia" />
+    </joint>
+
+    <link name="base_link_inertia">
+      <inertial>
+        <mass value="${mass}" />  <!-- [kg] -->
+        <origin xyz="0 0 0" />
+        <xacro:insert_block name="inertia" />
+      </inertial>
+      <xacro:insert_block name="collision" />
     </link>
 
     <!-- attach multirotor_base_plugin to the base_link -->
@@ -776,7 +843,7 @@ limitations under the License.
 
   <!-- Macro to add the rangefinder_plugin {-->
   <xacro:macro name="rangefinder_macro"
-    params="namespace parent_link rangefinder_suffix parent_frame_name rangefinder_frame_name topic
+    params="namespace parent_link parent_frame_name rangefinder_frame_name topic
     frame_rate fov min_distance max_distance resolution noise
     x y z roll pitch yaw
     *visual name color">
@@ -1107,7 +1174,6 @@ limitations under the License.
       color="DarkGrey"
       parent_link="${parent_link}"
       frame_rate="100"
-      rangefinder_suffix="garmin${orientation}"
       rangefinder_frame_name="${namespace}/garmin${orientation}"
       parent_frame_name="${namespace}/fcu"
       topic="garmin/range${orientation}"
@@ -1142,8 +1208,7 @@ limitations under the License.
       color="Yellow"
       parent_link="${parent_link}"
       frame_rate="100"
-      rangefinder_suffix="teraranger"
-      rangefinder_frame_name="${nacamespace}/teraranger"
+      rangefinder_frame_name="${namespace}/teraranger"
       parent_frame_name="${namespace}/fcu"
       topic="teraranger/range"
       fov="0.03"
@@ -1162,6 +1227,39 @@ limitations under the License.
         <origin xyz="0 0 0" rpy="0 -${rad90} 0" />
         <geometry>
           <box size=".027 .033 0.015" />
+        </geometry>
+      </visual>
+    </xacro:rangefinder_macro>
+  </xacro:macro>
+  <!--}-->
+
+  <!-- Macro to add a URM37 ultrasound {-->
+  <xacro:macro name="ultrasonic_sensor_macro" params="namespace parent_link suffix x y z yaw pitch roll">
+    <xacro:rangefinder_macro
+      namespace="${namespace}"
+      name="ultrasonic${suffix}"
+      color="DarkGrey"
+      parent_link="${parent_link}"
+      frame_rate="40"
+      rangefinder_frame_name="${namespace}/ultrasonic${suffix}"
+      parent_frame_name="${namespace}/fcu"
+      topic="ultrasonic${suffix}/range"
+      fov="0.698131701"
+      min_distance="0.04"
+      max_distance="5.0"
+      resolution= "0.01"
+      noise="0.04"
+      x="${x}"
+      y="${y}"
+      z="${z}"
+      yaw="${yaw}"
+      pitch="${pitch}"
+      roll="${roll}"
+      >
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://mrs_robots_description/meshes/sensors/ultrasonic_URM37.dae" scale="1 1 1" />
         </geometry>
       </visual>
     </xacro:rangefinder_macro>
@@ -1494,7 +1592,7 @@ limitations under the License.
       <!-- topics -->
     <xacro:property name="topic_lidar" value="/${namespace}/${sensor_name}_cloud_nodelet/points" />
     <xacro:property name="topic_imu" value="/${namespace}/${sensor_name}_cloud_nodelet/imu" />
-    <xacro:property name="topic_diag" value="/${namespace}/${sensor_name}_cloud_nodelet/diag" />
+    <xacro:property name="topic_diag" value="/${namespace}/${sensor_name}_cloud_nodelet/is_alive" />
 
       <!-- tf from sensor to lidar -->
     <xacro:property name="lidar_x" value="0" />
@@ -2105,7 +2203,7 @@ limitations under the License.
   <!--}-->
 
   <!-- Macro to add a camera mounted on virtual servo {-->
-  <xacro:macro name="servo_camera_macro" params="namespace name parent offset_x offset_y offset_z offset_yaw offset_roll offset_pitch update_rate max_pitch_rate camera_type compensate_tilt">
+  <xacro:macro name="servo_camera_macro" params="namespace name parent offset_x offset_y offset_z offset_yaw offset_roll offset_pitch update_rate max_pitch_rate camera_type compensate_tilt *visual">
 
       <joint name="${name}_joint" type="revolute">
           <parent link="${parent}"/>
@@ -2121,11 +2219,7 @@ limitations under the License.
               <mass value="1e-3" />
               <inertia ixx="1e-5" ixy="0.0" ixz="0.0" iyy="1e-5" iyz="0.0" izz="1e-5"/>
           </inertial>
-        <visual>
-          <geometry>
-            <box size="0.01 0.01 0.01" />
-          </geometry>
-        </visual>
+          <xacro:insert_block name="visual" />
       </link>
       <gazebo>
         <plugin name="servo_camera_plugin" filename="libMRSGazeboServoCameraPlugin.so">
@@ -2571,6 +2665,33 @@ limitations under the License.
           <compensate_tilt>${compensate_tilt}</compensate_tilt>
         </plugin>
       </gazebo>
+  </xacro:macro>
+  <!--}-->
+
+  <!-- Macro to add a safety_led {-->
+  <xacro:macro name="safety_led_macro" params="namespace name parent failure_duration_threshold x y z roll pitch yaw">
+
+    <joint name="${name}_joint" type="fixed">
+      <origin xyz="${x} ${y} ${z}" rpy="${roll} ${pitch} ${yaw}" />
+      <parent link="${parent}" />
+      <child link="${name}_link" />
+    </joint>
+    <link name="${name}_link" >
+    </link>
+    <gazebo>
+      <plugin name="safety_led_plugin" filename="libMRSSafetyLedPlugin.so">
+        <model_name>safety_led</model_name>
+        <failure_duration_threshold>${failure_duration_threshold}</failure_duration_threshold>
+        <model_spawn_delay>5.0</model_spawn_delay>
+        <x>${x}</x>
+        <y>${y}</y>
+        <z>${z}</z>
+        <roll>${roll}</roll>
+        <pitch>${pitch}</pitch>
+        <yaw>${yaw}</yaw>
+      </plugin>
+    </gazebo>
+
   </xacro:macro>
   <!--}-->
 
