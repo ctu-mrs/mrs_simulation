@@ -135,6 +135,27 @@ limitations under the License.
   </xacro:macro>
   <!--}-->
 
+  <!-- Macro for visualization of textured mash with collision {-->
+  <xacro:macro name="textured_visual_macro_with_collision"
+    params="robot_namespace name mesh_file mesh_scale parent *origin *collision">
+    <joint name="${name}_joint" type="fixed">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent}" />
+      <child link="${name}_link" />
+    </joint>
+
+    <link name="${name}_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="${mesh_file}" scale="${mesh_scale}" />
+        </geometry>
+      </visual>
+      <xacro:insert_block name="collision" />
+    </link>
+  </xacro:macro>
+  <!--}-->
+
  <!-- Macro for visualization of mash with collision {-->
   <xacro:macro name="visual_macro_with_collision"
     params="robot_namespace name mesh_file mesh_scale color parent *origin *collision">
@@ -391,7 +412,7 @@ limitations under the License.
   </xacro:macro>
   <!--}-->
 
-  <!-- Macro for main multirotor without mesh for simplier physics{-->
+  <!-- Macro for main multirotor without mesh for simplier physics {-->
   <xacro:macro name="multirotor_base_without_mesh_macro"
     params="robot_namespace mass body_radius body_height *inertia">
     <link name="base_link"></link>
@@ -414,6 +435,52 @@ limitations under the License.
           <cylinder length="${body_height}" radius="${body_radius}" />
         </geometry>
       </collision>
+    </link>
+
+    <!-- attach multirotor_base_plugin to the base_link -->
+    <gazebo>
+      <plugin filename="libgazebo_multirotor_base_plugin.so" name="rosbag">
+        <robotNamespace>${robot_namespace}</robotNamespace>
+        <linkName>base_link</linkName>
+        <rotorVelocitySlowdownSim>${rotor_velocity_slowdown_sim}</rotorVelocitySlowdownSim>
+      </plugin>
+    </gazebo>
+    <gazebo reference="base_link">
+      <collision name='base_link_inertia_collision'>
+        <surface>
+          <contact>
+            <ode>
+              <min_depth>0.001</min_depth>
+              <max_vel>0.0</max_vel>
+            </ode>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+    </gazebo>
+  </xacro:macro>
+  <!--}-->
+
+  <!-- Macro for main multirotor without mesh for simplier physics with collision {-->
+  <xacro:macro name="multirotor_base_without_mesh_with_collision_macro"
+    params="robot_namespace mass *inertia *collision">
+    <link name="base_link"></link>
+
+    <joint name="base_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <parent link="base_link" />
+      <child link="base_link_inertia" />
+    </joint>
+
+    <link name="base_link_inertia">
+      <inertial>
+        <mass value="${mass}" />  <!-- [kg] -->
+        <origin xyz="0 0 0" />
+        <xacro:insert_block name="inertia" />
+      </inertial>
+      <xacro:insert_block name="collision" />
     </link>
 
     <!-- attach multirotor_base_plugin to the base_link -->
@@ -776,7 +843,7 @@ limitations under the License.
 
   <!-- Macro to add the rangefinder_plugin {-->
   <xacro:macro name="rangefinder_macro"
-    params="namespace parent_link rangefinder_suffix parent_frame_name rangefinder_frame_name topic
+    params="namespace parent_link parent_frame_name rangefinder_frame_name topic
     frame_rate fov min_distance max_distance resolution noise
     x y z roll pitch yaw
     *visual name color">
@@ -1107,7 +1174,6 @@ limitations under the License.
       color="DarkGrey"
       parent_link="${parent_link}"
       frame_rate="100"
-      rangefinder_suffix="garmin${orientation}"
       rangefinder_frame_name="${namespace}/garmin${orientation}"
       parent_frame_name="${namespace}/fcu"
       topic="garmin/range${orientation}"
@@ -1142,8 +1208,7 @@ limitations under the License.
       color="Yellow"
       parent_link="${parent_link}"
       frame_rate="100"
-      rangefinder_suffix="teraranger"
-      rangefinder_frame_name="${nacamespace}/teraranger"
+      rangefinder_frame_name="${namespace}/teraranger"
       parent_frame_name="${namespace}/fcu"
       topic="teraranger/range"
       fov="0.03"
@@ -1162,6 +1227,39 @@ limitations under the License.
         <origin xyz="0 0 0" rpy="0 -${rad90} 0" />
         <geometry>
           <box size=".027 .033 0.015" />
+        </geometry>
+      </visual>
+    </xacro:rangefinder_macro>
+  </xacro:macro>
+  <!--}-->
+
+  <!-- Macro to add a URM37 ultrasound {-->
+  <xacro:macro name="ultrasonic_sensor_macro" params="namespace parent_link suffix x y z yaw pitch roll">
+    <xacro:rangefinder_macro
+      namespace="${namespace}"
+      name="ultrasonic${suffix}"
+      color="DarkGrey"
+      parent_link="${parent_link}"
+      frame_rate="40"
+      rangefinder_frame_name="${namespace}/ultrasonic${suffix}"
+      parent_frame_name="${namespace}/fcu"
+      topic="ultrasonic${suffix}/range"
+      fov="0.698131701"
+      min_distance="0.04"
+      max_distance="5.0"
+      resolution= "0.01"
+      noise="0.04"
+      x="${x}"
+      y="${y}"
+      z="${z}"
+      yaw="${yaw}"
+      pitch="${pitch}"
+      roll="${roll}"
+      >
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://mrs_robots_description/meshes/sensors/ultrasonic_URM37.dae" scale="1 1 1" />
         </geometry>
       </visual>
     </xacro:rangefinder_macro>
@@ -1494,7 +1592,7 @@ limitations under the License.
       <!-- topics -->
     <xacro:property name="topic_lidar" value="/${namespace}/${sensor_name}_cloud_nodelet/points" />
     <xacro:property name="topic_imu" value="/${namespace}/${sensor_name}_cloud_nodelet/imu" />
-    <xacro:property name="topic_diag" value="/${namespace}/${sensor_name}_cloud_nodelet/diag" />
+    <xacro:property name="topic_diag" value="/${namespace}/${sensor_name}_cloud_nodelet/is_alive" />
 
       <!-- tf from sensor to lidar -->
     <xacro:property name="lidar_x" value="0" />
@@ -1679,10 +1777,10 @@ limitations under the License.
 
   <!-- Macro to add an Intel Realsense D435 {-->
   <xacro:macro name="realsense_macro"
-    params="namespace realsense_namespace parent_link parent_frame_name camera_suffix x y z roll pitch yaw enable_realistic_realsense">
+    params="namespace camera_name parent_link parent_frame_name camera_suffix x y z roll pitch yaw enable_realistic_realsense">
 
     <!-- visual links and joints {-->
-    <link name="${realsense_namespace}/camera_${camera_suffix}">
+    <link name="${camera_name}/camera${camera_suffix}">
       <visual>
         <origin xyz="0.0 0.0 0" rpy="-${rad90} 0 -${rad90}" />
         <geometry>
@@ -1692,7 +1790,7 @@ limitations under the License.
       </visual>
     </link>
 
-    <link name="${realsense_namespace}/camera_${camera_suffix}_glass_link">
+    <link name="${camera_name}/camera${camera_suffix}_glass_link">
       <visual>
         <origin xyz="0.0 0.0 0" rpy="-${rad90} 0 -${rad90}" />
         <geometry>
@@ -1702,22 +1800,23 @@ limitations under the License.
       </visual>
     </link>
 
-    <joint name="${realsense_namespace}/camera_${camera_suffix}_joint" type="fixed">
+    <joint name="${camera_name}/camera${camera_suffix}_joint" type="fixed">
       <origin xyz="${x} ${y} ${z}" rpy="${roll} ${pitch} ${yaw}"/>
       <parent link="${parent_link}" />
-      <child link="${realsense_namespace}/camera_${camera_suffix}" />
+      <child link="${camera_name}/camera${camera_suffix}" />
     </joint>
 
-    <joint name="${realsense_namespace}/camera_${camera_suffix}_glass_joint" type="fixed">
+    <joint name="${camera_name}/camera${camera_suffix}_glass_joint" type="fixed">
       <origin xyz="0 0 0 " rpy="0 0 0"/>
-      <parent link="${realsense_namespace}/camera_${camera_suffix}" />
-      <child link="${realsense_namespace}/camera_${camera_suffix}_glass_link" />
+      <parent link="${camera_name}/camera${camera_suffix}" />
+      <child link="${camera_name}/camera${camera_suffix}_glass_link" />
     </joint>
     <!--}-->
 
     <gazebo>
-      <plugin name="${camera_suffix}_plugin" filename="libMRSGazeboRealsensePlugin.so">
-        <realsense_namespace>${realsense_namespace}</realsense_namespace>
+      <plugin name="${camera_name}${camera_suffix}_plugin" filename="libMRSGazeboRealsensePlugin.so">
+        <camera_name>${camera_name}</camera_name>
+        <camera_suffix>${camera_suffix}</camera_suffix>
         <useRealistic>${enable_realistic_realsense}</useRealistic>
         <noisePerMeter>0.2</noisePerMeter>
         <minNoiseDistance>4.0</minNoiseDistance>
@@ -1737,13 +1836,13 @@ limitations under the License.
     </gazebo>
 
     <!-- sensors {-->
-    <gazebo reference="${realsense_namespace}/camera_${camera_suffix}">
+    <gazebo reference="${camera_name}/camera${camera_suffix}">
 
       <!-- rgb camera {-->
-      <sensor name="${namespace}/${realsense_namespace}/color" type="camera">
+      <sensor name="${namespace}/${camera_name}${camera_suffix}_color" type="camera">
         <!-- <pose frame="">0 -0.046 0.004 0 0 0</pose> -->
         <pose frame="">0 0 -0.0115 0 0 0</pose>
-        <camera name="${realsense_namespace}/camera_${camera_suffix}">
+        <camera name="${camera_name}${camera_suffix}/camera">
           <!-- <horizontal_fov>1.211259</horizontal_fov> -->
           <horizontal_fov>1.211259</horizontal_fov>
           <image>
@@ -1768,11 +1867,11 @@ limitations under the License.
       <!--}-->
 
       <!-- infra stereo {-->
-      <sensor name="${namespace}/${realsense_namespace}/infra_stereo" type="multicamera">
+      <sensor name="${namespace}/${camera_name}${camera_suffix}_infra_stereo" type="multicamera">
         <always_on>1</always_on>
         <update_rate>30</update_rate>
         <visualize>0</visualize>
-        <camera name="${namespace}/${realsense_namespace}/infra1">
+        <camera name="${namespace}/${camera_name}${camera_suffix}/infra1">
           <!-- <horizontal_fov>1.7523106</horizontal_fov> -->
           <horizontal_fov>1.211259</horizontal_fov>
           <image>
@@ -1790,7 +1889,7 @@ limitations under the License.
             <stddev>0.005</stddev>
           </noise>
         </camera>
-        <camera name="${namespace}/${realsense_namespace}/infra2">
+        <camera name="${namespace}/${camera_name}${camera_suffix}/infra2">
           <pose>0 0.05 0 0 0 0</pose>
           <!-- <horizontal_fov>1.7523106</horizontal_fov> -->
           <horizontal_fov>1.211259</horizontal_fov>
@@ -1814,10 +1913,10 @@ limitations under the License.
 
       <!-- (unused) infra2 {-->
         <!-- <sensor name="infra2" type="camera"> -->
-        <!-- <parent link="${realsense_namespace}/camera_${camera_suffix}"/> -->
+        <!-- <parent link="${camera_name}${camera_suffix}_camera_${camera_suffix}"/> -->
         <!-- <pose>0 -1.0325 0 0 0 0</pose> -->
-        <!--   <pose frame="${realsense_namespace}/camera_${camera_suffix}_infra2">0 -1.0325 0 0 0 0</pose> -->
-        <!--   <camera name="${realsense_namespace}/camera_${camera_suffix}_infra2"> -->
+        <!--   <pose frame="${camera_name}${camera_suffix}/camera_infra2">0 -1.0325 0 0 0 0</pose> -->
+        <!--   <camera name="${camera_name}${camera_suffix}/camera_${camera_suffix}_infra2"> -->
           <!-- <horizontal_fov>1.7523106</horizontal_fov> -->
           <!--     <horizontal_fov>1.211259</horizontal_fov> -->
           <!--     <image> -->
@@ -1842,9 +1941,9 @@ limitations under the License.
           <!--}-->
 
       <!-- aligned depth to color {-->
-        <sensor name="${namespace}/${realsense_namespace}/aligned_depth_to_color" type="depth">
+        <sensor name="${namespace}/${camera_name}${camera_suffix}_aligned_depth_to_color" type="depth">
         <pose>0 -0.0115 0.0 0 0 0</pose>
-        <camera name="${realsense_namespace}/camera_${camera_suffix}">
+        <camera name="${camera_name}/camera${camera_suffix}">
           <horizontal_fov>1.211259</horizontal_fov>
           <image>
             <xacro:if value="${enable_realistic_realsense}">
@@ -1875,10 +1974,11 @@ limitations under the License.
     </gazebo>
     <!--}-->
 
-    <gazebo reference="${realsense_namespace}/camera_${camera_suffix}">
+    <gazebo reference="${camera_name}/camera${camera_suffix}">
       <material>Gazebo/White</material>
     </gazebo>
-    <gazebo reference="${realsense_namespace}/camera_${camera_suffix}_glass_link">
+
+    <gazebo reference="${camera_name}/camera${camera_suffix}_glass_link">
       <material>Gazebo/BlackTransparent</material>
     </gazebo>
 
@@ -2103,44 +2203,126 @@ limitations under the License.
   <!--}-->
 
   <!-- Macro to add a camera mounted on virtual servo {-->
-  <xacro:macro name="servo_camera_macro" params="namespace name parent offset_x offset_y offset_z offset_yaw offset_roll offset_pitch update_rate max_pitch_rate camera_type compensate_tilt">
+  <xacro:macro name="servo_camera_macro" params="namespace name parent offset_pitch_link_x offset_pitch_link_y offset_pitch_link_z offset_pitch_link_yaw offset_pitch_link_roll offset_pitch_link_pitch offset_roll_link_x offset_roll_link_y offset_roll_link_z offset_roll_link_yaw offset_roll_link_roll offset_roll_link_pitch tilt_update_rate max_pitch min_pitch max_pitch_rate max_roll min_roll max_roll_rate compensate_tilt_roll compensate_tilt_pitch parent_frame_name sensor_base_frame_name camera_frame_name camera_update_rate horizontal_fov img_width img_height roll_link_mesh_file pitch_link_mesh_file mesh_scale">
 
-      <joint name="${name}_joint" type="revolute">
-          <parent link="${parent}"/>
-          <child link="${name}_link"/>
-          <axis xyz="0 1 0"/>
-          <dynamics damping="0.05" friction="0.05"/>
-          <limit upper="1.57" lower="-1.57" effort="1" velocity="10" />
-          <origin xyz="${offset_x} ${offset_y} ${offset_z}" rpy="0.0 0.0 0.0"/>
-      </joint>
+    <joint name="${namespace}_servo_camera_joint_roll" type="revolute">
+      <parent link="${parent}"/>
+      <child link="${namespace}_servo_camera_gimbal_link"/>
+      <axis xyz="1 0 0"/>
+      <dynamics damping="0.05" friction="0.05"/>
+      <limit upper="0.5" lower="-0.5" effort="1" velocity="10" />
+      <origin xyz="${offset_roll_link_x} ${offset_roll_link_y} ${offset_roll_link_z}" rpy="${offset_roll_link_roll} ${offset_roll_link_pitch} ${offset_roll_link_yaw}"/>
+    </joint>
 
-      <link name="${name}_link">
-          <inertial>
-              <mass value="1e-3" />
-              <inertia ixx="1e-5" ixy="0.0" ixz="0.0" iyy="1e-5" iyz="0.0" izz="1e-5"/>
-          </inertial>
-        <visual>
-          <geometry>
+    <link name="${namespace}_servo_camera_gimbal_link">
+      <inertial>
+        <mass value="1e-3" />
+        <inertia ixx="1e-5" ixy="0.0" ixz="0.0" iyy="1e-5" iyz="0.0" izz="1e-5"/>
+      </inertial>
+      <visual>
+        <geometry>
+          <xacro:if value="${roll_link_mesh_file == ''}">
+            <mesh filename="${roll_link_mesh_file}" scale="${mesh_scale}" />
+          </xacro:if>
+          <xacro:unless value="${roll_link_mesh_file == ''}">
             <box size="0.01 0.01 0.01" />
-          </geometry>
-        </visual>
-      </link>
-      <gazebo>
-        <plugin name="servo_camera_plugin" filename="libMRSGazeboServoCameraPlugin.so">
-          <offset_x>${offset_x}</offset_x>
-          <offset_y>${offset_y}</offset_y>
-          <offset_z>${offset_z}</offset_z>
-          <offset_pitch>${offset_pitch}</offset_pitch>
-          <offset_yaw>${offset_yaw}</offset_yaw>
-          <offset_roll>${offset_roll}</offset_roll>
-          <spawning_frame>${parent}</spawning_frame>
-          <update_rate>${update_rate}</update_rate>
-          <max_pitch_rate>${max_pitch_rate}</max_pitch_rate>
-          <joint_name>${name}_joint</joint_name>
-          <camera_type>${camera_type}</camera_type>
-          <compensate_tilt>${compensate_tilt}</compensate_tilt>
+          </xacro:unless>
+        </geometry>
+      </visual>
+    </link>
+
+    <joint name="${namespace}_servo_camera_joint_pitch" type="revolute">
+      <parent link="${namespace}_servo_camera_gimbal_link"/>
+      <child link="${namespace}_servo_camera_link"/>
+      <axis xyz="0 1 0"/>
+      <dynamics damping="0.05" friction="0.05"/>
+      <limit upper="1.57" lower="-1.57" effort="1" velocity="10" />
+      <origin xyz="${offset_pitch_link_x} ${offset_pitch_link_y} ${offset_pitch_link_z}" rpy="${offset_pitch_link_roll} ${offset_pitch_link_pitch} ${offset_pitch_link_yaw}"/>
+    </joint>
+
+    <link name="${namespace}_servo_camera_link">
+      <inertial>
+        <mass value="1e-3" />
+        <inertia ixx="1e-5" ixy="0.0" ixz="0.0" iyy="1e-5" iyz="0.0" izz="1e-5"/>
+      </inertial>
+      <visual>
+        <geometry>
+          <xacro:if value="${pitch_link_mesh_file == ''}">
+            <box size="0.01 0.01 0.01" />
+          </xacro:if>
+          <xacro:unless value="${pitch_link_mesh_file == ''}">
+            <mesh filename="${pitch_link_mesh_file}" scale="${mesh_scale}" />
+          </xacro:unless>
+        </geometry>
+      </visual>
+    </link>
+
+    <gazebo reference="${namespace}_servo_camera_link">
+
+      <sensor type="camera" name="servo_camera">
+        <update_rate>${camera_update_rate}</update_rate>
+        <camera name="head">
+          <horizontal_fov>${horizontal_fov}</horizontal_fov>
+          <image>
+            <width>${img_width}</width>
+            <height>${img_height}</height>
+          </image>
+          <clip>
+            <near>0.25</near>
+            <far>100</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+              <!-- Noise is sampled independently per pixel on each frame.
+                That pixel's noise value is added to each of its color
+              channels, which at that point lie in the range [0,1]. -->
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+        </camera>
+        <plugin name="${namespace}_servo_camera_controller" filename="libMRSGazeboCameraPlugin.so">
+          <alwaysOn>true</alwaysOn>
+          <updateRate>${camera_update_rate}</updateRate>
+          <cameraName>servo_camera</cameraName>
+          <imageTopicName>image_raw</imageTopicName>
+          <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+          <frameName>${camera_frame_name}</frameName>
+          <hackBaseline>0.0</hackBaseline>
+          <distortionK1>0.0</distortionK1>
+          <distortionK2>0.0</distortionK2>
+          <distortionK3>0.0</distortionK3>
+          <distortionT1>0.0</distortionT1>
+          <distortionT2>0.0</distortionT2>
+          <x>0.0</x>
+          <y>0.0</y>
+          <z>0.0</z>
+          <roll>0.0</roll>
+          <pitch>0.0</pitch>
+          <yaw>0.0</yaw>
+          <parentFrameName>${parent_frame_name}</parentFrameName>
+          <sensorBaseFrameName>${sensor_base_frame_name}</sensorBaseFrameName>
         </plugin>
-      </gazebo>
+      </sensor>
+    </gazebo>
+
+    <gazebo>
+      <plugin name="servo_camera_plugin" filename="libMRSGazeboServoCameraPlugin.so">
+        <tilt_update_rate>${tilt_update_rate}</tilt_update_rate>
+        <max_pitch_rate>${max_pitch_rate}</max_pitch_rate>
+        <max_pitch>${max_pitch}</max_pitch>
+        <min_pitch>${min_pitch}</min_pitch>
+        <max_roll_rate>${max_roll_rate}</max_roll_rate>
+        <max_roll>${max_roll}</max_roll>
+        <min_roll>${min_roll}</min_roll>
+        <joint_name_pitch>${namespace}_servo_camera_joint_pitch</joint_name_pitch>
+        <joint_name_roll>${namespace}_servo_camera_joint_roll</joint_name_roll>
+        <parent_link_pitch>${namespace}_servo_camera_gimbal_link</parent_link_pitch>
+        <parent_link_roll>${parent}</parent_link_roll>
+        <compensate_tilt_roll>${compensate_tilt_roll}</compensate_tilt_roll>
+        <compensate_tilt_pitch>${compensate_tilt_pitch}</compensate_tilt_pitch>
+      </plugin>
+    </gazebo>
+
   </xacro:macro>
   <!--}-->
 
@@ -2569,6 +2751,33 @@ limitations under the License.
           <compensate_tilt>${compensate_tilt}</compensate_tilt>
         </plugin>
       </gazebo>
+  </xacro:macro>
+  <!--}-->
+
+  <!-- Macro to add a safety_led {-->
+  <xacro:macro name="safety_led_macro" params="namespace name parent failure_duration_threshold x y z roll pitch yaw">
+
+    <joint name="${name}_joint" type="fixed">
+      <origin xyz="${x} ${y} ${z}" rpy="${roll} ${pitch} ${yaw}" />
+      <parent link="${parent}" />
+      <child link="${name}_link" />
+    </joint>
+    <link name="${name}_link" >
+    </link>
+    <gazebo>
+      <plugin name="safety_led_plugin" filename="libMRSSafetyLedPlugin.so">
+        <model_name>safety_led</model_name>
+        <failure_duration_threshold>${failure_duration_threshold}</failure_duration_threshold>
+        <model_spawn_delay>5.0</model_spawn_delay>
+        <x>${x}</x>
+        <y>${y}</y>
+        <z>${z}</z>
+        <roll>${roll}</roll>
+        <pitch>${pitch}</pitch>
+        <yaw>${yaw}</yaw>
+      </plugin>
+    </gazebo>
+
   </xacro:macro>
   <!--}-->
 

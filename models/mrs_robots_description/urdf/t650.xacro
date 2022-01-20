@@ -95,6 +95,7 @@
   <xacro:property name="rplidar_mount_mesh" value="package://mrs_robots_description/meshes/tarot/t650/tarot_t650_rplidar_mount.dae" />
   <xacro:property name="uvdar_mount_mesh" value="package://mrs_robots_description/meshes/tarot/t650/tarot_t650_uvdar_mount.dae" />
   <xacro:property name="realsense_front_mount_mesh" value="package://mrs_robots_description/meshes/tarot/t650/tarot_t650_realsense_front_mount.dae" />
+  
 
   <!-- scales -->
   <xacro:property name="mesh_scale" value="1 1 1"/>
@@ -829,9 +830,9 @@
     <!-- sensor -->
     <xacro:realsense_macro
       namespace="${namespace}"
-      realsense_namespace=""
+      camera_name="rgbd"
+      camera_suffix=""
       parent_link="base_link"
-      camera_suffix="realsense_front"
       parent_frame_name="${namespace}/fcu"
       enable_realistic_realsense="${optionals['use_realistic_realsense']}"
       x="0.17"
@@ -849,9 +850,9 @@
     <!-- sensor -->
     <xacro:realsense_macro
       namespace="${namespace}"
-      realsense_namespace=""
+      camera_name="rgbd"
+      camera_suffix="_up"
       parent_link="base_link"
-      camera_suffix="realsense_up"
       parent_frame_name="${namespace}/fcu"
       enable_realistic_realsense="${optionals['use_realistic_realsense']}"
       x="0.08"
@@ -869,48 +870,12 @@
     <!-- sensor -->
     <xacro:realsense_macro
       namespace="${namespace}"
-      realsense_namespace=""
+      camera_name="rgbd"
+      camera_suffix="_down"
       parent_link="base_link"
-      camera_suffix="realsense_down"
       parent_frame_name="${namespace}/fcu"
       enable_realistic_realsense="${optionals['use_realistic_realsense']}"
       x="0.1"
-      y="0"
-      z="-0.05"
-      roll="0"
-      pitch="+${rad90}"
-      yaw="0">
-    </xacro:realsense_macro>
-  </xacro:if>
-  <!--}-->
-
-  <!-- up_down {-->
-  <xacro:if value="${optionals['enable_realsense_up_down']}">
-    <!-- sensor -->
-    <xacro:realsense_macro
-      namespace="${namespace}"
-      realsense_namespace="up_rgbd"
-      parent_link="base_link"
-      camera_suffix="realsense_up"
-      parent_frame_name="${namespace}/fcu"
-      enable_realistic_realsense="${optionals['use_realistic_realsense']}"
-      x="-0.01"
-      y="-0.07"
-      z="0.05"
-      roll="0"
-      pitch="-${rad90}"
-      yaw="${rad90}">
-    </xacro:realsense_macro>
-
-    <!-- sensor -->
-    <xacro:realsense_macro
-      namespace="${namespace}"
-      realsense_namespace="down_rgbd"
-      parent_link="base_link"
-      camera_suffix="realsense_down"
-      parent_frame_name="${namespace}/fcu"
-      enable_realistic_realsense="${optionals['use_realistic_realsense']}"
-      x="0.12"
       y="0"
       z="-0.05"
       roll="0"
@@ -1049,16 +1014,37 @@
       namespace="${namespace}"
       name="servo_camera_macro"
       parent="base_link"
-      offset_x="0.2"
-      offset_y="0.0"
-      offset_z="-0.10"
-      offset_roll="0.0"
-      offset_yaw="0.0"
-      offset_pitch="0.0"
+      parent_frame_name="${namespace}/fcu"
+      camera_frame_name="${namespace}/servo_camera_optical"
+      sensor_base_frame_name="${namespace}/servo_camera"
+      offset_pitch_link_x="0.0"
+      offset_pitch_link_y="0.0"
+      offset_pitch_link_z="0.0"
+      offset_pitch_link_roll="0.0"
+      offset_pitch_link_yaw="0.0"
+      offset_pitch_link_pitch="0.0"
+      offset_roll_link_x="0.2"
+      offset_roll_link_y="0.0"
+      offset_roll_link_z="-0.1"
+      offset_roll_link_roll="0.0"
+      offset_roll_link_yaw="0.0"
+      offset_roll_link_pitch="0.0"
+      tilt_update_rate="5.0"
+      min_pitch="-1.57"
+      max_pitch="1.57"
+      min_roll="-0.6"
+      max_roll="0.6"
       max_pitch_rate="0.1"
-      camera_type="servo_camera"
-      update_rate="30.0"
-      compensate_tilt="true">
+      max_roll_rate="0.1"
+      camera_update_rate="30"
+      horizontal_fov="1.92"
+      img_width="1920"
+      img_height="1080"
+      compensate_tilt_roll="true"
+      compensate_tilt_pitch="true"
+      pitch_link_mesh_file=""
+      roll_link_mesh_file=""
+      mesh_scale="">
     </xacro:servo_camera_macro>
   </xacro:if>
   <!--}-->
@@ -1394,7 +1380,7 @@
     <!-- tilted realsense {-->
     <xacro:realsense_macro
       namespace="${namespace}"
-      realsense_namespace=""
+      camera_name=""
       parent_link="base_link"
       camera_suffix="realsense_down"
       parent_frame_name="${namespace}/fcu"
