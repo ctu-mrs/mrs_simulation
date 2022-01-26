@@ -10,12 +10,15 @@ import threading
 import yaml
 import math
 import random
+from subprocess import Popen, PIPE
 
 from utils import print_error, print_info, print_ok, is_number, rinfo, rwarn, rerr
+from spawner import DroneSoftware
 
 from mrs_msgs.srv import String as StringSrv
 from mrs_msgs.srv import StringResponse as StringSrvResponse
 from gazebo_msgs.msg import ModelStates
+from gazebo_msgs.srv import DeleteModel
 from mavros_msgs.msg import State as MavrosState
 
 from mrs_msgs.msg import SpawnerDiagnostics
@@ -90,6 +93,10 @@ class MrsDroneSpawner():
 
         # spawning
         spawn_server = rospy.Service('~spawn', StringSrv, self.callback_spawn, buff_size=20)
+        despawn_server = rospy.Service('~despawn', StringSrv, self.callback_despawn, buff_size=20)
+
+        # gazebo delete model
+        self.delete_model_call = rospy.ServiceProxy('~gazebo_delete_model', DeleteModel)
 
         rospy.spin()
         # #}
@@ -249,20 +256,61 @@ class MrsDroneSpawner():
         # #}
 
         # #{ queue new launch processes
-        self.process_queue_mutex.acquire()
-        self.processing = True
-        for i, uav_roslaunch_args in enumerate(roslaunch_args):
-            ID = params_dict['uav_ids'][i]
-            self.queued_vehicles.append('uav' + str(ID))
-            self.process_queue.append((self.launch_mavros, (ID, uav_roslaunch_args)))
-            self.process_queue.append((self.spawn_simulation_model, (ID, uav_roslaunch_args)))
-            self.process_queue.append((self.launch_firmware, (ID, uav_roslaunch_args)))
-        self.process_queue_mutex.release()
+        # self.process_queue_mutex.acquire()
+        # self.processing = True
+        # for i, uav_roslaunch_args in enumerate(roslaunch_args):
+        #     ID = params_dict['uav_ids'][i]
+        #     self.queued_vehicles.append('uav' + str(ID))
+        #     self.process_queue.append((self.launch_mavros, (ID, uav_roslaunch_args)))
+        #     self.process_queue.append((self.spawn_simulation_model, (ID, uav_roslaunch_args)))
+        #     self.process_queue.append((self.launch_firmware, (ID, uav_roslaunch_args)))
+        # self.process_queue_mutex.release()
         # #}
+
+        for i, uav_roslaunch_args in enumerate(roslaunch_args):
+            px4_id = self.run_px4_firmware_subprocess(ID, uav_roslaunch_args)
+            self.process_queue.append((self.spawn_simulation_model, (ID, uav_roslaunch_args)))
+            mavros_id = self.run_mavros_subprocess(ID, uav_roslaunch_args)
+            print(px4_id, mavros_id)
+            ds = DroneSoftware(px4_id, mavros_id)
+            self.assigned_ids[ID] = ds
+
 
         res = StringSrvResponse()
         res.success = True
         res.message = str('Launch sequence queued')
+        return res
+
+    # #}
+    
+    # #{ callback_despawn
+    def callback_despawn(self, req):
+
+        data = req.value.split()
+        ids = []
+        for d in data:
+            try:
+                a = int(d)
+                if a in self.assigned_ids.keys():
+                    ids.append(a)
+            except:
+                print(str(d) + ' is not a valid UAV ID')
+
+        for i in ids:
+            print('Killing software for UAV' + str(i))
+            drone_software = self.assigned_ids[i]
+            drone_software.kill()
+            print('Despawning UAV' + str(i))
+            delete_srv = DeleteModel()
+            uav_name_string = 'uav' + str(i)
+            uav_name_string = uav_name_string.encode('ascii', 'ignore')
+            delete_srv.model_name = str(uav_name_string, encoding='ascii')
+            response = self.delete_model_call(delete_srv)
+            print('Delete result: ' + str(response.status_message))
+
+        res = StringSrvResponse()
+        res.success = True
+        res.message = str('Despawn called')
         return res
 
     # #}
@@ -583,6 +631,15 @@ class MrsDroneSpawner():
         return launch
     # #}
 
+    # #{ run_px4_firmware_subprocess
+    def run_px4_firmware_subprocess(self, ID, args):
+        # TODO: check if the process already exists and kill it
+        rinfo('Running firmware for uav' + str(ID) + '...')
+        # process = Popen(['roslaunch mrs_simulation run_simulation_firmware.launch', args])
+        process = Popen(['roslaunch', 'mrs_simulation', 'run_simulation_firmware.launch'])
+        return process.pid
+    # #}
+
     # #{ spawn_gazebo_model
     def spawn_simulation_model(self, ID, uav_roslaunch_args):
         rinfo('Spawning Gazebo model for uav' + str(ID) + '...')
@@ -628,6 +685,16 @@ class MrsDroneSpawner():
         rinfo('Mavros for uav' + str(ID) + ' started!')
         return launch
     # #}
+
+    # #{ run_mavros_subprocess
+    def run_mavros_subprocess(self, ID, args):
+        # TODO: check if the process already exists and kill it
+        rinfo('Running mavros for uav' + str(ID) + '...')
+        # process = Popen(['roslaunch mrs_simulation run_simulation_mavros.launch', args])
+        process = Popen(['roslaunch', 'mrs_simulation', 'run_simulation_mavros.launch'])
+        return process.pid
+    # #}
+
 
     # #{ dummy_function
     def dummy_function(self):

@@ -2,7 +2,9 @@
 
   <node name="mrs_drone_spawner" pkg="mrs_simulation" type="mrs_drone_spawner" output="screen" args="no_help verbose">
 
-    <remap from="~gazebo_model_states" to="/gazebo/model_states" />
+    <remap from="~gazebo_delete_model" to="/gazebo/delete_model" />
+    <remap from="~spawn_in" to="~spawn" />
+    <remap from="~despawn_in" to="~despawn" />
 
   </node>
 
