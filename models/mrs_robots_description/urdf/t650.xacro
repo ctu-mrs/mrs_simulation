@@ -1477,4 +1477,21 @@
 
   <!--}-->
 
+  <!-- Downward UV cameras {-->
+  <xacro:if value="${optionals['enable_downward_uv_camera']}">
+
+    <xacro:uvcam_macro
+      namespace="${namespace}"
+      parent_link="base_link"
+      number="1"
+      frame_rate="60"
+      camera_publish_topic="/${namespace}/uvdar_bluefox_bottom/image_raw"
+      calibration_file="${optionals['uvcam_calib_file']}"
+      occlusions="${optionals['uvcam_occlusions']}">
+    <origin xyz="0.0 0.0 -0.10" rpy="0 ${rad90} 0" />
+    </xacro:uvcam_macro>
+
+  </xacro:if>
+  <!--}-->
+
 </robot>
