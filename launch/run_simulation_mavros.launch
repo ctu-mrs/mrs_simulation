@@ -1,5 +1,5 @@
-<?xml version="1.0"?>
 <launch>
+
   <arg name="ID"/>
   <arg name="vehicle"/>
   <arg name="model_config_file"/>
@@ -12,25 +12,31 @@
   <arg name="y"/>
   <arg name="z"/>
   <arg name="heading"/>
-  
+
   <arg name="roll" default="0"/>
   <arg name="pitch" default="0"/>
   <arg name="est" default="ekf2"/>
 
-  <!-- UAV namespace -->
+  <arg name="pluginlists_yaml" value="$(find mrs_uav_general)/config/px4_pluginlists.yaml" />
+  <arg name="config_yaml" value="$(find mrs_uav_general)/config/px4_config.yaml" />
+
+    <!-- UAV namespace -->
   <group ns="uav$(arg ID)">
 
     <!-- PX4 params -->
     <env name="PX4_SIM_MODEL" value="$(arg vehicle)" />
     <env name="PX4_ESTIMATOR" value="$(arg est)" />
 
-    <!-- MAVROS -->
+      <!-- MAVROS -->
     <include file="$(find mavros)/launch/px4.launch">
       <arg name="fcu_url" value="$(arg fcu_url)"/>
       <arg name="gcs_url" value=""/>
       <arg name="tgt_system" value="$(eval 1 + arg('ID'))"/>
       <arg name="tgt_component" value="1"/>
+      <arg name="pluginlists_yaml" value="$(arg pluginlists_yaml)"/>
+      <arg name="config_yaml" value="$(arg config_yaml)"/>
     </include>
 
   </group>
+
 </launch>
