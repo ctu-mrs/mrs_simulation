@@ -1380,9 +1380,9 @@
     <!-- tilted realsense {-->
     <xacro:realsense_macro
       namespace="${namespace}"
-      camera_name=""
+      camera_name="rgbd"
       parent_link="base_link"
-      camera_suffix="realsense_down"
+      camera_suffix="_down"
       parent_frame_name="${namespace}/fcu"
       enable_realistic_realsense="${optionals['use_realistic_realsense']}"
       x="0.15"
