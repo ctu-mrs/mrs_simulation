@@ -16,6 +16,7 @@ from utils import print_error, print_info, print_ok, is_number, rinfo, rwarn, re
 from mrs_msgs.srv import String as StringSrv
 from mrs_msgs.srv import StringResponse as StringSrvResponse
 from gazebo_msgs.msg import ModelStates
+from gazebo_msgs.srv import DeleteModel
 from mavros_msgs.msg import State as MavrosState
 
 from mrs_msgs.msg import SpawnerDiagnostics
@@ -90,6 +91,10 @@ class MrsDroneSpawner():
 
         # spawning
         spawn_server = rospy.Service('~spawn', StringSrv, self.callback_spawn, buff_size=20)
+        despawn_server = rospy.Service('~despawn', StringSrv, self.callback_despawn, buff_size=20)
+        
+        # gazebo interaction
+        self.delete_model_client = rospy.ServiceProxy('~gazebo_delete_model', DeleteModel)
 
         rospy.spin()
         # #}
@@ -153,6 +158,35 @@ class MrsDroneSpawner():
             print(BOLDGREEN + '--' + str(param).replace('_', '-') + ENDC + BOLD + ' (default: ' + str(default_value) + ')' + ENDC + ': ' + str(help_string) )
     # #}
 
+    # #{ parse_input_params
+    def parse_input_params(self, data):
+        params_list = data.split()
+
+        try:
+            uav_ids = self.get_ids(params_list)
+            vehicle_type = self.get_vehicle_type(params_list)
+            params_dict = self.get_params_dict(params_list, vehicle_type)
+            if params_dict['pos_file'] != 'None':
+                rinfo('Loading spawn poses from file \'' + str(params_dict['pos_file']) + '\'')
+                spawn_poses = self.get_spawn_poses_from_file(params_dict['pos_file'], uav_ids)
+            elif params_dict['pos'] != 'None':
+                rinfo('Using spawn poses provided from command line args \'' + str(params_dict['pos']) + '\'')
+                spawn_poses = self.get_spawn_poses_from_args(params_dict['pos'], uav_ids)
+            else:
+                rinfo('Assigning default spawn poses')
+                spawn_poses = self.get_spawn_poses_from_ids(uav_ids)
+
+        except Exception as e:
+            rerr('Exception raised while parsing user input:')
+            rerr(str(e.args[0]))
+            raise Exception('Cannot spawn vehicle. Reason: ' + str(e.args[0]))
+
+        params_dict['uav_ids'] = uav_ids
+        params_dict['vehicle_type'] = vehicle_type
+        params_dict['spawn_poses'] = spawn_poses
+        return params_dict
+    # #}
+
     # #{ callback_action_timer
     def callback_action_timer(self, timer):
 
@@ -200,7 +234,7 @@ class MrsDroneSpawner():
 
         # #{ check gazebo running
         try:
-            rospy.wait_for_message('/gazebo/model_states', ModelStates, 60)
+            rospy.wait_for_message('~gazebo_model_states', ModelStates, 60)
         except:
             res = StringSrvResponse()
             res.success = False
@@ -267,33 +301,40 @@ class MrsDroneSpawner():
 
     # #}
 
-    # #{ parse_input_params
-    def parse_input_params(self, data):
-        params_list = data.split()
+    # #{ callback_despawn
+    def callback_despawn(self, req):
 
-        try:
-            uav_ids = self.get_ids(params_list)
-            vehicle_type = self.get_vehicle_type(params_list)
-            params_dict = self.get_params_dict(params_list, vehicle_type)
-            if params_dict['pos_file'] != 'None':
-                rinfo('Loading spawn poses from file \'' + str(params_dict['pos_file']) + '\'')
-                spawn_poses = self.get_spawn_poses_from_file(params_dict['pos_file'], uav_ids)
-            elif params_dict['pos'] != 'None':
-                rinfo('Using spawn poses provided from command line args \'' + str(params_dict['pos']) + '\'')
-                spawn_poses = self.get_spawn_poses_from_args(params_dict['pos'], uav_ids)
+        
+        data = req.value.split()
+        ids = []
+        for d in data:
+            try:
+                a = int(d)
+                if a in self.assigned_ids.keys():
+                    ids.append(a)
+            except:
+                print(str(d) + ' is not a valid UAV ID')
+
+        res = StringSrvResponse()
+        
+        for i in ids:
+            # drone_software = self.assigned_ids[i]
+            # drone_software.kill(15)
+            uav_name_string = 'uav' + str(i)
+            rospy.loginfo('Despawning model "' + str(uav_name_string) + '"')
+            result = self.delete_model_client(uav_name_string)
+
+            if not result.success:
+                rospy.logwarn('Model "' + str(uav_name_string) + '" NOT deleted')
+                res.message = result.message
+                return res
             else:
-                rinfo('Assigning default spawn poses')
-                spawn_poses = self.get_spawn_poses_from_ids(uav_ids)
+                rospy.loginfo('Model "' + str(uav_name_string) + '" deleted')
+                del(self.assigned_ids[i])
 
-        except Exception as e:
-            rerr('Exception raised while parsing user input:')
-            rerr(str(e.args[0]))
-            raise Exception('Cannot spawn vehicle. Reason: ' + str(e.args[0]))
-
-        params_dict['uav_ids'] = uav_ids
-        params_dict['vehicle_type'] = vehicle_type
-        params_dict['spawn_poses'] = spawn_poses
-        return params_dict
+        res.success = True
+        res.message = 'Despawning completed'
+        return res
     # #}
 
     # #{ assign_free_id
