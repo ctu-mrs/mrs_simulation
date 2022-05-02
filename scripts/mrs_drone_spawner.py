@@ -78,7 +78,6 @@ class MrsDroneSpawner():
         self.queued_vehicles = []
         self.got_mavlink = {}
         self.mavlink_sub = {}
-        self.running_processes= []
         self.assigned_ids = {} # dictionary {id: process_handle}
         # #}
 
@@ -204,7 +203,10 @@ class MrsDroneSpawner():
             roslaunch.pmon._init_signal_handlers = orig_signal_handler
 
             if process_handle is not None:
-                self.running_processes.append(process_handle)
+                # remember process handles
+                ID = args[0]
+                rospy.loginfo('Adding process handle for uav' + str(ID))
+                self.assigned_ids[ID].append(process_handle)
             else:
                 self.process_queue_mutex.acquire()
                 self.process_queue.append((process, args))
@@ -279,7 +281,7 @@ class MrsDroneSpawner():
         # #{ prepare id <-> process map
         self.spawn_called = True
         for ID in params_dict['uav_ids']:
-            self.assigned_ids[ID] = None
+            self.assigned_ids[ID] = [] 
         # #}
 
         # #{ queue new launch processes
@@ -318,8 +320,6 @@ class MrsDroneSpawner():
         res = StringSrvResponse()
         
         for i in ids:
-            # drone_software = self.assigned_ids[i]
-            # drone_software.kill(15)
             uav_name_string = 'uav' + str(i)
             rospy.loginfo('Despawning model "' + str(uav_name_string) + '"')
             result = self.delete_model_client(uav_name_string)
@@ -330,6 +330,10 @@ class MrsDroneSpawner():
                 return res
             else:
                 rospy.loginfo('Model "' + str(uav_name_string) + '" deleted')
+                drone_software = self.assigned_ids[i]
+                rospy.loginfo('Killing drone software for "' + str(uav_name_string) + '"')
+                for process in drone_software:
+                    process.shutdown()
                 del(self.assigned_ids[i])
 
         res.success = True
