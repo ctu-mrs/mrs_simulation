@@ -2,8 +2,8 @@
 Changelog for package mrs_simulation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.3 (2022-05-09)
+------------------
 * add front-facing realsense to x500
 * updated mbzirc sensor package
 * refactored mavros launchfiles
