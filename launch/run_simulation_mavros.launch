@@ -2,16 +2,7 @@
 
   <arg name="ID"/>
   <arg name="vehicle"/>
-  <arg name="model_config_file"/>
-  <arg name="udp_offboard_port_remote"/>
-  <arg name="udp_offboard_port_local"/>
-  <arg name="mavlink_tcp_port"/>
-  <arg name="mavlink_udp_port"/>
   <arg name="fcu_url"/>
-  <arg name="x"/>
-  <arg name="y"/>
-  <arg name="z"/>
-  <arg name="heading"/>
 
   <arg name="roll" default="0"/>
   <arg name="pitch" default="0"/>
@@ -28,7 +19,7 @@
     <env name="PX4_ESTIMATOR" value="$(arg est)" />
 
       <!-- MAVROS -->
-    <include file="$(find mavros)/launch/px4.launch">
+    <include file="$(find mavros)/launch/node.launch">
       <arg name="fcu_url" value="$(arg fcu_url)"/>
       <arg name="gcs_url" value=""/>
       <arg name="tgt_system" value="$(eval 1 + arg('ID'))"/>
