@@ -9,6 +9,7 @@
   <arg name="debug" default="false" />
   <arg name="physics" default="ode" />
   <arg name="verbose" default="true" />
+  <arg name="reset" default="true" />
 
     <!-- supply this argument to specify the world name within the mrs_gazebo_common_resources package -->
   <arg name="world_name" default="grass_plane" />
@@ -30,14 +31,20 @@
   <arg     if="$(arg verbose)" name="command_arg3" value="--verbose" />
   <arg unless="$(arg debug)" name="script_type" value="gzserver" />
   <arg     if="$(arg debug)" name="script_type" value="debug" />
+  
+  <!-- kill previous sessions of mavros, px4 and gazebo -->
+  <group if="$(arg reset)">
+    <node pkg="mrs_simulation" type="kill_previous_session.sh" name="kill_previous_session" output="screen" />
+  </group>
 
+  <!-- start spawner -->
   <include file="$(find mrs_simulation)/launch/mrs_drone_spawner.launch" />
 
-    <!-- start gazebo server-->
+  <!-- start gazebo server-->
   <node name="gazebo" pkg="gazebo_ros" type="$(arg script_type)" respawn="false" output="screen"
-    args="$(arg command_arg1) $(arg command_arg2) $(arg command_arg3) -e $(arg physics) $(arg extra_gazebo_args) $(arg world_file)" />
+        args="$(arg command_arg1) $(arg command_arg2) $(arg command_arg3) -e $(arg physics) $(arg extra_gazebo_args) $(arg world_file)" />
 
-    <!-- start gazebo client -->
+  <!-- start gazebo client -->
   <group if="$(arg gui)">
     <node name="gazebo_gui" pkg="gazebo_ros" type="gzclient" respawn="false" output="screen" />
   </group>
