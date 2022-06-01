@@ -440,13 +440,11 @@ class MrsDroneSpawner():
 
     # #{ get_vehicle_type
     def get_vehicle_type(self, params_list):
-        vehicle_type = DEFAULT_VEHICLE_TYPE
         for p in params_list:
             for v in VEHICLE_TYPES:
                 if v in p:
-                    vehicle_type = v
-                    break
-        return vehicle_type
+                    return v
+        return DEFAULT_VEHICLE_TYPE
     # #}
 
     # #{ get_spawn_poses
