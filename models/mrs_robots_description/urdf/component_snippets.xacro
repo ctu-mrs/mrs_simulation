@@ -1871,7 +1871,7 @@ limitations under the License.
         <always_on>1</always_on>
         <update_rate>30</update_rate>
         <visualize>0</visualize>
-        <camera name="${namespace}/${camera_name}${camera_suffix}/infra1">
+        <camera name="${namespace}/${camera_name}${camera_suffix}_infra1">
           <!-- <horizontal_fov>1.7523106</horizontal_fov> -->
           <horizontal_fov>1.211259</horizontal_fov>
           <image>
@@ -1889,7 +1889,7 @@ limitations under the License.
             <stddev>0.005</stddev>
           </noise>
         </camera>
-        <camera name="${namespace}/${camera_name}${camera_suffix}/infra2">
+        <camera name="${namespace}/${camera_name}${camera_suffix}_infra2">
           <pose>0 0.05 0 0 0 0</pose>
           <!-- <horizontal_fov>1.7523106</horizontal_fov> -->
           <horizontal_fov>1.211259</horizontal_fov>
