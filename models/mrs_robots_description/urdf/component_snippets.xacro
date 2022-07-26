@@ -47,9 +47,11 @@ limitations under the License.
   <xacro:property name="rad115" value="${115*pi/180}" />
   <xacro:property name="rad120" value="${120*pi/180}" />
   <xacro:property name="rad135" value="${135*pi/180}" />
+  <xacro:property name="rad140" value="${140*pi/180}" />
   <xacro:property name="rad150" value="${150*pi/180}" />
   <xacro:property name="rad180" value="${180*pi/180}" />
   <xacro:property name="rad210" value="${210*pi/180}" />
+  <xacro:property name="rad315" value="${315*pi/180}" />
 
   <xacro:property name="sin30" value="${sin(rad30)}" />
   <xacro:property name="sin45" value="${sin(rad45)}" />
@@ -2849,6 +2851,50 @@ limitations under the License.
     <gazebo reference="${namespace}_uvled_${number}_lens_link">
       <material>Gazebo/BlueTransparent</material>
     </gazebo>
+  </xacro:macro>
+  <!--}-->
+
+  <!-- Macro to add a Fisheye 120deg Pylon camera {-->
+  <xacro:macro name="fisheye_camera_pylon_macro"
+    params="namespace parent_link camera_suffix frame_rate noise x y z roll pitch yaw camera_frame_name sensor_base_frame_name parent_frame_name">
+    <xacro:fisheye_macro
+      namespace="${namespace}"
+      parent_link="${parent_link}"
+      camera_suffix="${camera_suffix}"
+      camera_frame_name="${camera_frame_name}"
+      sensor_base_frame_name="${sensor_base_frame_name}"
+      frame_rate="${frame_rate}"
+      horizontal_fov="${rad140}"
+      image_width="1600"
+      image_height="1200"
+      lens_type="custom"
+      lens_c1="1.05"
+      lens_c2="4"
+      lens_f="1.0"
+      lens_fun="tan"
+      lens_scale="true"
+      lens_cutoff_angle="${rad140}"
+      lens_texture_size="512"
+      min_distance="0.02"
+      max_distance="40"
+      noise_mean="0.0"
+      noise_stddev="${noise}"
+      parent_frame_name="${parent_frame_name}"
+      x="${x}"
+      y="${y}"
+      z="${z}"
+      yaw="${yaw}"
+      pitch="${pitch}"
+      roll="${roll}"
+      >
+      <visual>
+        <origin xyz="0 0 0" rpy="${rad90} 0 0" />
+        <geometry>
+          <mesh filename="package://mrs_robots_description/meshes/sensors/bluefox.dae"
+            scale="1 1 1" />
+        </geometry>
+      </visual>
+    </xacro:fisheye_macro>
   </xacro:macro>
   <!--}-->
 

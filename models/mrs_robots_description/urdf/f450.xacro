@@ -1142,6 +1142,46 @@
   </xacro:if>
   <!--}-->
 
+  <!-- Basler stereopair {-->
+  <xacro:if value="${optionals['enable_basler_stereopair']}">
+    <xacro:fisheye_camera_pylon_macro
+      namespace="${namespace}"
+      parent_link="base_link"
+      camera_suffix="fleft"
+      frame_rate="40"
+      noise="0.000"
+      parent_frame_name="${namespace}/basler_stereopair/base"
+      camera_frame_name="${namespace}/basler_left_optical"
+      sensor_base_frame_name="${namespace}/basler_left"
+      x="0.083"
+      y="0.083"
+      z="${arm_height + 0.2}"
+      roll="0.0"
+      pitch="0.0"
+      yaw="${rad45}"
+      >
+    </xacro:fisheye_camera_pylon_macro>
+
+    <xacro:fisheye_camera_pylon_macro
+      namespace="${namespace}"
+      parent_link="base_link"
+      camera_suffix="fright"
+      frame_rate="40"
+      noise="0.000"
+      parent_frame_name="${namespace}/basler_stereopair/base"
+      camera_frame_name="${namespace}/basler_right_optical"
+      sensor_base_frame_name="${namespace}/basler_rigth"
+      x="0.083"
+      y="-0.083"
+      z="${arm_height + 0.2}"
+      roll="0.0"
+      pitch="0.0"
+      yaw="${rad315}"
+      >
+    </xacro:fisheye_camera_pylon_macro>
+  </xacro:if>
+  <!--}-->
+
   <!-- ========================== other sensors ========================= -->
 
   <!-- Teraranger Tower Evo {-->
