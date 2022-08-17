@@ -359,7 +359,7 @@ class MrsDroneSpawner():
         ports['udp_offboard_port_local'] = VEHICLE_BASE_PORT + (4 * ID) + 1
         ports['mavlink_tcp_port'] = MAVLINK_TCP_BASE_PORT + ID
         ports['mavlink_udp_port'] = MAVLINK_UDP_BASE_PORT + ID
-        ports['fcu_url'] = 'udp://:' + str(ports['udp_offboard_port_remote']) + '@localhost:' + str(ports['udp_offboard_port_local'])
+        ports['fcu_url'] = 'udp://127.0.0.1:' + str(ports['udp_offboard_port_remote']) + '@127.0.0.1:' + str(ports['udp_offboard_port_local'])
         return ports
     # #}
 
