@@ -13,6 +13,12 @@
   <arg name="roll" default="0"/>
   <arg name="pitch" default="0"/>
   <arg name="est" default="ekf2"/>
+  
+  <!-- PX4 configs -->
+  <arg name="interactive" default="false"/>
+  <!-- PX4 SITL -->
+  <arg unless="$(arg interactive)" name="px4_command_arg1" value="-d"/>
+  <arg     if="$(arg interactive)" name="px4_command_arg1" value=""/>
 
   <!-- UAV namespace -->
   <group ns="uav$(arg ID)">
@@ -22,7 +28,7 @@
     <env name="PX4_ESTIMATOR" value="$(arg est)" />
 
     <!-- PX4 SITL -->
-    <node name="sitl_uav$(arg ID)" pkg="px4" type="px4" output="screen" args="$(find mrs_simulation)/ROMFS/px4fmu_common -s etc/init.d-posix/rcS -i $(arg ID) -w sitl_uav$(arg ID) -d"/>
+    <node name="sitl_uav$(arg ID)" pkg="px4" type="px4" output="screen" args="$(find mrs_simulation)/ROMFS/px4fmu_common -s etc/init.d-posix/rcS $(arg px4_command_arg1) -i $(arg ID) -w sitl_uav$(arg ID)"/>
   
   </group>
 </launch>
