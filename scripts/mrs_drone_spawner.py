@@ -36,6 +36,9 @@ class MrsDroneSpawner():
         self.verbose = verbose
         self.rospack = rospkg.RosPack()
 
+        # check that mrs_uav_general package can be found
+        self.rospack.get_path('mrs_uav_general')
+
         pkg_path = self.rospack.get_path('mrs_simulation')
         path_to_spawner_params = pkg_path + os.sep + 'config' + os.sep + 'spawner_params.yaml'
 
