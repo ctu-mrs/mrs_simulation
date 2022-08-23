@@ -9,7 +9,6 @@
 
 . ${R}etc/init.d/rc.mc_defaults
 
-set MAV_TYPE 13
+param set-default MAV_TYPE 13
 
 set MIXER hexa_x
-
