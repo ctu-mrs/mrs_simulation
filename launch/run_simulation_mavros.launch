@@ -11,22 +11,30 @@
   <arg name="pluginlists_yaml" value="$(find mrs_uav_general)/config/px4_pluginlists.yaml" />
   <arg name="config_yaml" value="$(find mrs_uav_general)/config/px4_config.yaml" />
 
-    <!-- UAV namespace -->
+  <arg name="respawn_mavros" default="false" />
+
+  <!-- UAV namespace -->
   <group ns="uav$(arg ID)">
 
     <!-- PX4 params -->
     <env name="PX4_SIM_MODEL" value="$(arg vehicle)" />
     <env name="PX4_ESTIMATOR" value="$(arg est)" />
 
-      <!-- MAVROS -->
-    <include file="$(find mavros)/launch/node.launch">
-      <arg name="fcu_url" value="$(arg fcu_url)"/>
-      <arg name="gcs_url" value=""/>
-      <arg name="tgt_system" value="$(eval 1 + arg('ID'))"/>
-      <arg name="tgt_component" value="1"/>
-      <arg name="pluginlists_yaml" value="$(arg pluginlists_yaml)"/>
-      <arg name="config_yaml" value="$(arg config_yaml)"/>
-    </include>
+    <!-- MAVROS -->
+    <node pkg="mavros" type="mavros_node" name="mavros" required="$(eval not respawn_mavros)" clear_params="true" output="screen" respawn="$(arg respawn_mavros)">
+      <param name="fcu_url" value="$(arg fcu_url)" />
+      <param name="gcs_url" value="" />
+      <param name="target_system_id" value="$(eval 1 + arg('ID'))" />
+      <param name="target_component_id" value="1" />
+      <param name="fcu_protocol" value="v2.0" />
+
+      <!-- enable simtime -->
+      <param name="time/publish_sim_time" value="True"/>
+
+      <!-- load blacklist, config -->
+      <rosparam command="load" file="$(arg pluginlists_yaml)" />
+      <rosparam command="load" file="$(arg config_yaml)" />
+    </node>
 
   </group>
 

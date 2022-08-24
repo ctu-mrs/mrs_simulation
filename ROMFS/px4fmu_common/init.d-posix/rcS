@@ -134,6 +134,10 @@ param set-default COM_CPU_MAX -1
 # Don't require RC calibration and configuration
 param set-default COM_RC_IN_MODE 1
 
+# Ignored RC Loss in Mission and Offboard modes.
+# https://docs.px4.io/main/en/advanced_config/parameter_reference.html#COM_RCL_EXCEPT
+param set-default COM_RCL_EXCEPT 5
+
 # Speedup SITL startup
 param set-default EKF2_REQ_GPS_H 0.5
 

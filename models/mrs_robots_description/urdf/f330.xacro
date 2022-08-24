@@ -8,7 +8,7 @@
   -->
   <xacro:property name="namespace" value="$(arg namespace)" />
   <xacro:property name='model_config_file' value="$(arg model_config_file)"/>
-  <xacro:property name="optionals" value="${load_yaml(model_config_file)}" />
+  <xacro:property name="optionals" value="${xacro.load_yaml(model_config_file)}" />
 
   <xacro:arg name='name' default='f330' />
   <xacro:arg name='mavlink_addr' default='INADDR_ANY' />
