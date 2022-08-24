@@ -32,6 +32,11 @@
       <param name="fcu_protocol" value="$(arg fcu_protocol)" />
 
       <param name="distance_sensor/garmin/frame_id" value="uav$(arg ID)/garmin" />
+      <param name="local_position/frame_id" value="uav$(arg ID)/pixhawk_origin" />
+      <param name="local_position/tf/child_frame_id" value="uav$(arg ID)/fcu" />
+      <param name="imu/frame_id" value="uav$(arg ID)/fcu" />
+      <param name="global_position/frame_id" value="uav$(arg ID)/utm_origin" />
+      <param name="global_position/child_frame_id" value="uav$(arg ID)/fcu" />
 
       <!-- enable simtime -->
       <param name="time/publish_sim_time" value="True"/>
