@@ -4,14 +4,17 @@
   <arg name="vehicle"/>
   <arg name="fcu_url"/>
 
-  <arg name="roll" default="0"/>
-  <arg name="pitch" default="0"/>
-  <arg name="est" default="ekf2"/>
-
   <arg name="pluginlists_yaml" value="$(find mrs_uav_general)/config/px4_pluginlists.yaml" />
   <arg name="config_yaml" value="$(find mrs_uav_general)/config/px4_config.yaml" />
 
+  <arg name="log_output" default="screen" />
+  <arg name="gcs_url" default="" />
+  <arg name="fcu_protocol" default="v2.0" />
+  <arg name="tgt_component" default="1" />
+  <arg name="tgt_system" default="$(eval 1 + arg('ID'))" />
   <arg name="respawn_mavros" default="false" />
+
+  <arg name="est" default="ekf2"/>
 
   <!-- UAV namespace -->
   <group ns="uav$(arg ID)">
@@ -21,12 +24,14 @@
     <env name="PX4_ESTIMATOR" value="$(arg est)" />
 
     <!-- MAVROS -->
-    <node pkg="mavros" type="mavros_node" name="mavros" required="$(eval not respawn_mavros)" clear_params="true" output="screen" respawn="$(arg respawn_mavros)">
+    <node pkg="mavros" type="mavros_node" name="mavros" required="$(eval not respawn_mavros)" clear_params="true" output="$(arg log_output)" respawn="$(arg respawn_mavros)">
       <param name="fcu_url" value="$(arg fcu_url)" />
-      <param name="gcs_url" value="" />
-      <param name="target_system_id" value="$(eval 1 + arg('ID'))" />
-      <param name="target_component_id" value="1" />
-      <param name="fcu_protocol" value="v2.0" />
+      <param name="gcs_url" value="$(arg gcs_url)" />
+      <param name="target_system_id" value="$(arg tgt_system)" />
+      <param name="target_component_id" value="$(arg tgt_component)" />
+      <param name="fcu_protocol" value="$(arg fcu_protocol)" />
+
+      <param name="distance_sensor/garmin/frame_id" value="uav$(arg ID)/garmin" />
 
       <!-- enable simtime -->
       <param name="time/publish_sim_time" value="True"/>
@@ -34,6 +39,9 @@
       <!-- load blacklist, config -->
       <rosparam command="load" file="$(arg pluginlists_yaml)" />
       <rosparam command="load" file="$(arg config_yaml)" />
+
+      <!-- prevent all uavs from publishing to the same diagnostics topic -->
+      <remap from="/diagnostics" to="/uav$(arg ID)/diagnostics" />
     </node>
 
   </group>
