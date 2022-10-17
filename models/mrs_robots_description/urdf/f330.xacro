@@ -677,9 +677,56 @@
       color="Black">
       <origin xyz="0 0 0" rpy="0 0 ${-rad90}" />
     </xacro:visual_macro>
+  </xacro:if>
   <!--}-->
 
+  <!-- fisheye down with imu {-->
+  <xacro:if value="${optionals['enable_vio_down']}">
+    <xacro:vio_macro
+      namespace="${namespace}"
+      parent_link="base_link"
+      parent_frame_name="${namespace}/fcu"
+      camera_frame_name="${namespace}/fisheye_camera_optical"
+      sensor_base_frame_name="${namespace}/fisheye_camera"
+      frame_rate="45"
+      horizontal_fov="${rad180}"
+      image_width="752"
+      image_height="480"
+      lens_type="custom"
+      lens_c1="1.05"
+      lens_c2="4"
+      lens_f="1.0"
+      lens_fun="tan"
+      lens_scale="true"
+      lens_cutoff_angle="${rad90}"
+      lens_texture_size="512"
+      min_distance="0.02"
+      max_distance="40"
+      camera_noise_mean="0.0"
+      x="0.107"
+      y="0"
+      z="-0.002"
+      roll="0"
+      pitch="${rad90}"
+      yaw="0.0"
+      imu_rate="125.0"
+      imu_topic="vio/imu"
+      imu_noise_mean="0.0"
+      >
+    </xacro:vio_macro>
+
+    <xacro:visual_macro
+      robot_namespace="${namespace}"
+      name="bluefox_mount"
+      mesh_file="${bluefox_mount_mesh}"
+      mesh_scale="${mesh_scale}"
+      parent="base_link"
+      color="Black">
+      <origin xyz="0 0 0" rpy="0 0 ${-rad90}" />
+    </xacro:visual_macro>
   </xacro:if>
+  <!--}-->
+
 
   <!--} VIO -->
 
