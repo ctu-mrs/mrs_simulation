@@ -49,10 +49,16 @@ enable_dual_uv_cameras: [False, 'Add right and left UV cameras on the vehicle (f
 enable_back_uv_camera: [False, 'Add back UV camera on the vehicle (f450 only)', [f450]]
 uvcam_calib_file: [None, 'Specify UV camera calibration different than default one', [f450, f550, t650]]
 uvcam_occlusions: [False, 'Enable occlusions for UVDAR simulation (NOTE: THIS REQUIRES A BEEFY COMPUTER)', [f450, f550, t650]]
-pos_file: [None, 'Load positions and ids from .csv file with format: [id, x, y, z, heading] or .yaml file with format: [uav_name: \n id: (int) \n x: (float) \n y: (float) \n z: (float) \n heading: (float)]', [f330, f450, f550, t650, x500, eaglemk2, brus, naki, big_dofec]]
-pos: [None, 'Specify spawn position of the first vehicle in format [x, y, z, heading]. Additional vehicles will spawn in line with 2m x-offset', [f330, f450, f550, t650, x500, eaglemk2, brus, naki, big_dofec]]
+<<<<<<< HEAD
+pos_file: [None, 'Load positions and ids from .csv file with format: [id, x, y, z, heading] or .yaml file with format: [uav_name: \n id: (int) \n x: (float) \n y: (float) \n z: (float) \n heading: (float)]', [f330, f450, f550, t650, x500, eaglemk2, brus, naki]]
+pos: [None, 'Specify spawn position of the first vehicle in format [x, y, z, heading]. Additional vehicles will spawn in line with 2m x-offset', [f330, f450, f550, t650, x500, eaglemk2, brus, naki]]
 enable_vio: [False, 'Add a forward-looking fisheye camera and a high frequency IMU', [f330, f450]]
 enable_vio_down: [False, 'Add a forward-looking fisheye camera and a high frequency IMU', [f330, f450]]
+=======
+pos_file: [None, 'Load positions and ids from .csv file with format: [id, x, y, z, heading] or .yaml file with format: [uav_name: \n id: (int) \n x: (float) \n y: (float) \n z: (float) \n heading: (float)]', [f330, f450, f550, t650, x500, eaglemk2, brus, naki, big_dofec]]
+pos: [None, 'Specify spawn position of the first vehicle in format [x, y, z, heading]. Additional vehicles will spawn in line with 2m x-offset', [f330, f450, f550, t650, x500, eaglemk2, brus, naki, big_dofec]]
+enable_vio: [False, 'Add a forward-looking fisheye camera and a high frequency IMU', [f330]]
+>>>>>>> 06dd02b
 enable_omni_ultrasounds: [False, 'Add omnidirectional ultrasonic sensors (up, down, 4 in horizontal plane)', [naki]]
 enable_safety_led: [False, 'Add a safety LED', [naki]]
 model_package: ["mrs_simulation", 'package name for the UAV models', [f330, f450, f550, t650, x500, eaglemk2, brus, naki, big_dofec]]
