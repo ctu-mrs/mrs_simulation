@@ -9,3 +9,4 @@
 *.swp
 *.swo
 
+scripts/jinja_gen.py
