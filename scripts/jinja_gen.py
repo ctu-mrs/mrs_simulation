@@ -36,15 +36,17 @@ if __name__ == "__main__":
     parser.add_argument('--hil_mode', default=0, help="Enable HIL mode for HITL simulation")
     parser.add_argument('--hil_state_level', default=0, help="HIL state level HITL simulation")
     parser.add_argument('--send_vision_estimation', default=0)
-    parser.add_argument('--send_odometry', default=0)
+    parser.add_argument('--send_odometry', default=1)
     parser.add_argument('--use_lockstep', default=1, help="Enable simulation lockstep for syncing physics&sensors")
     parser.add_argument('--use_tcp', default=1, help="Use TCP instead of UDP for PX4 SITL")
     parser.add_argument('--visual_material', default="DarkGrey", help="Default texture for 3D models")
     parser.add_argument('--gps_indoor_jamming', default=0, help="Trigger bad GPS when the vehicle has obstacles above it")
     parser.add_argument('--output-file', help="sdf output file")
-    args = parser.parse_args()
+    parser.add_argument('--model_config_file', help="config file with list of sensors for particular drone")
+    parser.add_argument('--stdout', action='store_true', default=False, help="dump to stdout instead of file")
+    args, _ = parser.parse_known_args()
 
-    print('Generating a templated model using jinja')
+    # print('Generating a templated model using jinja')
 
     filename = None 
     
@@ -57,7 +59,7 @@ if __name__ == "__main__":
     else:
         temp_filename = os.path.join(mrs_simulation_path, 'models', 'mrs_robots_description', 'urdf', args.filename)
         if os.path.exists(temp_filename) and os.path.isfile(temp_filename):
-            print('Loaded "%s" from "%s"' % (args.filename, temp_filename))
+            # print('Loaded "%s" from "%s"' % (args.filename, temp_filename))
             filename = temp_filename
 
     models_dir = os.path.join(mrs_simulation_path, 'models')
@@ -83,9 +85,11 @@ if __name__ == "__main__":
          'use_tcp': args.use_tcp, \
          'visual_material': args.visual_material, \
          'gps_indoor_jamming': args.gps_indoor_jamming, \
+         'model_config_file': args.model_config_file, \
          'mrs_robots_description_dir': mrs_robots_description_dir}
 
     result = template.render(d)
+
 
     if args.output_file:
         filename_out = args.output_file
@@ -108,8 +112,11 @@ if __name__ == "__main__":
                             '"\nRemove "' + str(filename_out) + '"\n(after extracting your changes) to disable this overwrite protection.')
 
     with open(filename_out, 'w') as f_out:
-        print('Output generated "%s"' % filename_out)
+        # print('Output generated "%s"' % filename_out)
         f_out.write(result)
 
     # Copy the contents to a "last_generated" file for overwrite protection check next time.
     shutil.copy(filename_out, filename_out_last_generated)
+
+    if args.stdout:
+        print(result)

@@ -341,8 +341,6 @@ class MrsDroneSpawner():
                     f.write(str(pname) + ': ' + str(pvalue) + '\n')
             uav_args_sequence.append('model_config_file:=' + path)
 
-            uav_args_sequence.append('resource_package_path:=' + self.rospack.get_path(str(params_dict['model_package'])))
-
             print('UAV' + str(ID) + ' ARGS_SEQUENCE:')
             print(uav_args_sequence)
             args_sequences.append(uav_args_sequence)
