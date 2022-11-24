@@ -7,6 +7,7 @@ import shutil
 import fnmatch
 import rospkg
 import numpy as np
+import json
 
 def get_file_contents(filepath):
     with open(filepath, 'rb') as f:
@@ -85,11 +86,18 @@ if __name__ == "__main__":
          'use_tcp': args.use_tcp, \
          'visual_material': args.visual_material, \
          'gps_indoor_jamming': args.gps_indoor_jamming, \
-         'model_config_file': args.model_config_file, \
          'mrs_robots_description_dir': mrs_robots_description_dir}
+    
+
+    # reading the data from the file
+    with open(args.model_config_file) as f:
+        data = f.read()
+  
+    # reconstructing the data as a dictionary
+    js = json.loads(data)
+    d.update(js)
 
     result = template.render(d)
-
 
     if args.output_file:
         filename_out = args.output_file

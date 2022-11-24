@@ -196,6 +196,17 @@
     <!-- ||                  optional sensor definitions                 || -->
     <!-- ================================================================== -->
 
+      {% if enable_rangefinder %}
+    <!-- Garmin {-->
+      {{ components.garmin_macro(root, "", -0.077, 0, -0.069, 0, components.rad(90), 0) }}
+    <!--}-->
+      {% endif %}
+
+      {% if enable_rangefinder_up %}
+    <!-- Garmin Up {-->
+      {{ components.garmin_macro(root, "_up", -0.077, 0, -0.033, 0, components.rad(-90), 0) }}
+      {% endif %}
+
 
 
   </model>
