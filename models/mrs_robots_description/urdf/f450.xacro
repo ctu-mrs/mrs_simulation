@@ -361,7 +361,7 @@
     mesh_file="${prop_mesh_file}"
     mesh_scale="${mesh_scale_prop_ccw}"
     color="White">
-    <origin xyz="${arm_length_battery_mount = tr * sin45} -${arm_length * sin45} ${arm_height + rotor_offset_top - body_height/2}"  rpy="0 0 0" />
+    <origin xyz="${arm_length * sin45} -${arm_length * sin45} ${arm_height + rotor_offset_top - body_height/2}"  rpy="0 0 0" />
     <xacro:insert_block name="rotor_inertia" />
   </xacro:vertical_rotor>
 
