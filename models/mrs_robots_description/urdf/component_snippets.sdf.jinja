@@ -397,26 +397,79 @@ limitations under the License.
 <!--}-->
 
 <!-- Macro to add the gps_plugin {-->
-{%- macro gps_macro(gps_name, pos_x, pos_y, pos_z, parent_link) -%}
-<include>
-  <uri>model://gps</uri>
-  <pose>{{ pos_x }} {{ pos_y }} {{ pos_z }} 0 0 0</pose>
-  <name>{{ gps_name }}</name>
-</include>
+{%- macro gps_macro(gps_name, pos_x, pos_y, pos_z, update_rate, gps_noise, gps_xy_random_walk, gps_z_random_walk, gps_xy_noise_density, gps_z_noise_density, gps_vxy_noise_density, gps_vz_noise_density, parent_link) -%}
+<model name="{{ gps_name }}">
+  <link name="link">
+    <pose>0 0 0 0 0 0</pose>
+    <inertial>
+      <pose>0 0 0 0 0 0</pose>
+      <mass>0.001</mass>
+      <inertia>
+        <ixx>1e-07</ixx>
+        <ixy>0</ixy>
+        <ixz>0</ixz>
+        <iyy>1e-07</iyy>
+        <iyz>0</iyz>
+        <izz>1e-07</izz>
+      </inertia>
+    </inertial>
+    <sensor name="gps" type="gps">
+      <pose>0 0 0 0 0 0</pose>
+      <plugin name="gps_plugin" filename="libgazebo_gps_plugin.so">
+        <robotNamespace/>
+        <update_rate>{{ update_rate }}</update_rate>
+        <gpsNoise>{{ gps_noise }}</gpsNoise>
+        <gpsXYRandomWalk>{{ gps_xy_random_walk }}</gpsXYRandomWalk>
+        <gpsZRandomWalk>{{ gps_z_random_walk }}</gpsZRandomWalk>
+        <gpsXYNoiseDensity>{{ gps_xy_noise_density }}</gpsXYNoiseDensity>
+        <gpsZNoiseDensity>{{ gps_z_noise_density }}</gpsZNoiseDensity>
+        <gpsVXYNoiseDensity>{{ gps_vxy_noise_density }}</gpsVXYNoiseDensity>
+        <gpsVZNoiseDensity>{{ gps_vz_noise_density }}</gpsVZNoiseDensity>
+        <topic>{{ gps_name }}</topic>
+      </plugin>
+    </sensor>
+  </link>
+</model>
+
 <joint name='{{ gps_name }}_joint' type='fixed'>
   <child>{{ gps_name }}::link</child>
   <parent>{{ parent_link }}</parent>
 </joint>
+
 {%- endmacro -%}
 <!--}-->
 
 <!-- Macro to add the magnetometer_plugin{-->
-{%- macro magnetometer_plugin_macro(magnetometer_name, pos_x, pos_y, pos_z, parent_link) -%}
-<include>
-  <uri>model://magnetometer</uri>
+{%- macro magnetometer_plugin_macro(magnetometer_name, pos_x, pos_y, pos_z, pub_rate, noise_density, random_walk, bias_correlation_time, parent_link) -%}
+<model name="{{ magnetometer_name }}">
   <pose>{{ pos_x }} {{ pos_y }} {{ pos_z }} 0 0 0</pose>
-  <name>{{ magnetometer_name }}</name>
-</include>
+  <link name="link">
+    <inertial>
+      <mass>0.001</mass>
+      <inertia>
+        <ixx>1e-07</ixx>
+        <ixy>0</ixy>
+        <ixz>0</ixz>
+        <iyy>1e-07</iyy>
+        <iyz>0</iyz>
+        <izz>1e-07</izz>
+      </inertia>
+    </inertial>
+    <sensor name="magnetometer" type="magnetometer">
+      <pose>0 0 0 0 0 0</pose>
+      <always_on>true</always_on>
+      <plugin name='magnetometer_plugin' filename='libgazebo_magnetometer_plugin.so'>
+        <robotNamespace/>
+        <pubRate>{{ pub_rate }}</pubRate>
+        <noiseDensity>{{ noise_density }}</noiseDensity>
+        <randomWalk>{{ random_walk }}</randomWalk>
+        <biasCorrelationTime>{{ bias_correlation_time }}</biasCorrelationTime>
+        <magTopic>{{ magnetometer_name }}</magTopic>
+      </plugin>
+    </sensor>
+  </link>
+</model>
+
 <joint name='{{ magnetometer_name }}_joint' type='fixed'>
   <child>{{ magnetometer_name }}::link</child>
   <parent>{{ parent_link }}</parent>
@@ -436,7 +489,7 @@ limitations under the License.
 <!--}-->
 
 <!-- Macro to add the barometer_plugin{-->
-{%- macro barometer_plugin_macro(pub_rate, baro_topic, baro_drift_pa_per_sec) -%}
+{%- macro barometer_plugin_macro(baro_topic, pub_rate, baro_drift_pa_per_sec) -%}
 <plugin name="barometer_plugin" filename="libgazebo_barometer_plugin.so">
   <robotNamespace/>
   <pubRate>{{ pub_rate }}</pubRate>
@@ -447,17 +500,46 @@ limitations under the License.
 <!--}-->
 
 <!-- Macro to add an IMU {-->
-{%- macro imu_plugin_macro(imu_name, pos_x, pos_y, pos_z, parent_link) -%}
-<include>
-  <uri>model://imu</uri>
-  <pose>{{ pos_x }} {{ pos_y }} {{ pos_z }} 0 0 0</pose>
-  <name>{{ imu_name }}</name>
-</include>
+{%- macro imu_plugin_macro(imu_name, pos_x, pos_y, pos_z, pos_roll, pos_pitch, pos_yaw, gyroscope_noise_density, gyroscope_random_walk, gyroscope_bias_correlation_time, gyroscope_turn_on_bias_sigma, accelerometer_noise_density, accelerometer_random_walk, accelerometer_bias_correlation_time, accelerometer_turn_on_bias_sigma, parent_link) -%}
+<model name="{{ imu_name }}">
+  <pose>{{ pos_x }} {{ pos_y }} {{ pos_z }} {{ pos_roll }} {{ pos_pitch }} {{ pos_yaw }}</pose>
+  <link name="link">
+    <inertial>
+      <mass>0.015</mass>
+      <inertia>
+        <ixx>1e-05</ixx>
+        <ixy>0</ixy>
+        <ixz>0</ixz>
+        <iyy>1e-05</iyy>
+        <iyz>0</iyz>
+        <izz>1e-05</izz>
+      </inertia>
+    </inertial>
+    <sensor name="imu" type="imu">
+      <pose>0 0 0 0 0 0</pose>
+      <plugin name='gazebo_imu_plugin' filename='libgazebo_imu_plugin.so'>
+        <!-- A good description of the IMU parameters can be found in the kalibr documentation:
+        https://github.com/ethz-asl/kalibr/wiki/IMU-Noise-Model-and-Intrinsics -->
+        <robotNamespace></robotNamespace>
+        <gyroscopeNoiseDensity>{{ gyroscope_noise_density }}</gyroscopeNoiseDensity> <!-- Gyroscope noise density (two-sided spectrum) [rad/s/sqrt(Hz)] -->
+        <gyroscopeRandomWalk>{{ gyroscope_random_walk }}</gyroscopeRandomWalk> <!-- Gyroscope bias random walk [rad/s/s/sqrt(Hz)] -->
+        <gyroscopeBiasCorrelationTime>{{ gyroscope_bias_correlation_time }}</gyroscopeBiasCorrelationTime> <!-- Gyroscope bias correlation time constant [s] -->
+        <gyroscopeTurnOnBiasSigma>{{ gyroscope_turn_on_bias_sigma }}</gyroscopeTurnOnBiasSigma> <!-- Gyroscope turn on bias standard deviation [rad/s] -->
+        <accelerometerNoiseDensity>{{ accelerometer_noise_density }}</accelerometerNoiseDensity> <!-- Accelerometer noise density (two-sided spectrum) [m/s^2/sqrt(Hz)] -->
+        <accelerometerRandomWalk>{{ accelerometer_random_walk }}</accelerometerRandomWalk> <!-- Accelerometer bias random walk. [m/s^2/s/sqrt(Hz)] -->
+        <accelerometerBiasCorrelationTime>{{ accelerometer_bias_correlation_time }}</accelerometerBiasCorrelationTime> <!-- Accelerometer bias correlation time constant [s] -->
+        <accelerometerTurnOnBiasSigma>{{ accelerometer_turn_on_bias_sigma }}</accelerometerTurnOnBiasSigma> <!-- Accelerometer turn on bias standard deviation [m/s^2] -->
+        <imuTopic>{{ imu_name }}</imuTopic> <!-- (string): name of the sensor output topic and prefix of service names (defaults to imu) -->
+      </plugin>
+    </sensor>
+  </link>
+</model>
+
 <joint name='{{ imu_name }}_joint' type='revolute'>
   <child>{{ imu_name }}::link</child>
   <parent>{{ parent_link }}</parent>
   <axis>
-    <xyz>1 0 0</xyz>
+    <xyz>0 0 1</xyz>
     <limit>
       <lower>0</lower>
       <upper>0</upper>

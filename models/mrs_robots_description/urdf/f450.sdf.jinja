@@ -173,11 +173,11 @@
     <!--}-->
 
     <!-- GPS {-->
-      {{ components.gps_macro("gps0", 0, 0, 0, root) }}
+      {{ components.gps_macro("gps0", 0, 0, 0, 10, true, 2.0, 4.0, "2.0e-4", "4.0e-4", 0.2, 0.4, root) }}
     <!--}-->
 
     <!-- Magnetometer {-->
-      {{ components.magnetometer_plugin_macro("mag0", 0, 0, 0, root) }}
+      {{ components.magnetometer_plugin_macro("mag0", 0, 0, 0, 100, 0.0004, "6.4e-06", 600,  root) }}
     <!--}-->
 
     <!-- Groundtruth {-->
@@ -185,11 +185,11 @@
     <!--}-->
 
     <!-- Barometer {-->
-      {{ components.barometer_plugin_macro(50, "/baro0", 0) }}
+      {{ components.barometer_plugin_macro("baro0", 50, 0) }}
     <!--}-->
 
-    <!-- IMU {-->
-      {{ components.imu_plugin_macro("imu0", 0, 0, 0, root) }}
+    <!-- IMU (ADIS16448) {-->
+      {{ components.imu_plugin_macro("imu0", 0, 0, 0, 0, 0, 0, 0.0003394, "3.8785e-05", 1000.0, 0.0087, 0.004, 0.006, 300.0, 0.1960, root) }}
     <!--}-->
 
     <!-- ================================================================== -->
