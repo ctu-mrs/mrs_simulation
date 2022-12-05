@@ -914,6 +914,10 @@ limitations under the License.
 {%- macro garmin_macro(sensor_name, parent_link, x, y, z, yaw, pitch, roll) -%}
 <link name="{{ sensor_name }}::link">
   {{ pose_macro(x, y, z, roll, pitch, yaw) }}
+  <inertial>
+    <mass>0.0001</mass>  <!-- [kg] -->
+    {{ inertia_macro("1e-7",0,0,"1e-7",0,"1e-7") }}
+  </inertial>
   <visual name="garmin_link_visual">
     <origin xyz="0.015 0 0" rpy="0 0 0" />
     <geometry>
