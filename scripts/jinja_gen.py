@@ -45,6 +45,7 @@ if __name__ == "__main__":
     parser.add_argument('--output-file', help="sdf output file")
     parser.add_argument('--model_config_file', help="config file with list of sensors for particular drone")
     parser.add_argument('--stdout', action='store_true', default=False, help="dump to stdout instead of file")
+    parser.add_argument('--namespace', default="uav", help="drone namespace")
     args, _ = parser.parse_known_args()
 
     # print('Generating a templated model using jinja')
@@ -86,6 +87,7 @@ if __name__ == "__main__":
          'use_tcp': args.use_tcp, \
          'visual_material': args.visual_material, \
          'gps_indoor_jamming': args.gps_indoor_jamming, \
+         'namespace': args.namespace, \
          'mrs_robots_description_dir': mrs_robots_description_dir}
     
 

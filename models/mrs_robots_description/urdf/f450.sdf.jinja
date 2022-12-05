@@ -177,7 +177,7 @@
     <!--}-->
 
     <!-- Magnetometer {-->
-      {{ components.magnetometer_plugin_macro("mag0", 0, 0, 0, 100, 0.0004, "6.4e-06", 600,  root) }}
+      {{ components.magnetometer_plugin_macro(100, 0.0004, 0.0000064, 600, "/mag") }}
     <!--}-->
 
     <!-- Groundtruth {-->
@@ -185,11 +185,11 @@
     <!--}-->
 
     <!-- Barometer {-->
-      {{ components.barometer_plugin_macro("/baro0", 50, 0) }}
+      {{ components.barometer_plugin_macro("/baro", 50, 0) }}
     <!--}-->
 
     <!-- IMU (ADIS16448) {-->
-      {{ components.imu_plugin_macro("imu0", 0, 0, 0, 0, 0, 0, 0.0003394, "3.8785e-05", 1000.0, 0.0087, 0.004, 0.006, 300.0, 0.1960, root) }}
+      {{ components.imu_plugin_macro("", root, "/imu", 0.015, 0.00018665, 0.000038785, 1000.0, 0.0087, 0.00186, 0.006, 300.0, 0.1960, 0, 0, 0, 0, 0, 0, 0.00001, 0, 0, 0.00001, 0, 0.00001) }}
     <!--}-->
 
     <!-- ================================================================== -->
@@ -198,13 +198,13 @@
 
       {% if enable_rangefinder %}
     <!-- Garmin {-->
-      {{ components.garmin_macro(root, "", -0.077, 0, -0.069, 0, components.rad(90), 0) }}
+      {{ components.garmin_macro(namespace, root, "", -0.077, 0, -0.069, 0, components.rad(90), 0) }}
     <!--}-->
       {% endif %}
 
       {% if enable_rangefinder_up %}
     <!-- Garmin Up {-->
-      {{ components.garmin_macro(root, "_up", -0.077, 0, -0.033, 0, components.rad(-90), 0) }}
+      {{ components.garmin_macro(namespace, root, "_up", -0.077, 0, -0.033, 0, components.rad(-90), 0) }}
       {% endif %}
 
 

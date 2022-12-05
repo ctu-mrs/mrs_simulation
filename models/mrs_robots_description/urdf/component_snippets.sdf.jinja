@@ -306,9 +306,9 @@ limitations under the License.
 {%- macro mavlink_interface_macro(mavlink_addr, mavlink_udp_port, mavlink_tcp_port, serial_enabled, serial_device, baudrate, qgc_addr, qgc_udp_port, sdk_addr, sdk_udp_port, hil_mode, hil_state_level, send_vision_estimation, send_odometry, enable_lockstep, use_tcp) -%}
 <plugin name="mavlink_interface" filename="libgazebo_mavlink_interface.so">
   <robotNamespace/>
-  <imuSubTopic>/imu0</imuSubTopic>
-  <magSubTopic>/mag0</magSubTopic>
-  <baroSubTopic>/baro0</baroSubTopic>
+  <imuSubTopic>/imu</imuSubTopic>
+  <magSubTopic>/mag</magSubTopic>
+  <baroSubTopic>/baro</baroSubTopic>
   <mavlink_addr>{{ mavlink_addr }}</mavlink_addr>
   <mavlink_udp_port>{{ mavlink_udp_port }}</mavlink_udp_port>
   <mavlink_tcp_port>{{ mavlink_tcp_port }}</mavlink_tcp_port>
@@ -440,40 +440,15 @@ limitations under the License.
 <!--}-->
 
 <!-- Macro to add the magnetometer_plugin{-->
-{%- macro magnetometer_plugin_macro(magnetometer_name, pos_x, pos_y, pos_z, pub_rate, noise_density, random_walk, bias_correlation_time, parent_link) -%}
-<model name="{{ magnetometer_name }}">
-  <pose>{{ pos_x }} {{ pos_y }} {{ pos_z }} 0 0 0</pose>
-  <link name="link">
-    <inertial>
-      <mass>0.001</mass>
-      <inertia>
-        <ixx>1e-07</ixx>
-        <ixy>0</ixy>
-        <ixz>0</ixz>
-        <iyy>1e-07</iyy>
-        <iyz>0</iyz>
-        <izz>1e-07</izz>
-      </inertia>
-    </inertial>
-    <sensor name="magnetometer" type="magnetometer">
-      <pose>0 0 0 0 0 0</pose>
-      <always_on>true</always_on>
-      <plugin name='magnetometer_plugin' filename='libgazebo_magnetometer_plugin.so'>
-        <robotNamespace/>
-        <pubRate>{{ pub_rate }}</pubRate>
-        <noiseDensity>{{ noise_density }}</noiseDensity>
-        <randomWalk>{{ random_walk }}</randomWalk>
-        <biasCorrelationTime>{{ bias_correlation_time }}</biasCorrelationTime>
-        <magTopic>{{ magnetometer_name }}</magTopic>
-      </plugin>
-    </sensor>
-  </link>
-</model>
-
-<joint name='{{ magnetometer_name }}_joint' type='fixed'>
-  <child>{{ magnetometer_name }}::link</child>
-  <parent>{{ parent_link }}</parent>
-</joint>
+{%- macro magnetometer_plugin_macro(pub_rate, noise_density, random_walk, bias_correlation_time, mag_topic) -%}
+<plugin name="magnetometer_plugin" filename="libgazebo_magnetometer_plugin.so">
+  <robotNamespace/>
+  <pubRate>{{ pub_rate }}</pubRate>
+  <noiseDensity>{{ noise_density }}</noiseDensity>
+  <randomWalk>{{ random_walk }}</randomWalk>
+  <biasCorrelationTime>{{ bias_correlation_time }}</biasCorrelationTime>
+  <magTopic>{{ mag_topic }}</magTopic>
+</plugin>
 {%- endmacro -%}
 <!--}-->
 
@@ -499,60 +474,47 @@ limitations under the License.
 {%- endmacro -%}
 <!--}-->
 
-<!-- Macro to add an IMU {-->
-{%- macro imu_plugin_macro(imu_name, pos_x, pos_y, pos_z, pos_roll, pos_pitch, pos_yaw, gyroscope_noise_density, gyroscope_random_walk, gyroscope_bias_correlation_time, gyroscope_turn_on_bias_sigma, accelerometer_noise_density, accelerometer_random_walk, accelerometer_bias_correlation_time, accelerometer_turn_on_bias_sigma, parent_link) -%}
-<model name="{{ imu_name }}">
-  <pose>{{ pos_x }} {{ pos_y }} {{ pos_z }} {{ pos_roll }} {{ pos_pitch }} {{ pos_yaw }}</pose>
-  <link name="link">
-    <inertial>
-      <mass>0.015</mass>
-      <inertia>
-        <ixx>1e-05</ixx>
-        <ixy>0</ixy>
-        <ixz>0</ixz>
-        <iyy>1e-05</iyy>
-        <iyz>0</iyz>
-        <izz>1e-05</izz>
-      </inertia>
-    </inertial>
-    <sensor name="imu" type="imu">
-      <pose>0 0 0 0 0 0</pose>
-      <plugin name='gazebo_imu_plugin' filename='libgazebo_imu_plugin.so'>
-        <!-- A good description of the IMU parameters can be found in the kalibr documentation:
-        https://github.com/ethz-asl/kalibr/wiki/IMU-Noise-Model-and-Intrinsics -->
-        <robotNamespace></robotNamespace>
-        <gyroscopeNoiseDensity>{{ gyroscope_noise_density }}</gyroscopeNoiseDensity> <!-- Gyroscope noise density (two-sided spectrum) [rad/s/sqrt(Hz)] -->
-        <gyroscopeRandomWalk>{{ gyroscope_random_walk }}</gyroscopeRandomWalk> <!-- Gyroscope bias random walk [rad/s/s/sqrt(Hz)] -->
-        <gyroscopeBiasCorrelationTime>{{ gyroscope_bias_correlation_time }}</gyroscopeBiasCorrelationTime> <!-- Gyroscope bias correlation time constant [s] -->
-        <gyroscopeTurnOnBiasSigma>{{ gyroscope_turn_on_bias_sigma }}</gyroscopeTurnOnBiasSigma> <!-- Gyroscope turn on bias standard deviation [rad/s] -->
-        <accelerometerNoiseDensity>{{ accelerometer_noise_density }}</accelerometerNoiseDensity> <!-- Accelerometer noise density (two-sided spectrum) [m/s^2/sqrt(Hz)] -->
-        <accelerometerRandomWalk>{{ accelerometer_random_walk }}</accelerometerRandomWalk> <!-- Accelerometer bias random walk. [m/s^2/s/sqrt(Hz)] -->
-        <accelerometerBiasCorrelationTime>{{ accelerometer_bias_correlation_time }}</accelerometerBiasCorrelationTime> <!-- Accelerometer bias correlation time constant [s] -->
-        <accelerometerTurnOnBiasSigma>{{ accelerometer_turn_on_bias_sigma }}</accelerometerTurnOnBiasSigma> <!-- Accelerometer turn on bias standard deviation [m/s^2] -->
-        <imuTopic>{{ imu_name }}</imuTopic> <!-- (string): name of the sensor output topic and prefix of service names (defaults to imu) -->
-      </plugin>
-    </sensor>
-  </link>
-</model>
-
-<joint name='{{ imu_name }}_joint' type='revolute'>
-  <child>{{ imu_name }}::link</child>
+<!-- Macro to add the imu_plugin{-->
+<!-- Macro to add an IMU. -->
+{%- macro imu_plugin_macro(imu_suffix, parent_link, imu_topic, mass_imu_sensor, gyroscope_noise_density, gyroscope_random_walk, gyroscope_bias_correlation_time, gyroscope_turn_on_bias_sigma, accelerometer_noise_density, accelerometer_random_walk, accelerometer_bias_correlation_time, accelerometer_turn_on_bias_sigma, x, y, z, roll, pitch, yaw, ixx, ixy, ixz, iyy, iyz, izz) -%}
+<!-- IMU link -->
+<link name="imu{{ imu_suffix }}_link">
+  <inertial>
+    <mass>{{ mass_imu_sensor }}</mass>
+    {{ inertia_macro(ixx, ixy, ixz, iyy, iyz, izz) }}
+  </inertial>
+</link>
+<!-- IMU joint -->
+<joint name="imu{{ imu_suffix }}_joint" type="revolute">
+  {{ pose_macro(x, y, z, roll, pitch, yaw) }}
   <parent>{{ parent_link }}</parent>
+  <child>imu{{ imu_suffix }}_link</child>
   <axis>
     <xyz>0 0 1</xyz>
     <limit>
-      <lower>0</lower>
       <upper>0</upper>
+      <lower>0</lower>
       <effort>0</effort>
       <velocity>0</velocity>
     </limit>
-    <dynamics>
-      <spring_reference>0</spring_reference>
-      <spring_stiffness>0</spring_stiffness>
-    </dynamics>
     <use_parent_model_frame>1</use_parent_model_frame>
   </axis>
 </joint>
+<plugin filename="libgazebo_imu_plugin.so" name="rotors_gazebo_imu{{ imu_suffix }}_plugin">
+<!-- A good description of the IMU parameters can be found in the kalibr documentation:
+     https://github.com/ethz-asl/kalibr/wiki/IMU-Noise-Model-and-Intrinsics -->
+  <robotNamespace/> <!-- (string, required): ros namespace in which the messages are published -->
+  <linkName>imu{{ imu_suffix }}_link</linkName> <!-- (string, required): name of the body which holds the IMU sensor -->
+  <imuTopic>{{ imu_topic }}</imuTopic> <!-- (string): name of the sensor output topic and prefix of service names (defaults to imu) -->
+  <gyroscopeNoiseDensity>{{ gyroscope_noise_density }}</gyroscopeNoiseDensity> <!-- Gyroscope noise density (two-sided spectrum) [rad/s/sqrt(Hz)] -->
+  <gyroscopeRandomWalk>{{ gyroscope_random_walk }}</gyroscopeRandomWalk> <!-- Gyroscope bias random walk [rad/s/s/sqrt(Hz)] -->
+  <gyroscopeBiasCorrelationTime>{{ gyroscope_bias_correlation_time }}</gyroscopeBiasCorrelationTime> <!-- Gyroscope bias correlation time constant [s] -->
+  <gyroscopeTurnOnBiasSigma>{{ gyroscope_turn_on_bias_sigma }}</gyroscopeTurnOnBiasSigma> <!-- Gyroscope turn on bias standard deviation [rad/s] -->
+  <accelerometerNoiseDensity>{{ accelerometer_noise_density }}</accelerometerNoiseDensity> <!-- Accelerometer noise density (two-sided spectrum) [m/s^2/sqrt(Hz)] -->
+  <accelerometerRandomWalk>{{ accelerometer_random_walk }}</accelerometerRandomWalk> <!-- Accelerometer bias random walk. [m/s^2/s/sqrt(Hz)] -->
+  <accelerometerBiasCorrelationTime>{{ accelerometer_bias_correlation_time }}</accelerometerBiasCorrelationTime> <!-- Accelerometer bias correlation time constant [s] -->
+  <accelerometerTurnOnBiasSigma>{{ accelerometer_turn_on_bias_sigma }}</accelerometerTurnOnBiasSigma> <!-- Accelerometer turn on bias standard deviation [m/s^2] -->
+</plugin>
 {%- endmacro -%}
 <!--}-->
 
@@ -950,7 +912,7 @@ limitations under the License.
 
 <!-- Macro to add a garmin {-->
 <!-- Orientation empty for down looking garmin, _up for upward looking sensor -->
-{%- macro garmin_macro(parent_link, orientation, x, y, z, yaw, pitch, roll) -%}
+{%- macro garmin_macro(namespace, parent_link, orientation, x, y, z, yaw, pitch, roll) -%}
 <link name="garmin{{ orientation }}_link">
   {{ pose_macro(x, y, z, roll, pitch, yaw) }}
   <visual name="garmin{{ orientation }}_link_visual">
@@ -968,7 +930,7 @@ limitations under the License.
       </script>
     </material>
   </visual>
-  {{ rangefinder_sensor_macro("garmin" + orientation, "/fcu", "/garmin" + orientation, "garmin" + orientation + "/range", 100, 0.03, 0.1, 40.0, 0.005, 0.01, x, y, z, roll, pitch, yaw) }}
+  {{ rangefinder_sensor_macro("garmin" + orientation, namespace + "/fcu", namespace + "/garmin" + orientation, "garmin" + orientation + "/range", 100, 0.03, 0.1, 40.0, 0.005, 0.01, x, y, z, roll, pitch, yaw) }}
 </link>
 
 <joint name="garmin{{ orientation }}_joint" type="fixed">
