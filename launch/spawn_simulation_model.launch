@@ -13,11 +13,13 @@
   <arg name="roll" default="0"/>
   <arg name="pitch" default="0"/>
 
+  <arg name="namespace" default="uav$(arg ID)"/>
+
   <!-- UAV namespace -->
-  <group ns="uav$(arg ID)">
+  <group ns="$(arg namespace)">
 
     <!-- generate sdf vehicle model -->
-    <arg name="cmd" default="$(find mrs_simulation)/scripts/jinja_gen.py --stdout --mavlink_udp_port=$(arg mavlink_udp_port) --mavlink_tcp_port=$(arg mavlink_tcp_port) --model_config_file=$(arg model_config_file) $(find mrs_simulation)/models/mrs_robots_description/urdf/$(arg vehicle).sdf.jinja"/>
+    <arg name="cmd" default="$(find mrs_simulation)/scripts/jinja_gen.py --stdout --mavlink_udp_port=$(arg mavlink_udp_port) --mavlink_tcp_port=$(arg mavlink_tcp_port) --model_config_file=$(arg model_config_file) --namespace=$(arg namespace) $(find mrs_simulation)/models/mrs_robots_description/urdf/$(arg vehicle).sdf.jinja"/>
     <param command="$(arg cmd)" name="sdf_description"/>
 
     <!-- spawn vehicle -->
