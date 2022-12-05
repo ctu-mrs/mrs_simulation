@@ -198,13 +198,13 @@
 
       {% if enable_rangefinder %}
     <!-- Garmin {-->
-      {{ components.garmin_macro(namespace, root, "", -0.077, 0, -0.069, 0, components.rad(90), 0) }}
+      {{ components.garmin_macro("lidar0", root, -0.077, 0, -0.069, 0, components.rad(90), 0) }}
     <!--}-->
       {% endif %}
 
       {% if enable_rangefinder_up %}
     <!-- Garmin Up {-->
-      {{ components.garmin_macro(namespace, root, "_up", -0.077, 0, -0.033, 0, components.rad(-90), 0) }}
+      {{ components.external_garmin_macro(namespace, root, "_up", -0.077, 0, -0.033, 0, components.rad(-90), 0) }}
       {% endif %}
 
 

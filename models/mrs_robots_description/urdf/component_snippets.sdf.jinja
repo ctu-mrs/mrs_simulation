@@ -910,9 +910,67 @@ limitations under the License.
 
 <!-- ======================= rangefinder sensors ======================-->
 
-<!-- Macro to add a garmin {-->
+<!-- Macro to add a garmin (connected to the pixhawk) {-->
+{%- macro garmin_macro(sensor_name, parent_link, x, y, z, yaw, pitch, roll) -%}
+<link name="{{ sensor_name }}::link">
+  {{ pose_macro(x, y, z, roll, pitch, yaw) }}
+  <visual name="garmin_link_visual">
+    <origin xyz="0.015 0 0" rpy="0 0 0" />
+    <geometry>
+      <mesh>
+        <uri>model://mrs_robots_description/meshes/sensors/garmin_lidar_v3.stl</uri>
+        <scale>0.001 0.001 0.001</scale>
+      </mesh>
+    </geometry>
+    <material>
+      <script>
+        <name>Gazebo/DarkGrey</name>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+      </script>
+    </material>
+  </visual>
+  <sensor name="garmin" type="ray">
+    <always_on>true</always_on>
+    <update_rate>100</update_rate>
+    <visualize>false</visualize>
+    <ray>
+      <scan>
+        <horizontal>
+          <samples>1</samples>
+          <resolution>1</resolution>
+          <min_angle>-0</min_angle>
+          <max_angle>0</max_angle>
+        </horizontal>
+      </scan>
+      <range>
+        <min>0.06</min> <!-- do not change: use min_distance (below) for realistic behavior (smaller values cause issues) -->
+        <max>35</max>   <!-- do not change: use max_distance (below) for realistic behavior (bigger values cause issues) -->
+        <resolution>0.01</resolution>
+      </range>
+      <noise>
+        <type>gaussian</type>
+        <mean>0.0</mean>
+        <stddev>0.01</stddev>
+      </noise>
+    </ray>
+    <plugin name="{{ sensor_name }}_garmin" filename="libgazebo_lidar_plugin.so">
+      <robotNamespace/>
+      <min_distance>0.1</min_distance>
+      <max_distance>35.0</max_distance>
+    </plugin>
+  </sensor>
+</link>
+
+<joint name="{{ sensor_name }}_joint" type="fixed">
+  <parent>{{ parent_link }}</parent>
+  <child>{{ sensor_name }}::link</child>
+</joint>
+{%- endmacro -%}
+<!--}-->
+
+<!-- Macro to add an external garmin (not connected to the pixhawk) {-->
 <!-- Orientation empty for down looking garmin, _up for upward looking sensor -->
-{%- macro garmin_macro(namespace, parent_link, orientation, x, y, z, yaw, pitch, roll) -%}
+{%- macro external_garmin_macro(namespace, parent_link, orientation, x, y, z, yaw, pitch, roll) -%}
 <link name="garmin{{ orientation }}_link">
   {{ pose_macro(x, y, z, roll, pitch, yaw) }}
   <visual name="garmin{{ orientation }}_link_visual">

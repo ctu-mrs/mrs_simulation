@@ -31,6 +31,7 @@
       <param name="target_component_id" value="$(arg tgt_component)" />
       <param name="fcu_protocol" value="$(arg fcu_protocol)" />
 
+      <param name="distance_sensor/garmin/id" value="0" />
       <param name="distance_sensor/garmin/frame_id" value="uav$(arg ID)/garmin" />
       <param name="local_position/frame_id" value="uav$(arg ID)/pixhawk_origin" />
       <param name="local_position/tf/child_frame_id" value="uav$(arg ID)/fcu" />
