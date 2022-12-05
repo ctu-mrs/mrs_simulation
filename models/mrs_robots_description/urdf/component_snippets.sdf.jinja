@@ -977,6 +977,10 @@ limitations under the License.
 {%- macro external_garmin_macro(namespace, parent_link, orientation, x, y, z, yaw, pitch, roll) -%}
 <link name="garmin{{ orientation }}_link">
   {{ pose_macro(x, y, z, roll, pitch, yaw) }}
+  <inertial>
+    <mass>0.0001</mass>  <!-- [kg] -->
+    {{ inertia_macro("1e-7",0,0,"1e-7",0,"1e-7") }}
+  </inertial>
   <visual name="garmin{{ orientation }}_link_visual">
     <origin xyz="0.015 0 0" rpy="0 0 0" />
     <geometry>
