@@ -102,53 +102,264 @@
     <link name="{{ root }}">
 
       <!-- Body physics {-->
-      {{ components.multirotor_physics_macro(mass = mass, body_radius = body_radius, body_height = body_height, rotor_velocity_slowdown_sim = rotor_velocity_slowdown_sim, ixx = body_ixx, ixy = body_ixy, ixz = body_ixz, iyy = body_iyy, iyz = body_iyz, izz = body_izz) }}
+      {{ components.multirotor_physics_macro(
+        mass = mass,
+        body_radius = body_radius,
+        body_height = body_height,
+        rotor_velocity_slowdown_sim = rotor_velocity_slowdown_sim,
+        ixx = body_ixx,
+        ixy = body_ixy,
+        ixz = body_ixz,
+        iyy = body_iyy,
+        iyz = body_iyz,
+        izz = body_izz)
+      }}
       <!--}-->
 
       <!-- Body visuals {-->
 
       <!-- Boards {-->
-      {{ components.visual_macro(name = "lower_central_board", mesh_file = central_board_mesh_bottom, mesh_scale = mesh_scale, color = "DarkGrey", parent = root, x = 0, y = 0, z = - body_height / 2, roll = 0, pitch = 0, yaw = 0) }}
+      {{ components.visual_macro(
+        name = "lower_central_board",
+        mesh_file = central_board_mesh_bottom,
+        mesh_scale = mesh_scale,
+        color = "DarkGrey",
+        parent = root,
+        x = 0,
+        y = 0,
+        z = - body_height / 2,
+        roll = 0,
+        pitch = 0,
+        yaw = 0)
+      }}
 
-      {{ components.visual_macro(name = "upper_central_board", mesh_file = central_board_mesh_top, mesh_scale = mesh_scale, color = "DarkGrey", parent = root , x = 0, y = 0, z = arm_height - body_height / 2, roll = 0, pitch = 0, yaw = 0) }}
+      {{ components.visual_macro(
+        name = "upper_central_board",
+        mesh_file = central_board_mesh_top,
+        mesh_scale = mesh_scale,
+        color = "DarkGrey",
+        parent = root,
+        x = 0,
+        y = 0,
+        z = arm_height - body_height / 2,
+        roll = 0,
+        pitch = 0,
+        yaw = 0)
+      }}
       <!--}-->
 
       <!-- Arms {-->
-      {{ components.visual_macro(name = "front_right_arm", mesh_file = arm_mesh_file, mesh_scale = mesh_scale, color = "White", parent = root, x = board_radius * components.sin45, y = -board_radius * components.sin45, z = arm_height - body_height / 2, roll = 0, pitch = 0, yaw = components.rad(-45)) }}
+      {{ components.visual_macro(
+        name = "front_right_arm",
+        mesh_file = arm_mesh_file,
+        mesh_scale = mesh_scale,
+        color = "White",
+        parent = root,
+        x = board_radius * components.sin45,
+        y = -board_radius * components.sin45,
+        z = arm_height - body_height / 2,
+        roll = 0,
+        pitch = 0,
+        yaw = components.rad(-45))
+      }}
 
-      {{ components.visual_macro(name = "front_left_arm", mesh_file = arm_mesh_file, mesh_scale = mesh_scale, color = "White", parent = root, x = board_radius * components.sin45, y = board_radius * components.sin45, z = arm_height - body_height / 2, roll = 0, pitch = 0, yaw = components.rad(45)) }}
+      {{ components.visual_macro(
+        name = "front_left_arm",
+        mesh_file = arm_mesh_file,
+        mesh_scale = mesh_scale,
+        color = "White",
+        parent = root,
+        x = board_radius * components.sin45,
+        y = board_radius * components.sin45,
+        z = arm_height - body_height / 2,
+        roll = 0,
+        pitch = 0,
+        yaw = components.rad(45))
+      }}
 
-      {{ components.visual_macro(name = "back_right_arm", mesh_file = arm_mesh_file, mesh_scale = mesh_scale, color = "Red", parent = root, x = -board_radius * components.sin45, y = -board_radius * components.sin45, z = arm_height - body_height / 2, roll = 0, pitch = 0, yaw = components.rad(-135)) }}
+      {{ components.visual_macro(
+        name = "back_right_arm",
+        mesh_file = arm_mesh_file,
+        mesh_scale = mesh_scale,
+        color = "Red",
+        parent = root,
+        x = -board_radius * components.sin45,
+        y = -board_radius * components.sin45,
+        z = arm_height - body_height / 2,
+        roll = 0,
+        pitch = 0,
+        yaw = components.rad(-135))
+      }}
 
-      {{ components.visual_macro(name = "back_left_arm", mesh_file = arm_mesh_file, mesh_scale = mesh_scale, color = "Red", parent = root, x = -board_radius * components.sin45, y = board_radius * components.sin45, z = arm_height - body_height / 2, roll = 0, pitch = 0, yaw = components.rad(135)) }}
+      {{ components.visual_macro(
+        name = "back_left_arm",
+        mesh_file = arm_mesh_file,
+        mesh_scale = mesh_scale,
+        color = "Red",
+        parent = root,
+        x = -board_radius * components.sin45,
+        y = board_radius * components.sin45,
+        z = arm_height - body_height / 2,
+        roll = 0,
+        pitch = 0,
+        yaw = components.rad(135))
+      }}
       <!--}-->
 
       <!-- intel nuc {-->
-      {{ components.visual_macro(name = "NUC", mesh_file = nuc_mesh_file, mesh_scale = mesh_scale_milimeters, color = "DarkGrey", parent = root, x = 0, y = 0, z = 0.023, roll = 0, pitch = 0, yaw = 0) }}
+      {{ components.visual_macro(
+        name = "NUC",
+        mesh_file = nuc_mesh_file,
+        mesh_scale = mesh_scale_milimeters,
+        color = "DarkGrey",
+        parent = root,
+        x = 0,
+        y = 0,
+        z = 0.023,
+        roll = 0,
+        pitch = 0,
+        yaw = 0)
+      }}
       <!--}-->
 
       <!-- pixhawk {-->
-      {{ components.visual_macro(name = "pixhawk", mesh_file = pixhawk_mesh_file, mesh_scale = mesh_scale, color = "DarkGrey", parent = root, x = 0, y = 0, z = -body_height / 2 - pixhawk_offset, roll = 0, pitch = 0, yaw = 0) }}
+      {{ components.visual_macro(
+        name = "pixhawk",
+        mesh_file = pixhawk_mesh_file,
+        mesh_scale = mesh_scale,
+        color = "DarkGrey",
+        parent = root,
+        x = 0,
+        y = 0,
+        z = -body_height / 2 - pixhawk_offset,
+        roll = 0,
+        pitch = 0,
+        yaw = 0)
+      }}
       <!--}-->
 
       <!-- legs {-->
-      {{ components.leg_macro(name = "front_right_leg", mesh_file = leg_mesh_file, mesh_scale = mesh_scale_milimeters, color = "White", parent = root, x = (arm_length - leg_offset_r) * components.sin45, y = -(arm_length - leg_offset_r) * components.sin45, z = arm_height - body_height/2 - leg_offset_z, roll = 0, pitch = 0, yaw = components.rad(135), collision_height = leg_height, collision_radius = leg_offset_r) }}
+      {{ components.leg_macro(
+        name = "front_right_leg",
+        mesh_file = leg_mesh_file,
+        mesh_scale = mesh_scale_milimeters,
+        color = "White",
+        parent = root,
+        x = (arm_length - leg_offset_r) * components.sin45,
+        y = -(arm_length - leg_offset_r) * components.sin45,
+        z = arm_height - body_height/2 - leg_offset_z,
+        roll = 0,
+        pitch = 0,
+        yaw = components.rad(135),
+        collision_height = leg_height,
+        collision_radius = leg_offset_r)
+      }}
 
-      {{ components.leg_macro(name = "front_left_leg", mesh_file = leg_mesh_file, mesh_scale = mesh_scale_milimeters, color = "White", parent = root, x = (arm_length - leg_offset_r) * components.sin45, y = (arm_length - leg_offset_r) * components.sin45, z = arm_height - body_height/2 - leg_offset_z, roll = 0, pitch = 0, yaw = components.rad(-135), collision_height = leg_height, collision_radius = leg_offset_r) }}
+      {{ components.leg_macro(
+        name = "front_left_leg",
+        mesh_file = leg_mesh_file,
+        mesh_scale = mesh_scale_milimeters,
+        color = "White",
+        parent = root,
+        x = (arm_length - leg_offset_r) * components.sin45,
+        y = (arm_length - leg_offset_r) * components.sin45,
+        z = arm_height - body_height/2 - leg_offset_z,
+        roll = 0,
+        pitch = 0,
+        yaw = components.rad(-135),
+        collision_height = leg_height,
+        collision_radius = leg_offset_r)
+      }}
 
-      {{ components.leg_macro(name = "back_right_leg", mesh_file = leg_mesh_file, mesh_scale = mesh_scale_milimeters, color = "Red", parent = root, x = -(arm_length - leg_offset_r) * components.sin45, y = -(arm_length - leg_offset_r) * components.sin45, z = arm_height - body_height/2 - leg_offset_z, roll = 0, pitch = 0, yaw = components.rad(45), collision_height = leg_height, collision_radius = leg_offset_r) }}
+      {{ components.leg_macro(
+        name = "back_right_leg",
+        mesh_file = leg_mesh_file,
+        mesh_scale = mesh_scale_milimeters,
+        color = "Red",
+        parent = root,
+        x = -(arm_length - leg_offset_r) * components.sin45,
+        y = -(arm_length - leg_offset_r) * components.sin45,
+        z = arm_height - body_height/2 - leg_offset_z,
+        roll = 0,
+        pitch = 0,
+        yaw = components.rad(45),
+        collision_height = leg_height,
+        collision_radius = leg_offset_r)
+      }}
 
-      {{ components.leg_macro(name = "back_left_leg", mesh_file = leg_mesh_file, mesh_scale = mesh_scale_milimeters, color = "Red", parent = root, x = -(arm_length - leg_offset_r) * components.sin45, y = (arm_length - leg_offset_r) * components.sin45, z = arm_height - body_height/2 - leg_offset_z, roll = 0, pitch = 0, yaw = components.rad(-45), collision_height = leg_height, collision_radius = leg_offset_r) }}
+      {{ components.leg_macro(
+        name = "back_left_leg",
+        mesh_file = leg_mesh_file,
+        mesh_scale = mesh_scale_milimeters,
+        color = "Red",
+        parent = root,
+        x = -(arm_length - leg_offset_r) * components.sin45,
+        y = (arm_length - leg_offset_r) * components.sin45,
+        z = arm_height - body_height/2 - leg_offset_z,
+        roll = 0,
+        pitch = 0,
+        yaw = components.rad(-45),
+        collision_height = leg_height,
+        collision_radius = leg_offset_r)
+      }}
       <!--}-->
 
       <!-- motors {-->
-      {{ components.visual_macro(name = "front_right_motor", mesh_file = motor_mesh_file, mesh_scale = mesh_scale, color = "Black", parent = root, x = arm_length * components.sin45, y = -arm_length * components.sin45, z = arm_height - body_height / 2, roll = 0, pitch = 0, yaw = 0) }}
+      {{ components.visual_macro(
+        name = "front_right_motor",
+        mesh_file = motor_mesh_file,
+        mesh_scale = mesh_scale,
+        color = "Black",
+        parent = root,
+        x = arm_length * components.sin45,
+        y = -arm_length * components.sin45,
+        z = arm_height - body_height / 2,
+        roll = 0,
+        pitch = 0,
+        yaw = 0)
+      }}
 
-      {{ components.visual_macro(name = "front_left_motor", mesh_file = motor_mesh_file, mesh_scale = mesh_scale, color = "Black", parent = root, x = arm_length * components.sin45, y = arm_length * components.sin45, z = arm_height - body_height / 2, roll = 0, pitch = 0, yaw = 0) }}
+      {{ components.visual_macro(
+        name = "front_left_motor",
+        mesh_file = motor_mesh_file,
+        mesh_scale = mesh_scale,
+        color = "Black",
+        parent = root,
+        x = arm_length * components.sin45,
+        y = arm_length * components.sin45,
+        z = arm_height - body_height / 2,
+        roll = 0,
+        pitch = 0,
+        yaw = 0)
+      }}
 
-      {{ components.visual_macro(name = "back_right_motor", mesh_file = motor_mesh_file, mesh_scale = mesh_scale, color = "Black", parent = root, x = -arm_length * components.sin45, y = -arm_length * components.sin45, z = arm_height - body_height / 2, roll = 0, pitch = 0, yaw = 0) }}
+      {{ components.visual_macro(
+        name = "back_right_motor",
+        mesh_file = motor_mesh_file,
+        mesh_scale = mesh_scale,
+        color = "Black",
+        parent = root,
+        x = -arm_length * components.sin45,
+        y = -arm_length * components.sin45,
+        z = arm_height - body_height / 2,
+        roll = 0,
+        pitch = 0,
+        yaw = 0)
+      }}
 
-      {{ components.visual_macro(name = "back_left_motor", mesh_file = motor_mesh_file, mesh_scale = mesh_scale, color = "Black", parent = root, x = -arm_length * components.sin45, y = arm_length * components.sin45, z = arm_height - body_height / 2, roll = 0, pitch = 0, yaw = 0) }}
+      {{ components.visual_macro(
+        name = "back_left_motor",
+        mesh_file = motor_mesh_file,
+        mesh_scale = mesh_scale,
+        color = "Black",
+        parent = root,
+        x = -arm_length * components.sin45,
+        y = arm_length * components.sin45,
+        z = arm_height - body_height / 2,
+        roll = 0,
+        pitch = 0,
+        yaw = 0)
+      }}
       <!--}-->
 
       {% if use_battery_mount %}
@@ -164,13 +375,129 @@
     </link>
 
     <!-- Propellers {-->
-    {{ components.prop_macro(direction = "ccw", rotor_velocity_slowdown_sim = rotor_velocity_slowdown_sim, motor_constant = motor_constant, moment_constant = moment_constant, parent = root, mass = mass_prop, radius = radius_prop, time_constant_up = time_constant_up, time_constant_down = time_constant_down, max_rot_velocity = max_rot_velocity, motor_number = 0, rotor_drag_coefficient = rotor_drag_coefficient, rolling_moment_coefficient = rolling_moment_coefficient, color = "White", mesh_file = prop_mesh_file, mesh_scale = mesh_scale_prop_ccw, x = arm_length * components.sin45, y = -arm_length * components.sin45, z = arm_height + prop_offset_top - body_height/2, roll = 0, pitch = 0, yaw = 0, ixx = prop_ixx, ixy = prop_ixy, ixz = prop_ixz, iyy = prop_iyy, iyz = prop_iyz, izz = prop_izz) }}
+    {{ components.prop_macro(
+      direction = "ccw",
+      rotor_velocity_slowdown_sim = rotor_velocity_slowdown_sim,
+      motor_constant = motor_constant,
+      moment_constant = moment_constant,
+      parent = root,
+      mass = mass_prop,
+      radius = radius_prop,
+      time_constant_up = time_constant_up,
+      time_constant_down = time_constant_down,
+      max_rot_velocity = max_rot_velocity,
+      motor_number = 0,
+      rotor_drag_coefficient = rotor_drag_coefficient,
+      rolling_moment_coefficient = rolling_moment_coefficient,
+      color = "White",
+      mesh_file = prop_mesh_file,
+      mesh_scale = mesh_scale_prop_ccw,
+      x = arm_length * components.sin45,
+      y = -arm_length * components.sin45,
+      z = arm_height + prop_offset_top - body_height/2,
+      roll = 0,
+      pitch = 0,
+      yaw = 0,
+      ixx = prop_ixx,
+      ixy = prop_ixy,
+      ixz = prop_ixz,
+      iyy = prop_iyy,
+      iyz = prop_iyz,
+      izz = prop_izz)
+    }}
 
-    {{ components.prop_macro(direction = "ccw", rotor_velocity_slowdown_sim = rotor_velocity_slowdown_sim, motor_constant =  motor_constant, moment_constant = moment_constant, parent = root, mass = mass_prop, radius = radius_prop, time_constant_up = time_constant_up, time_constant_down = time_constant_down, max_rot_velocity = max_rot_velocity, motor_number = 1, rotor_drag_coefficient = rotor_drag_coefficient, rolling_moment_coefficient = rolling_moment_coefficient, color = "White", mesh_file = prop_mesh_file, mesh_scale = mesh_scale_prop_ccw, x = -arm_length * components.sin45, y = arm_length * components.sin45, z = arm_height + prop_offset_top - body_height/2, roll = 0, pitch = 0, yaw = 0, ixx = prop_ixx, ixy = prop_ixy, ixz = prop_ixz, iyy = prop_iyy, iyz = prop_iyz, izz = prop_izz) }}
+    {{ components.prop_macro(
+      direction = "ccw",
+      rotor_velocity_slowdown_sim = rotor_velocity_slowdown_sim,
+      motor_constant =  motor_constant,
+      moment_constant = moment_constant,
+      parent = root,
+      mass = mass_prop,
+      radius = radius_prop,
+      time_constant_up = time_constant_up,
+      time_constant_down = time_constant_down,
+      max_rot_velocity = max_rot_velocity,
+      motor_number = 1,
+      rotor_drag_coefficient = rotor_drag_coefficient,
+      rolling_moment_coefficient = rolling_moment_coefficient,
+      color = "White",
+      mesh_file = prop_mesh_file,
+      mesh_scale = mesh_scale_prop_ccw,
+      x = -arm_length * components.sin45,
+      y = arm_length * components.sin45,
+      z = arm_height + prop_offset_top - body_height/2,
+      roll = 0,
+      pitch = 0,
+      yaw = 0,
+      ixx = prop_ixx,
+      ixy = prop_ixy,
+      ixz = prop_ixz,
+      iyy = prop_iyy,
+      iyz = prop_iyz,
+      izz = prop_izz)
+    }}
 
-    {{ components.prop_macro(direction = "cw", rotor_velocity_slowdown_sim = rotor_velocity_slowdown_sim, motor_constant =  motor_constant, moment_constant = moment_constant, parent = root, mass = mass_prop, radius = radius_prop, time_constant_up = time_constant_up, time_constant_down = time_constant_down, max_rot_velocity = max_rot_velocity, motor_number = 2, rotor_drag_coefficient = rotor_drag_coefficient, rolling_moment_coefficient = rolling_moment_coefficient, color = "White", mesh_file = prop_mesh_file, mesh_scale = mesh_scale_prop_cw, x = arm_length * components.sin45, y = arm_length * components.sin45, z = arm_height + prop_offset_top - body_height/2, roll = 0, pitch = 0, yaw = 0, ixx = prop_ixx, ixy = prop_ixy, ixz = prop_ixz, iyy = prop_iyy, iyz = prop_iyz, izz = prop_izz) }}
+    {{ components.prop_macro(
+      direction = "cw",
+      rotor_velocity_slowdown_sim = rotor_velocity_slowdown_sim,
+      motor_constant =  motor_constant,
+      moment_constant = moment_constant,
+      parent = root,
+      mass = mass_prop,
+      radius = radius_prop,
+      time_constant_up = time_constant_up,
+      time_constant_down = time_constant_down,
+      max_rot_velocity = max_rot_velocity,
+      motor_number = 2,
+      rotor_drag_coefficient = rotor_drag_coefficient,
+      rolling_moment_coefficient = rolling_moment_coefficient,
+      color = "White",
+      mesh_file = prop_mesh_file,
+      mesh_scale = mesh_scale_prop_cw,
+      x = arm_length * components.sin45,
+      y = arm_length * components.sin45,
+      z = arm_height + prop_offset_top - body_height/2,
+      roll = 0,
+      pitch = 0,
+      yaw = 0,
+      ixx = prop_ixx,
+      ixy = prop_ixy,
+      ixz = prop_ixz,
+      iyy = prop_iyy,
+      iyz = prop_iyz,
+      izz = prop_izz)
+    }}
 
-    {{ components.prop_macro(direction = "cw", rotor_velocity_slowdown_sim = rotor_velocity_slowdown_sim, motor_constant =  motor_constant, moment_constant = moment_constant, parent = root, mass = mass_prop, radius = radius_prop, time_constant_up = time_constant_up, time_constant_down = time_constant_down, max_rot_velocity = max_rot_velocity, motor_number = 3, rotor_drag_coefficient = rotor_drag_coefficient, rolling_moment_coefficient = rolling_moment_coefficient, color = "White", mesh_file = prop_mesh_file, mesh_scale = mesh_scale_prop_cw, x = -arm_length * components.sin45, y = -arm_length * components.sin45, z = arm_height + prop_offset_top - body_height/2, roll = 0, pitch = 0, yaw = 0, ixx = prop_ixx, ixy = prop_ixy, ixz = prop_ixz, iyy = prop_iyy, iyz = prop_iyz, izz = prop_izz) }}
+    {{ components.prop_macro(
+      direction = "cw",
+      rotor_velocity_slowdown_sim = rotor_velocity_slowdown_sim,
+      motor_constant =  motor_constant,
+      moment_constant = moment_constant,
+      parent = root,
+      mass = mass_prop,
+      radius = radius_prop,
+      time_constant_up = time_constant_up,
+      time_constant_down = time_constant_down,
+      max_rot_velocity = max_rot_velocity,
+      motor_number = 3,
+      rotor_drag_coefficient = rotor_drag_coefficient,
+      rolling_moment_coefficient = rolling_moment_coefficient,
+      color = "White",
+      mesh_file = prop_mesh_file,
+      mesh_scale = mesh_scale_prop_cw,
+      x = -arm_length * components.sin45,
+      y = -arm_length * components.sin45,
+      z = arm_height + prop_offset_top - body_height/2,
+      roll = 0,
+      pitch = 0,
+      yaw = 0,
+      ixx = prop_ixx,
+      ixy = prop_ixy,
+      ixz = prop_ixz,
+      iyy = prop_iyy,
+      iyz = prop_iyz,
+      izz = prop_izz)
+    }}
     <!--}-->
 
     <!-- ================================================================== -->
