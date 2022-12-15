@@ -113,9 +113,9 @@ limitations under the License.
 <link name="{{ name }}_link">
   <inertial>
     <mass>0.0001</mass>  <!-- [kg] -->
-    {{ inertia_macro("1e-7",0,0,"1e-7",0,"1e-7") }}
+    {{ inertia_macro(ixx = "1e-7", ixy = 0, ixz = 0, iyy = "1e-7", iyz = 0, izz = "1e-7") }}
   </inertial>
-  {{ pose_macro(x, y, z, roll, pitch, yaw) }}
+  {{ pose_macro(x = x, y = y, z = z, roll = roll, pitch = pitch, yaw = yaw) }}
   <visual name="{{ name }}_link_visual">
     <geometry>
       <box>
@@ -141,7 +141,7 @@ limitations under the License.
 <!-- Visual macro (generic mesh) {-->
 {%- macro visual_macro(name, mesh_file, mesh_scale, color, parent, x, y, z, roll, pitch, yaw) -%}
 <visual name="{{ name }}_visual">
-{{ pose_macro(x, y, z, roll, pitch, yaw) }}
+{{ pose_macro(x = x, y = y, z = z, roll = roll, pitch = pitch, yaw = yaw) }}
   <geometry>
     <mesh>
       <uri>{{ mesh_file }}</uri>
@@ -160,9 +160,9 @@ limitations under the License.
 
 <!-- Leg macro {-->
 {%- macro leg_macro(name, mesh_file, mesh_scale, color, parent, x, y, z, roll, pitch, yaw, collision_height, collision_radius) -%}
-{{ visual_macro(name, mesh_file, mesh_scale, color, parent, x, y, z, roll, pitch, yaw) }}
+{{ visual_macro(name = name, mesh_file = mesh_file, mesh_scale = mesh_scale, color = color, parent = parent, x = x, y = y, z = z, roll = roll, pitch = pitch, yaw = yaw) }}
 <collision name="{{ name }}_link_collision">
-  {{ pose_macro(x, y, z, roll, pitch, yaw) }}
+  {{ pose_macro(x = x, y = y, z = z, roll = roll, pitch = pitch, yaw = yaw) }}
   <geometry>
     <cylinder>
       <length>{{ collision_height }}</length>
@@ -187,10 +187,10 @@ limitations under the License.
 <!-- Prop macro {-->
 {%- macro prop_macro(direction, rotor_velocity_slowdown_sim, motor_constant, moment_constant, parent, mass, radius, time_constant_up, time_constant_down, max_rot_velocity, motor_number, rotor_drag_coefficient, rolling_moment_coefficient, color, mesh_file, mesh_scale, x, y, z, roll, pitch, yaw, ixx, ixy, ixz, iyy, iyz, izz) -%}
 <link name="prop_{{ motor_number }}_link">
-  {{ pose_macro(x, y, z, roll, pitch, yaw) }}
+  {{ pose_macro(x = x, y = y, z = z, roll = roll, pitch = pitch, yaw = yaw) }}
   <inertial>
     <mass>{{ mass }}</mass>
-    {{ inertia_macro(ixx, ixy, ixz, iyy, iyz, izz) }}
+    {{ inertia_macro(ixx = ixx, ixy = ixy, ixz = ixz, iyy = iyy, iyz = iyz, izz = izz) }}
   </inertial>
   <visual name="prop_{{ motor_number }}_link_visual">
     <geometry>
@@ -265,10 +265,10 @@ limitations under the License.
 {%- macro multirotor_physics_macro(mass, body_radius, body_height, rotor_velocity_slowdown_sim, ixx, ixy, ixz, iyy, iyz, izz) -%}
 <inertial>
   <mass>{{ mass }}</mass>  <!-- [kg] -->
-  {{ inertia_macro(ixx, ixy, ixz, iyy, iyz, izz) }}
+  {{ inertia_macro(ixx = ixx, ixy = ixy, ixz = ixz, iyy = iyy, iyz = iyz, izz = izz) }}
 </inertial>
 <collision name="base_link_collision">
-  {{ pose_macro(0, 0, - body_height / 2, 0, 0, 0) }}
+  {{ pose_macro(x = 0, y = 0, z = - body_height / 2, roll = 0, pitch = 0, yaw = 0) }}
   <geometry>
     <cylinder>
       <length>{{ body_height }}</length>
@@ -403,15 +403,8 @@ limitations under the License.
     <pose>0 0 0 0 0 0</pose>
     <inertial>
       <pose>0 0 0 0 0 0</pose>
-      <mass>0.001</mass>
-      <inertia>
-        <ixx>1e-07</ixx>
-        <ixy>0</ixy>
-        <ixz>0</ixz>
-        <iyy>1e-07</iyy>
-        <iyz>0</iyz>
-        <izz>1e-07</izz>
-      </inertia>
+      <mass>0.0001</mass> 
+      {{ inertia_macro(ixx = "1e-7", ixy = 0, ixz = 0, iyy = "1e-7", iyz = 0, izz = "1e-7") }}
     </inertial>
     <sensor name="gps" type="gps">
       <pose>0 0 0 0 0 0</pose>
@@ -475,18 +468,15 @@ limitations under the License.
 <!--}-->
 
 <!-- Macro to add the imu_plugin{-->
-<!-- Macro to add an IMU. -->
-{%- macro imu_plugin_macro(imu_suffix, parent_link, imu_topic, mass_imu_sensor, gyroscope_noise_density, gyroscope_random_walk, gyroscope_bias_correlation_time, gyroscope_turn_on_bias_sigma, accelerometer_noise_density, accelerometer_random_walk, accelerometer_bias_correlation_time, accelerometer_turn_on_bias_sigma, x, y, z, roll, pitch, yaw, ixx, ixy, ixz, iyy, iyz, izz) -%}
-<!-- IMU link -->
+{%- macro imu_plugin_macro(imu_suffix, parent_link, imu_topic, gyroscope_noise_density, gyroscope_random_walk, gyroscope_bias_correlation_time, gyroscope_turn_on_bias_sigma, accelerometer_noise_density, accelerometer_random_walk, accelerometer_bias_correlation_time, accelerometer_turn_on_bias_sigma, x, y, z, roll, pitch, yaw) -%}
 <link name="imu{{ imu_suffix }}_link">
   <inertial>
-    <mass>{{ mass_imu_sensor }}</mass>
-    {{ inertia_macro(ixx, ixy, ixz, iyy, iyz, izz) }}
+    <mass>0.0001</mass> 
+    {{ inertia_macro(ixx = "1e-7", ixy = 0, ixz = 0, iyy = "1e-7", iyz = 0, izz = "1e-7") }}
   </inertial>
 </link>
-<!-- IMU joint -->
 <joint name="imu{{ imu_suffix }}_joint" type="revolute">
-  {{ pose_macro(x, y, z, roll, pitch, yaw) }}
+  {{ pose_macro(x = x, y = y, z = z, roll = roll, pitch = pitch, yaw = yaw) }}
   <parent>{{ parent_link }}</parent>
   <child>imu{{ imu_suffix }}_link</child>
   <axis>
@@ -521,10 +511,15 @@ limitations under the License.
 <!-- Macro to add imu with configurable rate {-->
 {%- macro custom_imu_macro(parent_link, sensor_name, update_rate, topic_name, noise_mean, x, y, z, roll, pitch, yaw) -%}
 <link name="{{ sensor_name }}_link">
+  <inertial>
+    <pose>0 0 0 0 0 0</pose>
+    <mass>0.0001</mass> 
+    {{ inertia_macro(ixx = "1e-7", ixy = 0, ixz = 0, iyy = "1e-7", iyz = 0, izz = "1e-7") }}
+  </inertial>
 </link>
 
 <joint name="{{ sensor_name }}_joint" type="fixed">
-  {{ pose_macro(x, y, z, roll, pitch, yaw) }}
+  {{ pose_macro(x = x, y = y, z = z, roll = roll, pitch = pitch, yaw = yaw) }}
   <parent>{{ parent_link }}</parent>
   <child>{{ sensor_name }}_link</child>
 </joint>
@@ -568,15 +563,13 @@ limitations under the License.
 
 <!-- Macro to add the odometry_plugin{-->
 {%- macro odometry_plugin_macro(odometry_sensor_suffix, parent_link, topic_name, mass_odometry_sensor, noise, frame_name, frame_rate, xyz_offset, rpy_offset, x, y, z, roll, pitch, yaw, ixx, ixy, ixz, iyy, iyz, izz) -%}
-<!-- odometry link -->
 <link name="odometry_sensor{{ odometry_sensor_suffix }}_link">
-  {{ pose_macro(x, y, z, roll, pitch, yaw)  }} }}
+  {{ pose_macro(x = x, y = y, z = z, roll = roll, pitch = pitch, yaw = yaw) }}
   <inertial>
-    <mass>{{ mass_odometry_sensor }}</mass>  <!-- [kg] -->
-    {{ inertia_macro(ixx, ixy, ixz, iyy, iyz, izz)  }} }}
+    <mass>{{ mass_odometry_sensor }}</mass> 
+    {{ inertia_macro(ixx = ixx, ixy = ixy, ixz = ixz, iyy = iyy, iyz = iyz, izz = izz) }}
   </inertial>
 </link>
-<!-- odometry joint -->
 <joint name="odometry_sensor{{ odometry_sensor_suffix }}_joint" type="revolute">
   <parent>{{ parent_link }}</parent>
   <child>odometry_sensor{{ odometry_sensor_suffix }}_link</child>
@@ -654,7 +647,6 @@ limitations under the License.
 
 <!-- visual links and joints {-->
 <link name="camera_{{ camera_suffix }}_link">
-  <!-- <xacro:insert_block name="visual_body" /> -->
   <visual name="camera_{{ camera_suffix }}_link_visual">
   <material>
       <script>
@@ -1005,36 +997,3 @@ limitations under the License.
 </joint>
 {%- endmacro -%}
 <!--}-->
-
-<!--<!-1- Macro to add a Teraranger One {-1->-->
-<!--<xacro:macro name="teraranger_macro" params="arent_link x y z yaw pitch roll">-->
-<!--  <xacro:rangefinder_macro-->
-<!--    name="teraranger"-->
-<!--    color="Yellow"-->
-<!--    parent_link="${parent_link}"-->
-<!--    frame_rate="100"-->
-<!--    rangefinder_suffix="teraranger"-->
-<!--    rangefinder_frame_name="${nacamespace}/teraranger"-->
-<!--    parent_frame_name="${namespace}/fcu"-->
-<!--    topic="teraranger/range"-->
-<!--    fov="0.03"-->
-<!--    min_distance="0.1"-->
-<!--    max_distance="14"-->
-<!--    resolution= "0.005"-->
-<!--    noise="0.04"-->
-<!--    x="${x}"-->
-<!--    y="${y}"-->
-<!--    z="${z}"-->
-<!--    yaw="${yaw}"-->
-<!--    pitch="${pitch}"-->
-<!--    roll="${roll}"-->
-<!--    >-->
-<!--    <visual>-->
-<!--      <origin xyz="0 0 0" rpy="0 -${rad90} 0" />-->
-<!--      <geometry>-->
-<!--        <box size=".027 .033 0.015" />-->
-<!--      </geometry>-->
-<!--    </visual>-->
-<!--  </xacro:rangefinder_macro>-->
-<!--</xacro:macro>-->
-<!--<!-1-}-1->-->
