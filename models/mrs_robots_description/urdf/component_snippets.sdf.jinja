@@ -13,6 +13,8 @@ Copyright 2015 Michael Burri, ASL, ETH Zurich, Switzerland
 Copyright 2015 Mina Kamel, ASL, ETH Zurich, Switzerland
 Copyright 2015 Janosch Nikolic, ASL, ETH Zurich, Switzerland
 Copyright 2015 Markus Achtelik, ASL, ETH Zurich, Switzerland
+Copyright 2022 Vojtech Spurny, MRS, CTU Prague, Czech Republic
+Copyright 2022 Petr Stibinger, MRS, CTU Prague, Czech Republic
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -903,7 +905,7 @@ limitations under the License.
 <!-- ======================= rangefinder sensors ======================-->
 
 <!-- Macro to add a garmin (connected to the pixhawk) {-->
-{%- macro garmin_macro(sensor_name, parent_link, x, y, z, yaw, pitch, roll) -%}
+{%- macro garmin_macro(sensor_name, parent_link, x, y, z, roll, pitch, yaw) -%}
 <link name="{{ sensor_name }}::link">
   {{ pose_macro(x, y, z, roll, pitch, yaw) }}
   <inertial>
@@ -966,7 +968,7 @@ limitations under the License.
 
 <!-- Macro to add an external garmin (not connected to the pixhawk) {-->
 <!-- Orientation empty for down looking garmin, _up for upward looking sensor -->
-{%- macro external_garmin_macro(namespace, parent_link, orientation, x, y, z, yaw, pitch, roll) -%}
+{%- macro external_garmin_macro(namespace, parent_link, orientation, x, y, z, roll, pitch, yaw) -%}
 <link name="garmin{{ orientation }}_link">
   {{ pose_macro(x, y, z, roll, pitch, yaw) }}
   <inertial>

@@ -364,9 +364,34 @@
 
       {% if use_battery_mount %}
       <!-- battery mount and battery {-->
-      {{ components.visual_macro(name = "battery_mount", mesh_file = battery_mount_mesh, mesh_scale = mesh_scale_milimeters, color = "DarkGrey", parent = root, x = 0.003, y = 0, z = -body_height / 2 - 0.029, roll = 0, pitch = 0, yaw = components.rad(180)) }}
+      {{ components.visual_macro(
+        name = "battery_mount",
+        mesh_file = battery_mount_mesh,
+        mesh_scale = mesh_scale_milimeters,
+        color = "DarkGrey",
+        parent = root,
+        x = 0.003,
+        y = 0,
+        z = -body_height / 2 - 0.029,
+        roll = 0,
+        pitch = 0,
+        yaw = components.rad(180))
+      }}
 
-      {{ components.colored_box(name = "battery", size_x = 0.13, size_y = 0.042, size_z = 0.044, color = "Grey", parent = root, x = 0.003, y = 0, z = -body_height / 2 - 0.027, roll = 0, pitch = 0, yaw = components.rad(180)) }}
+      {{ components.colored_box(
+        name = "battery",
+        size_x = 0.13,
+        size_y = 0.042,
+        size_z = 0.044,
+        color = "Grey",
+        parent = root,
+        x = 0.003,
+        y = 0,
+        z = -body_height / 2 - 0.027,
+        roll = 0,
+        pitch = 0,
+        yaw = components.rad(180))
+      }}
       <!--}-->
       {% endif %}
 
@@ -505,27 +530,90 @@
     <!-- ================================================================== -->
 
     <!-- Mavlink interface {-->
-    {{ components.mavlink_interface_macro(mavlink_addr, mavlink_udp_port, mavlink_tcp_port, serial_enabled, serial_device, serial_baudrate, qgc_addr, qgc_udp_port, sdk_addr, sdk_udp_port, hil_mode, hil_state_level, send_vision_estimation, send_odometry, use_lockstep, use_tcp) }}
+    {{ components.mavlink_interface_macro(
+      mavlink_addr = mavlink_addr,
+      mavlink_udp_port = mavlink_udp_port,
+      mavlink_tcp_port = mavlink_tcp_port,
+      serial_enabled = serial_enabled,
+      serial_device = serial_device,
+      baudrate = serial_baudrate,
+      qgc_addr = qgc_addr,
+      qgc_udp_port = qgc_udp_port,
+      sdk_addr = sdk_addr,
+      sdk_udp_port =sdk_udp_port,
+      hil_mode = hil_mode,
+      hil_state_level = hil_state_level,
+      send_vision_estimation = send_vision_estimation,
+      send_odometry = send_odometry,
+      enable_lockstep = use_lockstep,
+      use_tcp = use_tcp)
+    }}
     <!--}-->
 
     <!-- GPS {-->
-    {{ components.gps_macro("gps0", 0, 0, 0, 10, true, 2.0, 4.0, "2.0e-4", "4.0e-4", 0.2, 0.4, root) }}
+    {{ components.gps_macro(
+      gps_name = "gps0",
+      pos_x = 0,
+      pos_y = 0,
+      pos_z = 0,
+      update_rate = 10,
+      gps_noise = true,
+      gps_xy_random_walk = 2.0,
+      gps_z_random_walk = 4.0,
+      gps_xy_noise_density = "2.0e-4",
+      gps_z_noise_density = "4.0e-4",
+      gps_vxy_noise_density = 0.2,
+      gps_vz_noise_density = 0.4,
+      parent_link = root)
+    }}
     <!--}-->
 
     <!-- Magnetometer {-->
-    {{ components.magnetometer_plugin_macro(100, 0.0004, 0.0000064, 600, "/mag") }}
+    {{ components.magnetometer_plugin_macro(
+      pub_rate = 100,
+      noise_density = 0.0004,
+      random_walk = 0.0000064,
+      bias_correlation_time = 600,
+      mag_topic = "/mag")
+    }}
     <!--}-->
 
     <!-- Groundtruth {-->
-    {{ components.groundtruth_plugin_macro(0, 0, 0) }}
+    {{ components.groundtruth_plugin_macro(
+      home_latitude = 0,
+      home_longitude = 0,
+      home_altitude = 0)
+    }}
     <!--}-->
 
     <!-- Barometer {-->
-    {{ components.barometer_plugin_macro("/baro", 50, 0) }}
+    {{ components.barometer_plugin_macro(
+      baro_topic = "/baro",
+      pub_rate = 50,
+      baro_drift_pa_per_sec = 0)
+    }}
     <!--}-->
 
-    <!-- IMU (ADIS16448) {-->
-    {{ components.imu_plugin_macro("", root, "/imu", 0.00018665, 0.000038785, 1000.0, 0.0087, 0.00186, 0.006, 300.0, 0.1960, 0, 0, 0, 0, 0, 0) }}
+    <!-- IMU {-->
+    {{ components.imu_plugin_macro(
+      imu_suffix = "",
+      parent_link = root,
+      imu_topic = "/imu",
+      gyroscope_noise_density = 0.00018665,
+      gyroscope_random_walk = 0.000038785,
+      gyroscope_bias_correlation_time = 1000.0,
+      gyroscope_turn_on_bias_sigma = 0.0087,
+      accelerometer_noise_density = 0.00186,
+      accelerometer_random_walk = 0.006,
+      accelerometer_bias_correlation_time = 300.0,
+      accelerometer_turn_on_bias_sigma = 0.1960,
+      x = 0,
+      y = 0,
+      z = 0,
+      roll = 0,
+      pitch = 0,
+      yaw = 0)
+    }}
     <!--}-->
 
     {# fill the remaining optional sensors to have follwing comment in produced sdf #}
@@ -539,13 +627,34 @@
     {% if enable_rangefinder %}
     <!-- Garmin {-->
     {# {{ components.garmin_macro("lidar0", root, -0.077, 0, -0.069, 0, components.rad(90), 0) }} - uncomment when simulation will work with pixgarm #}
-    {{ components.external_garmin_macro(namespace, root, "", -0.077, 0, -0.069, 0, components.rad(90), 0) }}
+    {{ components.external_garmin_macro(
+      namespace = namespace,
+      parent_link = root,
+      orientation = "",
+      x = -0.077,
+      y = 0,
+      z = -0.069,
+      roll = 0,
+      pitch = components.rad(90),
+      yaw = 0)
+    }}
     <!--}-->
     {% endif %}
 
     {% if enable_rangefinder_up %}
     <!-- Garmin Up {-->
-    {{ components.external_garmin_macro(namespace, root, "_up", -0.077, 0, -0.033, 0, components.rad(-90), 0) }}
+    {{ components.external_garmin_macro(
+      namespace = namespace,
+      parent_link = root,
+      orientation = "_up",
+      x = -0.077,
+      y = 0,
+      z = -0.033,
+      roll = 0,
+      pitch = components.rad(-90),
+      yaw = 0)
+    }}
+    <!--}-->
     {% endif %}
 
   </model>
