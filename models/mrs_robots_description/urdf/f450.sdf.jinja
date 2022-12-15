@@ -102,60 +102,60 @@
     <link name="{{ root }}">
 
       <!-- Body physics {-->
-      {{ components.multirotor_physics_macro(mass, body_radius, body_height, rotor_velocity_slowdown_sim, body_ixx, body_ixy, body_ixz, body_iyy, body_iyz, body_izz) }}
+      {{ components.multirotor_physics_macro(mass = mass, body_radius = body_radius, body_height = body_height, rotor_velocity_slowdown_sim = rotor_velocity_slowdown_sim, ixx = body_ixx, ixy = body_ixy, ixz = body_ixz, iyy = body_iyy, iyz = body_iyz, izz = body_izz) }}
       <!--}-->
 
       <!-- Body visuals {-->
 
       <!-- Boards {-->
-      {{ components.visual_macro("lower_central_board", central_board_mesh_bottom, mesh_scale, "DarkGrey", root, 0, 0, - body_height / 2, 0, 0, 0) }}
+      {{ components.visual_macro(name = "lower_central_board", mesh_file = central_board_mesh_bottom, mesh_scale = mesh_scale, color = "DarkGrey", parent = root, x = 0, y = 0, z = - body_height / 2, roll = 0, pitch = 0, yaw = 0) }}
 
-      {{ components.visual_macro("upper_central_board", central_board_mesh_top, mesh_scale, "DarkGrey", root , 0, 0, arm_height - body_height / 2, 0, 0, 0) }}
+      {{ components.visual_macro(name = "upper_central_board", mesh_file = central_board_mesh_top, mesh_scale = mesh_scale, color = "DarkGrey", parent = root , x = 0, y = 0, z = arm_height - body_height / 2, roll = 0, pitch = 0, yaw = 0) }}
       <!--}-->
 
       <!-- Arms {-->
-      {{ components.visual_macro("front_right_arm", arm_mesh_file, mesh_scale, "White", root, board_radius * components.sin45, -board_radius * components.sin45, arm_height - body_height / 2, 0, 0, components.rad(-45)) }}
+      {{ components.visual_macro(name = "front_right_arm", mesh_file = arm_mesh_file, mesh_scale = mesh_scale, color = "White", parent = root, x = board_radius * components.sin45, y = -board_radius * components.sin45, z = arm_height - body_height / 2, roll = 0, pitch = 0, yaw = components.rad(-45)) }}
 
-      {{ components.visual_macro("front_left_arm", arm_mesh_file, mesh_scale, "White", root, board_radius * components.sin45, board_radius * components.sin45, arm_height - body_height / 2, 0, 0, components.rad(45)) }}
+      {{ components.visual_macro(name = "front_left_arm", mesh_file = arm_mesh_file, mesh_scale = mesh_scale, color = "White", parent = root, x = board_radius * components.sin45, y = board_radius * components.sin45, z = arm_height - body_height / 2, roll = 0, pitch = 0, yaw = components.rad(45)) }}
 
-      {{ components.visual_macro("back_right_arm", arm_mesh_file, mesh_scale, "Red", root, -board_radius * components.sin45, -board_radius * components.sin45, arm_height - body_height / 2, 0, 0, components.rad(-135)) }}
+      {{ components.visual_macro(name = "back_right_arm", mesh_file = arm_mesh_file, mesh_scale = mesh_scale, color = "Red", parent = root, x = -board_radius * components.sin45, y = -board_radius * components.sin45, z = arm_height - body_height / 2, roll = 0, pitch = 0, yaw = components.rad(-135)) }}
 
-      {{ components.visual_macro("back_left_arm", arm_mesh_file, mesh_scale, "Red", root, -board_radius * components.sin45, board_radius * components.sin45, arm_height - body_height / 2, 0, 0, components.rad(135)) }}
+      {{ components.visual_macro(name = "back_left_arm", mesh_file = arm_mesh_file, mesh_scale = mesh_scale, color = "Red", parent = root, x = -board_radius * components.sin45, y = board_radius * components.sin45, z = arm_height - body_height / 2, roll = 0, pitch = 0, yaw = components.rad(135)) }}
       <!--}-->
 
       <!-- intel nuc {-->
-      {{ components.visual_macro("NUC", nuc_mesh_file, mesh_scale_milimeters, "DarkGrey", root, 0, 0, 0.023, 0, 0, 0) }}
+      {{ components.visual_macro(name = "NUC", mesh_file = nuc_mesh_file, mesh_scale = mesh_scale_milimeters, color = "DarkGrey", parent = root, x = 0, y = 0, z = 0.023, roll = 0, pitch = 0, yaw = 0) }}
       <!--}-->
 
       <!-- pixhawk {-->
-      {{ components.visual_macro("pixhawk", pixhawk_mesh_file, mesh_scale, "DarkGrey", root, 0, 0, -body_height / 2 - pixhawk_offset, 0, 0, 0) }}
+      {{ components.visual_macro(name = "pixhawk", mesh_file = pixhawk_mesh_file, mesh_scale = mesh_scale, color = "DarkGrey", parent = root, x = 0, y = 0, z = -body_height / 2 - pixhawk_offset, roll = 0, pitch = 0, yaw = 0) }}
       <!--}-->
 
       <!-- legs {-->
-      {{ components.leg_macro("front_right_leg", leg_mesh_file, mesh_scale_milimeters, "White", root, (arm_length - leg_offset_r) * components.sin45, -(arm_length - leg_offset_r) * components.sin45, arm_height - body_height/2 - leg_offset_z, 0, 0, components.rad(135), leg_height, leg_offset_r) }}
+      {{ components.leg_macro(name = "front_right_leg", mesh_file = leg_mesh_file, mesh_scale = mesh_scale_milimeters, color = "White", parent = root, x = (arm_length - leg_offset_r) * components.sin45, y = -(arm_length - leg_offset_r) * components.sin45, z = arm_height - body_height/2 - leg_offset_z, roll = 0, pitch = 0, yaw = components.rad(135), collision_height = leg_height, collision_radius = leg_offset_r) }}
 
-      {{ components.leg_macro("front_left_leg", leg_mesh_file, mesh_scale_milimeters, "White", root, (arm_length - leg_offset_r) * components.sin45, (arm_length - leg_offset_r) * components.sin45, arm_height - body_height/2 - leg_offset_z, 0, 0, components.rad(-135), leg_height, leg_offset_r) }}
+      {{ components.leg_macro(name = "front_left_leg", mesh_file = leg_mesh_file, mesh_scale = mesh_scale_milimeters, color = "White", parent = root, x = (arm_length - leg_offset_r) * components.sin45, y = (arm_length - leg_offset_r) * components.sin45, z = arm_height - body_height/2 - leg_offset_z, roll = 0, pitch = 0, yaw = components.rad(-135), collision_height = leg_height, collision_radius = leg_offset_r) }}
 
-      {{ components.leg_macro("back_right_leg", leg_mesh_file, mesh_scale_milimeters, "Red", root, -(arm_length - leg_offset_r) * components.sin45, -(arm_length - leg_offset_r) * components.sin45, arm_height - body_height/2 - leg_offset_z, 0, 0, components.rad(45), leg_height, leg_offset_r) }}
+      {{ components.leg_macro(name = "back_right_leg", mesh_file = leg_mesh_file, mesh_scale = mesh_scale_milimeters, color = "Red", parent = root, x = -(arm_length - leg_offset_r) * components.sin45, y = -(arm_length - leg_offset_r) * components.sin45, z = arm_height - body_height/2 - leg_offset_z, roll = 0, pitch = 0, yaw = components.rad(45), collision_height = leg_height, collision_radius = leg_offset_r) }}
 
-      {{ components.leg_macro("back_left_leg", leg_mesh_file, mesh_scale_milimeters, "Red", root, -(arm_length - leg_offset_r) * components.sin45, (arm_length - leg_offset_r) * components.sin45, arm_height - body_height/2 - leg_offset_z, 0, 0, components.rad(-45), leg_height, leg_offset_r) }}
+      {{ components.leg_macro(name = "back_left_leg", mesh_file = leg_mesh_file, mesh_scale = mesh_scale_milimeters, color = "Red", parent = root, x = -(arm_length - leg_offset_r) * components.sin45, y = (arm_length - leg_offset_r) * components.sin45, z = arm_height - body_height/2 - leg_offset_z, roll = 0, pitch = 0, yaw = components.rad(-45), collision_height = leg_height, collision_radius = leg_offset_r) }}
       <!--}-->
 
       <!-- motors {-->
-      {{ components.visual_macro("front_right_motor", motor_mesh_file, mesh_scale, "Black", root, arm_length * components.sin45, -arm_length * components.sin45, arm_height - body_height / 2, 0, 0, 0) }}
+      {{ components.visual_macro(name = "front_right_motor", mesh_file = motor_mesh_file, mesh_scale = mesh_scale, color = "Black", parent = root, x = arm_length * components.sin45, y = -arm_length * components.sin45, z = arm_height - body_height / 2, roll = 0, pitch = 0, yaw = 0) }}
 
-      {{ components.visual_macro("front_left_motor", motor_mesh_file, mesh_scale, "Black", root, arm_length * components.sin45, arm_length * components.sin45, arm_height - body_height / 2, 0, 0, 0) }}
+      {{ components.visual_macro(name = "front_left_motor", mesh_file = motor_mesh_file, mesh_scale = mesh_scale, color = "Black", parent = root, x = arm_length * components.sin45, y = arm_length * components.sin45, z = arm_height - body_height / 2, roll = 0, pitch = 0, yaw = 0) }}
 
-      {{ components.visual_macro("back_right_motor", motor_mesh_file, mesh_scale, "Black", root, -arm_length * components.sin45, -arm_length * components.sin45, arm_height - body_height / 2, 0, 0, 0) }}
+      {{ components.visual_macro(name = "back_right_motor", mesh_file = motor_mesh_file, mesh_scale = mesh_scale, color = "Black", parent = root, x = -arm_length * components.sin45, y = -arm_length * components.sin45, z = arm_height - body_height / 2, roll = 0, pitch = 0, yaw = 0) }}
 
-      {{ components.visual_macro("back_left_motor", motor_mesh_file, mesh_scale, "Black", root, -arm_length * components.sin45, arm_length * components.sin45, arm_height - body_height / 2, 0, 0, 0) }}
+      {{ components.visual_macro(name = "back_left_motor", mesh_file = motor_mesh_file, mesh_scale = mesh_scale, color = "Black", parent = root, x = -arm_length * components.sin45, y = arm_length * components.sin45, z = arm_height - body_height / 2, roll = 0, pitch = 0, yaw = 0) }}
       <!--}-->
 
       {% if use_battery_mount %}
       <!-- battery mount and battery {-->
-      {{ components.visual_macro("battery_mount", battery_mount_mesh, mesh_scale_milimeters, "DarkGrey", root, 0.003, 0, -body_height / 2 - 0.029, 0, 0, components.rad(180)) }}
+      {{ components.visual_macro(name = "battery_mount", mesh_file = battery_mount_mesh, mesh_scale = mesh_scale_milimeters, color = "DarkGrey", parent = root, x = 0.003, y = 0, z = -body_height / 2 - 0.029, roll = 0, pitch = 0, yaw = components.rad(180)) }}
 
-      {{ components.colored_box("battery", 0.13, 0.042, 0.044, "Grey", root, 0.003, 0, -body_height / 2 - 0.027, 0, 0, components.rad(180)) }}
+      {{ components.colored_box(name = "battery", size_x = 0.13, size_y = 0.042, size_z = 0.044, color = "Grey", parent = root, x = 0.003, y = 0, z = -body_height / 2 - 0.027, roll = 0, pitch = 0, yaw = components.rad(180)) }}
       <!--}-->
       {% endif %}
 
@@ -178,7 +178,6 @@
     <!-- ================================================================== -->
 
     <!-- Mavlink interface {-->
-    <!-- Instantiate mavlink telemetry interface. -->
     {{ components.mavlink_interface_macro(mavlink_addr, mavlink_udp_port, mavlink_tcp_port, serial_enabled, serial_device, serial_baudrate, qgc_addr, qgc_udp_port, sdk_addr, sdk_udp_port, hil_mode, hil_state_level, send_vision_estimation, send_odometry, use_lockstep, use_tcp) }}
     <!--}-->
 
