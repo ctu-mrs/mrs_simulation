@@ -7,7 +7,7 @@
   {# ||                    parameters definition                     || #}
   {# ================================================================== #}
 
-  {#-  Robot parameters and arguments -#}
+  {# Robot parameters and arguments {--> #}
   {%- set mass = 1.7 -%} {# [kg] #}
   {%- set body_radius = 0.2 -%} {# [m] #}
   {%- set body_height = 0.1 -%} {# [m] #}
@@ -25,8 +25,9 @@
   {%- set pixhawk_offset = -0.0075 -%} {# [m] #}
   {%- set use_battery_mount = true -%} {# [bool] #}
   {%- set root = "base_link" -%}
+  {# <!--}--> #}
 
-  {#- Motor constants -#}
+  {# Motor constants {--> #}
   {%- set rotor_velocity_slowdown_sim = 0.0159236 -%}
   {%- set motor_constant = 10.04544 -%} {# [kg.m/s^2] #}
   {%- set moment_constant = 0.016 -%} {# [m] #}
@@ -34,14 +35,17 @@
   {%- set time_constant_down = 1.0 / 40.0 -%} {# [s] #}
   {%- set max_rot_velocity = 1 -%} {# [rad/s] #}
   {%- set rotor_drag_coefficient = 0.001 -%} {# orig 8.06428e-04 #}
-  {%- set rolling_moment_coefficient = "1.0E-6" -%}
+  {%- set rolling_moment_coefficient = "1.0e-6" -%}
+  {# <!--}--> #}
 
-  {#- Inertia constants -#}
+  {# Inertia constants {--> #}
   {%- set inertia_body_radius = 0.2 -%} {# [m] #}
   {%- set inertia_body_height = 0.05 -%} {# [m] #}
+  {# <!--}--> #}
 
-  {#- Meshes -#}
-  {#- Drone parts -#}
+  {# Meshes {--> #}
+
+  {# Drone parts {--> #}
   {%- set central_board_mesh_top = "model://mrs_robots_description/meshes/dji/f450/dji_f450_central_top.dae" -%}
   {%- set central_board_mesh_bottom = "model://mrs_robots_description/meshes/dji/f450/dji_f450_central_bottom.dae" -%}
   {%- set arm_mesh_file = "model://mrs_robots_description/meshes/dji/f450/dji_f450_arm.dae" -%}
@@ -50,8 +54,9 @@
   {%- set prop_mesh_file = "model://mrs_robots_description/meshes/dji/f450/dji_f450_prop.dae"-%}
   {%- set pixhawk_mesh_file = "model://mrs_robots_description/meshes/sensors/pixhawk.dae" -%}
   {%- set nuc_mesh_file = "model://mrs_robots_description/meshes/dji/f450/dji_f450_nuc.dae" -%}
+  {# <!--}--> #}
 
-  {#- Holders #}
+  {# Holders {--> #}
   {%- set battery_mount_mesh = "model://mrs_robots_description/meshes/dji/f450/dji_f450_battery_mount.dae" -%}
   {%- set bluefox_mount_mesh = "model://mrs_robots_description/meshes/dji/f450/dji_f450_bluefox_mount.dae" -%}
   {%- set ouster_mount_mesh = "model://mrs_robots_description/meshes/dji/f450/dji_f450_ouster_mount.dae" -%}
@@ -61,14 +66,18 @@
   {%- set realsense_front_pitched_mount_mesh = "model://mrs_robots_description/meshes/dji/f450/dji_f450_realsense_front_pitched_45_mount.dae" -%}
   {%- set realsense_front_down_mount_mesh = "model://mrs_robots_description/meshes/dji/f450/dji_f450_realsense_front_pitched_90_mount.dae" -%}
   {%- set uvdar_mount_mesh = "model://mrs_robots_description/meshes/dji/f450/dji_f450_uvdar_mount.dae" -%}
+  {# <!--}--> #}
 
-  {#- Scales -#}
+  {# Scales {--> #}
   {%- set mesh_scale = "1 1 1" -%}
   {%- set mesh_scale_prop_ccw = "1 1 1" -%}
   {%- set mesh_scale_prop_cw = "-1 1 1" -%}
   {%- set mesh_scale_milimeters = "0.001 0.001 0.001" -%}
+  {# <!--}--> #}
 
-  {#- Inertias -#}
+  {# <!--}--> #}
+
+  {# Inertias {--> #}
   {%- set body_ixx = mass * (3 * inertia_body_radius * inertia_body_radius + inertia_body_height * inertia_body_height) / 12 -%}
   {%- set body_ixy = 0 -%}
   {%- set body_ixz = 0 -%}
@@ -82,6 +91,7 @@
   {%- set prop_iyy = 0.0001 -%}
   {%- set prop_iyz = 0 -%}
   {%- set prop_izz = 0.0001 -%}
+  {# <!--}--> #}
 
   <model name="{{ name }}">
 
@@ -154,13 +164,13 @@
     </link>
 
     <!-- Propellers {-->
-      {{ components.prop_macro("ccw", rotor_velocity_slowdown_sim, motor_constant, moment_constant, root, mass_prop, radius_prop, time_constant_up, time_constant_down, max_rot_velocity, 0, rotor_drag_coefficient, rolling_moment_coefficient, "White", prop_mesh_file, mesh_scale_prop_ccw, arm_length * components.sin45, -arm_length * components.sin45, arm_height + prop_offset_top - body_height/2, 0, 0, 0, prop_ixx, prop_ixy, prop_ixz, prop_iyy, prop_iyz, prop_izz) }}
+    {{ components.prop_macro("ccw", rotor_velocity_slowdown_sim, motor_constant, moment_constant, root, mass_prop, radius_prop, time_constant_up, time_constant_down, max_rot_velocity, 0, rotor_drag_coefficient, rolling_moment_coefficient, "White", prop_mesh_file, mesh_scale_prop_ccw, arm_length * components.sin45, -arm_length * components.sin45, arm_height + prop_offset_top - body_height/2, 0, 0, 0, prop_ixx, prop_ixy, prop_ixz, prop_iyy, prop_iyz, prop_izz) }}
 
-      {{ components.prop_macro("ccw", rotor_velocity_slowdown_sim, motor_constant, moment_constant, root, mass_prop, radius_prop, time_constant_up, time_constant_down, max_rot_velocity, 1, rotor_drag_coefficient, rolling_moment_coefficient, "White", prop_mesh_file, mesh_scale_prop_ccw, -arm_length * components.sin45, arm_length * components.sin45, arm_height + prop_offset_top - body_height/2, 0, 0, 0, prop_ixx, prop_ixy, prop_ixz, prop_iyy, prop_iyz, prop_izz) }}
+    {{ components.prop_macro("ccw", rotor_velocity_slowdown_sim, motor_constant, moment_constant, root, mass_prop, radius_prop, time_constant_up, time_constant_down, max_rot_velocity, 1, rotor_drag_coefficient, rolling_moment_coefficient, "White", prop_mesh_file, mesh_scale_prop_ccw, -arm_length * components.sin45, arm_length * components.sin45, arm_height + prop_offset_top - body_height/2, 0, 0, 0, prop_ixx, prop_ixy, prop_ixz, prop_iyy, prop_iyz, prop_izz) }}
 
-      {{ components.prop_macro("cw", rotor_velocity_slowdown_sim, motor_constant, moment_constant, root, mass_prop, radius_prop, time_constant_up, time_constant_down, max_rot_velocity, 2, rotor_drag_coefficient, rolling_moment_coefficient, "White", prop_mesh_file, mesh_scale_prop_cw, arm_length * components.sin45, arm_length * components.sin45, arm_height + prop_offset_top - body_height/2, 0, 0, 0, prop_ixx, prop_ixy, prop_ixz, prop_iyy, prop_iyz, prop_izz) }}
+    {{ components.prop_macro("cw", rotor_velocity_slowdown_sim, motor_constant, moment_constant, root, mass_prop, radius_prop, time_constant_up, time_constant_down, max_rot_velocity, 2, rotor_drag_coefficient, rolling_moment_coefficient, "White", prop_mesh_file, mesh_scale_prop_cw, arm_length * components.sin45, arm_length * components.sin45, arm_height + prop_offset_top - body_height/2, 0, 0, 0, prop_ixx, prop_ixy, prop_ixz, prop_iyy, prop_iyz, prop_izz) }}
 
-      {{ components.prop_macro("cw", rotor_velocity_slowdown_sim, motor_constant, moment_constant, root, mass_prop, radius_prop, time_constant_up, time_constant_down, max_rot_velocity, 3, rotor_drag_coefficient, rolling_moment_coefficient, "White", prop_mesh_file, mesh_scale_prop_cw, -arm_length * components.sin45, -arm_length * components.sin45, arm_height + prop_offset_top - body_height/2, 0, 0, 0, prop_ixx, prop_ixy, prop_ixz, prop_iyy, prop_iyz, prop_izz) }}
+    {{ components.prop_macro("cw", rotor_velocity_slowdown_sim, motor_constant, moment_constant, root, mass_prop, radius_prop, time_constant_up, time_constant_down, max_rot_velocity, 3, rotor_drag_coefficient, rolling_moment_coefficient, "White", prop_mesh_file, mesh_scale_prop_cw, -arm_length * components.sin45, -arm_length * components.sin45, arm_height + prop_offset_top - body_height/2, 0, 0, 0, prop_ixx, prop_ixy, prop_ixz, prop_iyy, prop_iyz, prop_izz) }}
     <!--}-->
 
     <!-- ================================================================== -->
@@ -169,46 +179,48 @@
 
     <!-- Mavlink interface {-->
     <!-- Instantiate mavlink telemetry interface. -->
-      {{ components.mavlink_interface_macro(mavlink_addr, mavlink_udp_port, mavlink_tcp_port, serial_enabled, serial_device, serial_baudrate, qgc_addr, qgc_udp_port, sdk_addr, sdk_udp_port, hil_mode, hil_state_level, send_vision_estimation, send_odometry, use_lockstep, use_tcp) }}
+    {{ components.mavlink_interface_macro(mavlink_addr, mavlink_udp_port, mavlink_tcp_port, serial_enabled, serial_device, serial_baudrate, qgc_addr, qgc_udp_port, sdk_addr, sdk_udp_port, hil_mode, hil_state_level, send_vision_estimation, send_odometry, use_lockstep, use_tcp) }}
     <!--}-->
 
     <!-- GPS {-->
-      {{ components.gps_macro("gps0", 0, 0, 0, 10, true, 2.0, 4.0, "2.0e-4", "4.0e-4", 0.2, 0.4, root) }}
+    {{ components.gps_macro("gps0", 0, 0, 0, 10, true, 2.0, 4.0, "2.0e-4", "4.0e-4", 0.2, 0.4, root) }}
     <!--}-->
 
     <!-- Magnetometer {-->
-      {{ components.magnetometer_plugin_macro(100, 0.0004, 0.0000064, 600, "/mag") }}
+    {{ components.magnetometer_plugin_macro(100, 0.0004, 0.0000064, 600, "/mag") }}
     <!--}-->
 
     <!-- Groundtruth {-->
-      {{ components.groundtruth_plugin_macro(0, 0, 0) }}
+    {{ components.groundtruth_plugin_macro(0, 0, 0) }}
     <!--}-->
 
     <!-- Barometer {-->
-      {{ components.barometer_plugin_macro("/baro", 50, 0) }}
+    {{ components.barometer_plugin_macro("/baro", 50, 0) }}
     <!--}-->
 
     <!-- IMU (ADIS16448) {-->
-      {{ components.imu_plugin_macro("", root, "/imu", 0.00018665, 0.000038785, 1000.0, 0.0087, 0.00186, 0.006, 300.0, 0.1960, 0, 0, 0, 0, 0, 0) }}
+    {{ components.imu_plugin_macro("", root, "/imu", 0.00018665, 0.000038785, 1000.0, 0.0087, 0.00186, 0.006, 300.0, 0.1960, 0, 0, 0, 0, 0, 0) }}
     <!--}-->
 
+    {# fill the remaining optional sensors to have follwing comment in produced sdf #}
+    {%- set using_any_optional_sensor = enable_rangefinder or enable_rangefinder_up -%}
+    {% if using_any_optional_sensor %}
     <!-- ================================================================== -->
     <!-- ||                  optional sensor definitions                 || -->
     <!-- ================================================================== -->
+    {% endif %}
 
-      {% if enable_rangefinder %}
+    {% if enable_rangefinder %}
     <!-- Garmin {-->
-      {# {{ components.garmin_macro("lidar0", root, -0.077, 0, -0.069, 0, components.rad(90), 0) }} - uncomment when simulation will work with pixgarm #}
-      {{ components.external_garmin_macro(namespace, root, "", -0.077, 0, -0.069, 0, components.rad(90), 0) }}
+    {# {{ components.garmin_macro("lidar0", root, -0.077, 0, -0.069, 0, components.rad(90), 0) }} - uncomment when simulation will work with pixgarm #}
+    {{ components.external_garmin_macro(namespace, root, "", -0.077, 0, -0.069, 0, components.rad(90), 0) }}
     <!--}-->
-      {% endif %}
+    {% endif %}
 
-      {% if enable_rangefinder_up %}
+    {% if enable_rangefinder_up %}
     <!-- Garmin Up {-->
-      {{ components.external_garmin_macro(namespace, root, "_up", -0.077, 0, -0.033, 0, components.rad(-90), 0) }}
-      {% endif %}
-
-
+    {{ components.external_garmin_macro(namespace, root, "_up", -0.077, 0, -0.033, 0, components.rad(-90), 0) }}
+    {% endif %}
 
   </model>
 </sdf>
