@@ -470,9 +470,9 @@ limitations under the License.
 {%- endmacro -%}
 <!--}-->
 
-<!-- Macro to add the groundtruth_plugin{-->
-{%- macro groundtruth_plugin_macro(home_latitude, home_longitude, home_altitude) -%}
-<plugin name="groundtruth_plugin" filename="libgazebo_groundtruth_plugin.so">
+<!-- Macro to add the GPS groundtruth_plugin{-->
+{%- macro gps_groundtruth_plugin_macro(home_latitude, home_longitude, home_altitude) -%}
+<plugin name="gps_groundtruth_plugin_macro" filename="libgazebo_groundtruth_plugin.so">
   <robotNamespace/>
   <homeLatitude>{{ home_latitude }}</homeLatitude>
   <homeLongitude>{{ home_longitude }}</homeLongitude>
@@ -579,7 +579,7 @@ limitations under the License.
 <!--}-->
 
 <!-- Macro to add the odometry_plugin{-->
-{%- macro odometry_plugin_macro(odometry_sensor_name, parent_link, topic_name, noise, frame_name, frame_rate, xyz_offset, rpy_offset, x, y, z, roll, pitch, yaw) -%}
+{%- macro odometry_plugin_macro(odometry_sensor_name, parent_link, topic_name, noise, frame_name, frame_rate, x, y, z, roll, pitch, yaw) -%}
 <link name="{{ odometry_sensor_name }}_link">
   <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   {{ zero_inertial_macro() }}
@@ -605,13 +605,13 @@ limitations under the License.
   <topicName>{{ topic_name }}</topicName>
   <gaussianNoise>{{ noise }}</gaussianNoise>
   <frameName>{{ frame_name }}</frameName>
-  <xyzOffset>{{ xyz_offset }}</xyzOffset>
-  <rpyOffset>{{ rpy_offset }}</rpyOffset>
+  <xyzOffset>{{ x }} {{ y }} {{ z }}</xyzOffset>
+  <rpyOffset>{{ roll }} {{ pitch }} {{ yaw }}</rpyOffset>
 </plugin>
 {%- endmacro -%}
 <!--}-->
 
-<!-- Macro to add a rangefinder sensor plugin {-->
+<!-- Macro to add the rangefinder sensor plugin {-->
 {%- macro rangefinder_sensor_macro(name, parent_frame_name, rangefinder_frame_name, topic, frame_rate, fov, min_distance, max_distance, resolution, noise, x, y, z, roll, pitch, yaw) -%}
 <sensor name="{{ name }}" type='ray'>
   <update_rate>{{ frame_rate }}</update_rate>

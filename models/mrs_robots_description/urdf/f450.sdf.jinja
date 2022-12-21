@@ -581,8 +581,8 @@
     }}
     <!--}-->
 
-    <!-- Groundtruth {-->
-    {{ components.groundtruth_plugin_macro(
+    <!-- GPS groundtruth {-->
+    {{ components.gps_groundtruth_plugin_macro(
       home_latitude = 0,
       home_longitude = 0,
       home_altitude = 0)
@@ -619,13 +619,30 @@
     }}
     <!--}-->
 
-    {# fill the remaining optional sensors to have follwing comment in produced sdf #}
-    {%- set using_any_optional_sensor = enable_rangefinder or enable_rangefinder_up -%}
-    {% if using_any_optional_sensor %}
     <!-- ================================================================== -->
     <!-- ||                  optional sensor definitions                 || -->
     <!-- ================================================================== -->
+
+    {% if enable_ground_truth %}
+    <!-- Ground truth {-->
+    {{ components.odometry_plugin_macro(
+      odometry_sensor_name = "ground_truth",
+      parent_link = "base_link",
+      topic_name = "ground_truth",
+      noise = "0",
+      frame_name = "world",
+      frame_rate = "150",
+      x = 0,
+      y = 0,
+      z = 0,
+      roll = 0,
+      pitch = 0,
+      yaw = 0)
+    }}
+    <!--}-->
     {% endif %}
+
+  <!-- ======================= rangefinder sensors ======================-->
 
     {% if enable_rangefinder %}
     <!-- Garmin {-->
