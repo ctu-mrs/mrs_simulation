@@ -677,5 +677,20 @@
     <!--}-->
     {% endif %}
 
+    {% if enable_teraranger %}
+    <!-- Teraranger One {-->
+    {{ components.teraranger_macro(
+      namespace = namespace,
+      parent_link = root,
+      x = 0.08,
+      y = 0,
+      z = -0.05,
+      roll = 0,
+      pitch = components.rad(90),
+      yaw = 0)
+    }}
+    <!--}-->
+    {% endif %}
+
   </model>
 </sdf>

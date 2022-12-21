@@ -1022,3 +1022,48 @@ limitations under the License.
 </joint>
 {%- endmacro -%}
 <!--}-->
+
+<!-- Macro to add a Teraranger One {-->
+{%- macro teraranger_macro(namespace, parent_link, x, y, z, roll, pitch, yaw) -%}
+<link name="teraranger_link">
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
+  {{ zero_inertial_macro() }}
+  <visual name="teraranger_link_visual">
+    <geometry>
+      <box>
+        <size>0.015 0.027 0.033</size>
+      </box>
+    </geometry>
+    <material>
+      <script>
+        <name>Gazebo/Yellow</name>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+      </script>
+    </material>
+  </visual>
+  {{ rangefinder_sensor_macro(
+    name = "teraranger",
+    parent_frame_name = namespace + "/fcu",
+    rangefinder_frame_name = namespace + "/teraranger",
+    topic = "teraranger/range",
+    frame_rate = 100,
+    fov = 0.03,
+    min_distance = 0.1,
+    max_distance = 14,
+    resolution = 0.005,
+    noise = 0.04,
+    x = x,
+    y = y,
+    z = z,
+    roll = roll,
+    pitch = pitch,
+    yaw = yaw)
+  }}
+</link>
+
+<joint name="teraranger_joint" type="fixed">
+  <parent>{{ parent_link }}</parent>
+  <child>teraranger_link</child>
+</joint>
+{%- endmacro -%}
+<!--}-->
