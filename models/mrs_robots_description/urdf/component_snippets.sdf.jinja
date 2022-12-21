@@ -74,22 +74,20 @@ limitations under the License.
 <!-- ||                          code blocks                         || -->
 <!-- ================================================================== -->
 
-<!-- Pose macro {-->
-{%- macro pose_macro(x, y, z, roll, pitch, yaw) -%}
-<pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
-{%- endmacro -%}
-<!--}-->
-
-<!-- Inertia macro {-->
-{%- macro inertia_macro(ixx, ixy, ixz, iyy, iyz, izz) -%}
-<inertia>
-  <ixx>{{ ixx }}</ixx>
-  <ixy>{{ ixy }}</ixy>
-  <ixz>{{ ixz }}</ixz>
-  <iyy>{{ iyy }}</iyy>
-  <iyz>{{ iyz }}</iyz>
-  <izz>{{ izz }}</izz>
-</inertia>
+<!-- Zero inertial macro {-->
+{# macro to place the lowest mass and intertia that gazebo allows #}
+{%- macro zero_inertial_macro() -%}
+<inertial>
+  <mass>0.0001</mass>  <!-- [kg] -->
+  <inertia>
+    <ixx>1e-7</ixx>
+    <ixy>0</ixy>
+    <ixz>0</ixz>
+    <iyy>1e-7</iyy>
+    <iyz>0</iyz>
+    <izz>1e-7</izz>
+  </inertia>
+</inertial>
 {%- endmacro -%}
 <!--}-->
 
@@ -113,11 +111,8 @@ limitations under the License.
 <!-- Colored box {-->
 {%- macro colored_box(name, size_x, size_y, size_z, color, parent, x, y, z, roll, pitch, yaw) -%}
 <link name="{{ name }}_link">
-  <inertial>
-    <mass>0.0001</mass>  <!-- [kg] -->
-    {{ inertia_macro(ixx = "1e-7", ixy = 0, ixz = 0, iyy = "1e-7", iyz = 0, izz = "1e-7") }}
-  </inertial>
-  {{ pose_macro(x = x, y = y, z = z, roll = roll, pitch = pitch, yaw = yaw) }}
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
+  {{ zero_inertial_macro() }}
   <visual name="{{ name }}_link_visual">
     <geometry>
       <box>
@@ -143,7 +138,7 @@ limitations under the License.
 <!-- Visual macro (generic mesh) {-->
 {%- macro visual_macro(name, mesh_file, mesh_scale, color, parent, x, y, z, roll, pitch, yaw) -%}
 <visual name="{{ name }}_visual">
-{{ pose_macro(x = x, y = y, z = z, roll = roll, pitch = pitch, yaw = yaw) }}
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   <geometry>
     <mesh>
       <uri>{{ mesh_file }}</uri>
@@ -162,9 +157,21 @@ limitations under the License.
 
 <!-- Leg macro {-->
 {%- macro leg_macro(name, mesh_file, mesh_scale, color, parent, x, y, z, roll, pitch, yaw, collision_height, collision_radius) -%}
-{{ visual_macro(name = name, mesh_file = mesh_file, mesh_scale = mesh_scale, color = color, parent = parent, x = x, y = y, z = z, roll = roll, pitch = pitch, yaw = yaw) }}
+{{ visual_macro(
+  name = name,
+  mesh_file = mesh_file,
+  mesh_scale = mesh_scale,
+  color = color,
+  parent = parent,
+  x = x,
+  y = y,
+  z = z,
+  roll = roll,
+  pitch = pitch,
+  yaw = yaw)
+}}
 <collision name="{{ name }}_link_collision">
-  {{ pose_macro(x = x, y = y, z = z, roll = roll, pitch = pitch, yaw = yaw) }}
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   <geometry>
     <cylinder>
       <length>{{ collision_height }}</length>
@@ -189,10 +196,17 @@ limitations under the License.
 <!-- Prop macro {-->
 {%- macro prop_macro(direction, rotor_velocity_slowdown_sim, motor_constant, moment_constant, parent, mass, radius, time_constant_up, time_constant_down, max_rot_velocity, motor_number, rotor_drag_coefficient, rolling_moment_coefficient, color, mesh_file, mesh_scale, x, y, z, roll, pitch, yaw, ixx, ixy, ixz, iyy, iyz, izz) -%}
 <link name="prop_{{ motor_number }}_link">
-  {{ pose_macro(x = x, y = y, z = z, roll = roll, pitch = pitch, yaw = yaw) }}
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   <inertial>
     <mass>{{ mass }}</mass>
-    {{ inertia_macro(ixx = ixx, ixy = ixy, ixz = ixz, iyy = iyy, iyz = iyz, izz = izz) }}
+    <inertia>
+      <ixx>{{ ixx }}</ixx>
+      <ixy>{{ ixy }}</ixy>
+      <ixz>{{ ixz }}</ixz>
+      <iyy>{{ iyy }}</iyy>
+      <iyz>{{ iyz }}</iyz>
+      <izz>{{ izz }}</izz>
+    </inertia>
   </inertial>
   <visual name="prop_{{ motor_number }}_link_visual">
     <geometry>
@@ -267,10 +281,24 @@ limitations under the License.
 {%- macro multirotor_physics_macro(mass, body_radius, body_height, rotor_velocity_slowdown_sim, ixx, ixy, ixz, iyy, iyz, izz) -%}
 <inertial>
   <mass>{{ mass }}</mass>  <!-- [kg] -->
-  {{ inertia_macro(ixx = ixx, ixy = ixy, ixz = ixz, iyy = iyy, iyz = iyz, izz = izz) }}
+  <inertia>
+    <ixx>{{ ixx }}</ixx>
+    <ixy>{{ ixy }}</ixy>
+    <ixz>{{ ixz }}</ixz>
+    <iyy>{{ iyy }}</iyy>
+    <iyz>{{ iyz }}</iyz>
+    <izz>{{ izz }}</izz>
+  </inertia>
 </inertial>
 <collision name="base_link_collision">
-  {{ pose_macro(x = 0, y = 0, z = - body_height / 2, roll = 0, pitch = 0, yaw = 0) }}
+  <pose>
+    <x>0</x>
+    <y>0</y>
+    <z>{{ - body_height / 2 }}</z>
+    <roll>0</roll>
+    <pitch>0</pitch>
+    <yaw>0</yaw>
+  </pose>
   <geometry>
     <cylinder>
       <length>{{ body_height }}</length>
@@ -306,7 +334,7 @@ limitations under the License.
 
 <!-- Macro to add the mavlink_interface_plugin{-->
 {%- macro mavlink_interface_macro(mavlink_addr, mavlink_udp_port, mavlink_tcp_port, serial_enabled, serial_device, baudrate, qgc_addr, qgc_udp_port, sdk_addr, sdk_udp_port, hil_mode, hil_state_level, send_vision_estimation, send_odometry, enable_lockstep, use_tcp) -%}
-<plugin name="mavlink_interface" filename="libgazebo_mavlink_interface.so">
+<plugin name="mavlink_interface_plugin" filename="libgazebo_mavlink_interface.so">
   <robotNamespace/>
   <imuSubTopic>/imu</imuSubTopic>
   <magSubTopic>/mag</magSubTopic>
@@ -399,17 +427,12 @@ limitations under the License.
 <!--}-->
 
 <!-- Macro to add the gps_plugin {-->
-{%- macro gps_macro(gps_name, pos_x, pos_y, pos_z, update_rate, gps_noise, gps_xy_random_walk, gps_z_random_walk, gps_xy_noise_density, gps_z_noise_density, gps_vxy_noise_density, gps_vz_noise_density, parent_link) -%}
+{%- macro gps_macro(gps_name, parent_link, update_rate, gps_noise, gps_xy_random_walk, gps_z_random_walk, gps_xy_noise_density, gps_z_noise_density, gps_vxy_noise_density, gps_vz_noise_density, x, y, z, roll, pitch, yaw) -%}
 <model name="{{ gps_name }}">
   <link name="link">
-    <pose>0 0 0 0 0 0</pose>
-    <inertial>
-      <pose>0 0 0 0 0 0</pose>
-      <mass>0.0001</mass> 
-      {{ inertia_macro(ixx = "1e-7", ixy = 0, ixz = 0, iyy = "1e-7", iyz = 0, izz = "1e-7") }}
-    </inertial>
+    <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
+    {{ zero_inertial_macro() }}
     <sensor name="gps" type="gps">
-      <pose>0 0 0 0 0 0</pose>
       <plugin name="gps_plugin" filename="libgazebo_gps_plugin.so">
         <robotNamespace/>
         <update_rate>{{ update_rate }}</update_rate>
@@ -470,17 +493,14 @@ limitations under the License.
 <!--}-->
 
 <!-- Macro to add the imu_plugin{-->
-{%- macro imu_plugin_macro(imu_suffix, parent_link, imu_topic, gyroscope_noise_density, gyroscope_random_walk, gyroscope_bias_correlation_time, gyroscope_turn_on_bias_sigma, accelerometer_noise_density, accelerometer_random_walk, accelerometer_bias_correlation_time, accelerometer_turn_on_bias_sigma, x, y, z, roll, pitch, yaw) -%}
-<link name="imu{{ imu_suffix }}_link">
-  <inertial>
-    <mass>0.0001</mass> 
-    {{ inertia_macro(ixx = "1e-7", ixy = 0, ixz = 0, iyy = "1e-7", iyz = 0, izz = "1e-7") }}
-  </inertial>
+{%- macro imu_plugin_macro(imu_name, parent_link, imu_topic, gyroscope_noise_density, gyroscope_random_walk, gyroscope_bias_correlation_time, gyroscope_turn_on_bias_sigma, accelerometer_noise_density, accelerometer_random_walk, accelerometer_bias_correlation_time, accelerometer_turn_on_bias_sigma, x, y, z, roll, pitch, yaw) -%}
+<link name="{{ imu_name }}_link">
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
+  {{ zero_inertial_macro() }}
 </link>
-<joint name="imu{{ imu_suffix }}_joint" type="revolute">
-  {{ pose_macro(x = x, y = y, z = z, roll = roll, pitch = pitch, yaw = yaw) }}
+<joint name="{{ imu_name }}_joint" type="revolute">
   <parent>{{ parent_link }}</parent>
-  <child>imu{{ imu_suffix }}_link</child>
+  <child>{{ imu_name }}_link</child>
   <axis>
     <xyz>0 0 1</xyz>
     <limit>
@@ -492,11 +512,11 @@ limitations under the License.
     <use_parent_model_frame>1</use_parent_model_frame>
   </axis>
 </joint>
-<plugin filename="libgazebo_imu_plugin.so" name="rotors_gazebo_imu{{ imu_suffix }}_plugin">
+<plugin filename="libgazebo_imu_plugin.so" name="{{ imu_name }}_plugin">
 <!-- A good description of the IMU parameters can be found in the kalibr documentation:
      https://github.com/ethz-asl/kalibr/wiki/IMU-Noise-Model-and-Intrinsics -->
   <robotNamespace/> <!-- (string, required): ros namespace in which the messages are published -->
-  <linkName>imu{{ imu_suffix }}_link</linkName> <!-- (string, required): name of the body which holds the IMU sensor -->
+  <linkName>{{ imu_name }}_link</linkName> <!-- (string, required): name of the body which holds the IMU sensor -->
   <imuTopic>{{ imu_topic }}</imuTopic> <!-- (string): name of the sensor output topic and prefix of service names (defaults to imu) -->
   <gyroscopeNoiseDensity>{{ gyroscope_noise_density }}</gyroscopeNoiseDensity> <!-- Gyroscope noise density (two-sided spectrum) [rad/s/sqrt(Hz)] -->
   <gyroscopeRandomWalk>{{ gyroscope_random_walk }}</gyroscopeRandomWalk> <!-- Gyroscope bias random walk [rad/s/s/sqrt(Hz)] -->
@@ -511,17 +531,13 @@ limitations under the License.
 <!--}-->
 
 <!-- Macro to add imu with configurable rate {-->
-{%- macro custom_imu_macro(parent_link, sensor_name, update_rate, topic_name, noise_mean, x, y, z, roll, pitch, yaw) -%}
+{%- macro custom_imu_macro(sensor_name, parent_link, update_rate, topic_name, noise_mean, x, y, z, roll, pitch, yaw) -%}
 <link name="{{ sensor_name }}_link">
-  <inertial>
-    <pose>0 0 0 0 0 0</pose>
-    <mass>0.0001</mass> 
-    {{ inertia_macro(ixx = "1e-7", ixy = 0, ixz = 0, iyy = "1e-7", iyz = 0, izz = "1e-7") }}
-  </inertial>
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
+  {{ zero_inertial_macro() }}
 </link>
 
 <joint name="{{ sensor_name }}_joint" type="fixed">
-  {{ pose_macro(x = x, y = y, z = z, roll = roll, pitch = pitch, yaw = yaw) }}
   <parent>{{ parent_link }}</parent>
   <child>{{ sensor_name }}_link</child>
 </joint>
@@ -541,7 +557,6 @@ limitations under the License.
     <frameName>{{ parent_link }}</frameName>
     <initialOrientationAsReference>false</initialOrientationAsReference>
   </plugin>
-  <pose>0 0 0 0 0 0</pose>
 </sensor>
 {%- endmacro -%}
 <!--}-->
@@ -564,17 +579,14 @@ limitations under the License.
 <!--}-->
 
 <!-- Macro to add the odometry_plugin{-->
-{%- macro odometry_plugin_macro(odometry_sensor_suffix, parent_link, topic_name, mass_odometry_sensor, noise, frame_name, frame_rate, xyz_offset, rpy_offset, x, y, z, roll, pitch, yaw, ixx, ixy, ixz, iyy, iyz, izz) -%}
-<link name="odometry_sensor{{ odometry_sensor_suffix }}_link">
-  {{ pose_macro(x = x, y = y, z = z, roll = roll, pitch = pitch, yaw = yaw) }}
-  <inertial>
-    <mass>{{ mass_odometry_sensor }}</mass> 
-    {{ inertia_macro(ixx = ixx, ixy = ixy, ixz = ixz, iyy = iyy, iyz = iyz, izz = izz) }}
-  </inertial>
+{%- macro odometry_plugin_macro(odometry_sensor_name, parent_link, topic_name, noise, frame_name, frame_rate, xyz_offset, rpy_offset, x, y, z, roll, pitch, yaw) -%}
+<link name="{{ odometry_sensor_name }}_link">
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
+  {{ zero_inertial_macro() }}
 </link>
-<joint name="odometry_sensor{{ odometry_sensor_suffix }}_joint" type="revolute">
+<joint name="{{ odometry_sensor_name }}_joint" type="revolute">
   <parent>{{ parent_link }}</parent>
-  <child>odometry_sensor{{ odometry_sensor_suffix }}_link</child>
+  <child>{{ odometry_sensor_name }}_link</child>
   <axis>
     <xyz>0 0 1</xyz>
     <limit>
@@ -586,10 +598,10 @@ limitations under the License.
     <use_parent_model_frame>1</use_parent_model_frame>
   </axis>
 </joint>
-<plugin filename="libgazebo_ros_p3d.so" name="odometry_sensor{{ odometry_sensor_suffix }}">
+<plugin filename="libgazebo_ros_p3d.so" name="{{ odometry_sensor_name }}">
   <alwaysOn>true</alwaysOn>
   <updateRate>{{ frame_rate }}</updateRate>
-  <bodyName>odometry_sensor{{ odometry_sensor_suffix }}_link</bodyName>
+  <bodyName>{{ odometry_sensor_name }}_link</bodyName>
   <topicName>{{ topic_name }}</topicName>
   <gaussianNoise>{{ noise }}</gaussianNoise>
   <frameName>{{ frame_name }}</frameName>
@@ -649,6 +661,7 @@ limitations under the License.
 
 <!-- visual links and joints {-->
 <link name="camera_{{ camera_suffix }}_link">
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   <visual name="camera_{{ camera_suffix }}_link_visual">
   <material>
       <script>
@@ -660,12 +673,15 @@ limitations under the License.
 </link>
 
 <link name="camera_{{ camera_suffix }}_infra1_link">
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
 </link>
 
 <link name="camera_{{ camera_suffix }}_infra2_link">
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
 </link>
 
 <link name="camera_{{ camera_suffix }}_glass_link">
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   <!-- <xacro:insert_block name="visual_glass" /> -->
   <visual name="camera_{{ camera_suffix }}_link_visual">
   <material>
@@ -678,25 +694,21 @@ limitations under the License.
 </link>
 
 <joint name="camera_{{ camera_suffix }}_joint" type="fixed">
-  {{ pose_macro(x, y, z, roll, pitch, yaw)  }} }}
   <parent>{{ parent_link }}</parent>
   <child>camera_{{ camera_suffix }}_link</child>
 </joint>
 
 <joint name="camera_{{ camera_suffix }}_infra1_joint" type="fixed">
-  {{ pose_macro(x, y, z, roll, pitch, yaw)  }} }}
   <parent>camera_{{ camera_suffix }}_link"</parent>
   <child>camera_{{ camera_suffix }}_infra1_link"</child>
 </joint>
 
 <joint name="camera_{{ camera_suffix }}_infra2_joint" type="fixed">
-  {{ pose_macro(x, y, z, roll, pitch, yaw)  }} }}
   <parent>camera_{{ camera_suffix }}_link</parent>
   <child>camera_{{ camera_suffix }}_infra2_link</child>
 </joint>
 
 <joint name="camera_{{ camera_suffix }}_glass_joint" type="fixed">
-  {{ pose_macro(x, y, z, roll, pitch, yaw)  }} }}
   <parent>{{ parent_link }}</parent>
   <child>camera_{{ camera_suffix }}_glass_link</child>
 </joint>
@@ -755,7 +767,7 @@ limitations under the License.
 <!-- Macro to add the camera_plugin {-->
 {%- macro camera_macro(parent_link, camera_suffix, camera_frame_name, sensor_base_frame_name, frame_rate, parent_frame_name, horizontal_fov, image_width, image_height, min_distance, max_distance, x, y, z, roll, pitch, yaw, noise_mean, noise_stddev) -%}
 <link name="camera_{{ camera_suffix }}_link">
-  {{ pose_macro(x, y, z, roll, pitch, yaw) }}
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   <visual name="camera_{{ camera_suffix }}_link_visual">
   <material>
       <script>
@@ -821,7 +833,7 @@ limitations under the License.
 <!-- Macro to add the fisheye_camera_plugin {-->
 {%- macro fisheye_macro(parent_link, camera_suffix, camera_frame_name, sensor_base_frame_name, frame_rate, parent_frame_name, horizontal_fov, image_width, image_height, min_distance, max_distance, lens_type, lens_c1, lens_c2, lens_f, lens_fun, lens_scale, lens_cutoff_angle, lens_texture_size, x, y, z, roll, pitch, yaw, noise_mean, noise_stddev) -%}
 <link name="camera_{{ camera_suffix }}_link">
-  {{ pose_macro(x, y, z, roll, pitch, yaw) }}
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   <visual name="camera_{{ camera_suffix }}_link_visual">
   <material>
       <script>
@@ -907,11 +919,8 @@ limitations under the License.
 <!-- Macro to add a garmin (connected to the pixhawk) {-->
 {%- macro garmin_macro(sensor_name, parent_link, x, y, z, roll, pitch, yaw) -%}
 <link name="{{ sensor_name }}::link">
-  {{ pose_macro(x, y, z, roll, pitch, yaw) }}
-  <inertial>
-    <mass>0.0001</mass>  <!-- [kg] -->
-    {{ inertia_macro("1e-7",0,0,"1e-7",0,"1e-7") }}
-  </inertial>
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
+  {{ zero_inertial_macro() }}
   <visual name="garmin_link_visual">
     <origin xyz="0.015 0 0" rpy="0 0 0" />
     <geometry>
@@ -970,11 +979,8 @@ limitations under the License.
 <!-- Orientation empty for down looking garmin, _up for upward looking sensor -->
 {%- macro external_garmin_macro(namespace, parent_link, orientation, x, y, z, roll, pitch, yaw) -%}
 <link name="garmin{{ orientation }}_link">
-  {{ pose_macro(x, y, z, roll, pitch, yaw) }}
-  <inertial>
-    <mass>0.0001</mass>  <!-- [kg] -->
-    {{ inertia_macro("1e-7",0,0,"1e-7",0,"1e-7") }}
-  </inertial>
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
+  {{ zero_inertial_macro() }}
   <visual name="garmin{{ orientation }}_link_visual">
     <origin xyz="0.015 0 0" rpy="0 0 0" />
     <geometry>
@@ -990,7 +996,24 @@ limitations under the License.
       </script>
     </material>
   </visual>
-  {{ rangefinder_sensor_macro("garmin" + orientation, namespace + "/fcu", namespace + "/garmin" + orientation, "garmin" + orientation + "/range", 100, 0.03, 0.1, 40.0, 0.005, 0.01, x, y, z, roll, pitch, yaw) }}
+  {{ rangefinder_sensor_macro(
+    name = "garmin" + orientation,
+    parent_frame_name = namespace + "/fcu",
+    rangefinder_frame_name = namespace + "/garmin" + orientation,
+    topic = "garmin" + orientation + "/range",
+    frame_rate = 100,
+    fov = 0.03,
+    min_distance = 0.1,
+    max_distance = 40.0,
+    resolution = 0.005,
+    noise = 0.01,
+    x = x,
+    y = y,
+    z = z,
+    roll = roll,
+    pitch = pitch,
+    yaw = yaw)
+  }}
 </link>
 
 <joint name="garmin{{ orientation }}_joint" type="fixed">

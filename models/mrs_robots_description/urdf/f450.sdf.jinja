@@ -553,9 +553,7 @@
     <!-- GPS {-->
     {{ components.gps_macro(
       gps_name = "gps0",
-      pos_x = 0,
-      pos_y = 0,
-      pos_z = 0,
+      parent_link = root,
       update_rate = 10,
       gps_noise = true,
       gps_xy_random_walk = 2.0,
@@ -564,7 +562,12 @@
       gps_z_noise_density = "4.0e-4",
       gps_vxy_noise_density = 0.2,
       gps_vz_noise_density = 0.4,
-      parent_link = root)
+      x = 0,
+      y = 0,
+      z = 0,
+      roll = 0,
+      pitch = 0,
+      yaw = 0)
     }}
     <!--}-->
 
@@ -596,7 +599,7 @@
 
     <!-- IMU {-->
     {{ components.imu_plugin_macro(
-      imu_suffix = "",
+      imu_name = "imu",
       parent_link = root,
       imu_topic = "/imu",
       gyroscope_noise_density = 0.00018665,
