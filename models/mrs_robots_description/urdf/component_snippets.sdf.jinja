@@ -1271,3 +1271,127 @@ limitations under the License.
 </joint>
 {%- endmacro -%}
 <!--}-->
+
+<!-- Macro to add a Velodyne Lidar {-->
+{%- macro velodyne_macro(namespace, parent_link, sensor_name, rot_freq, lasers, max_range, noise, vfov_angle, enable_gpu_ray, x, y, z, roll, pitch, yaw) -%}
+
+{%- set topic_lidar = "/" + namespace + "/" + sensor_name + "/scan" -%}
+{%- set topic_diag = "/" + namespace + "/" + sensor_name + "/diag" -%}
+{%- set frame_sensor = namespace + "/" + sensor_name + "_sensor" -%}
+{%- set frame_lidar = namespace + "/" + sensor_name  -%}
+{%- set frame_fcu = namespace + "/fcu" -%}
+
+{% if enable_gpu_ray %}
+  {%- set velodyne_plugin_filename ="libMRSGazebo3DLidarGpuPlugin.so" -%}
+  {%- set sensor_type = "gpu_ray"  -%}
+{% else %}
+  {%- set velodyne_plugin_filename ="libMRSGazebo3DLidarPlugin.so" -%}
+  {%- set sensor_type = "ray"  -%}
+{% endif %}
+
+<link name="velodyne_link">
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
+  {{ zero_inertial_macro() }}
+  <visual name="velodyne_base_visual">
+    <pose>0 0 0.0094 0 0 0</pose>
+    <geometry>
+      <cylinder>
+        <length>0.0188</length>
+        <radius>0.062</radius>
+      </cylinder>
+    </geometry>
+    <material>
+      <script>
+        <name>Gazebo/FlatBlack</name>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+      </script>
+    </material>
+  </visual>
+  <visual name="velodyne_top_visual">
+    <pose>0 0 0.0643 0 0 0</pose>
+    <geometry>
+      <cylinder>
+        <length>0.0148</length>
+        <radius>0.062</radius>
+      </cylinder>
+    </geometry>
+    <material>
+      <script>
+        <name>Gazebo/FlatBlack</name>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+      </script>
+    </material>
+  </visual>
+  <visual name="velodyne_window_visual">
+    <pose>0 0 0.03785 0 0 0</pose>
+    <geometry>
+      <cylinder>
+        <length>0.0381</length>
+        <radius>0.058</radius>
+      </cylinder>
+    </geometry>
+    <material>
+      <script>
+        <name>Gazebo/Blue</name>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+      </script>
+    </material>
+  </visual>
+  <sensor type="{{ sensor_type }}" name="{{ frame_sensor }}">
+    <!-- The laser rays should be coming approximately from the half of sensor height -->
+    <pose>0.0 0.0 0.037725 0.0 0.0 0.0</pose>
+    <visualize>false</visualize>
+    <update_rate>{{ rot_freq }}</update_rate>
+    <ray>
+      <scan>
+        <horizontal>
+          <samples>{{ 291200/(rot_freq*lasers) }}</samples>
+          <resolution>1</resolution>
+          <min_angle>{{ -rad180 }}</min_angle>
+          <max_angle>{{ rad180 }}</max_angle>
+        </horizontal>
+        <vertical>
+          <samples>{{ lasers }}</samples>
+          <resolution>1</resolution>
+          <min_angle>{{ -vfov_angle/2*rad180/180.0 }}</min_angle>
+          <max_angle>{{ vfov_angle/2*rad180/180.0 }}</max_angle>
+        </vertical>
+      </scan>
+      <range>
+        <min>0.1</min>
+        <max>{{ max_range }}</max>
+        <resolution>0.03</resolution>
+      </range>
+    </ray>
+    <plugin name="gazebo_ros_laser_controller" filename="{{ velodyne_plugin_filename }}">
+      <parentFrameName>{{ frame_fcu }}</parentFrameName>
+      <sensorFrameName>{{ frame_sensor }}</sensorFrameName>
+      <sensor_x>{{ x }}</sensor_x>
+      <sensor_y>{{ y }}</sensor_y>
+      <sensor_z>{{ z }}</sensor_z>
+      <sensor_roll>{{ roll }}</sensor_roll>
+      <sensor_pitch>{{ pitch }}</sensor_pitch>
+      <sensor_yaw>{{ yaw }}</sensor_yaw>
+      <lidar_x>0</lidar_x>
+      <lidar_y>0</lidar_y>
+      <lidar_z>0.037725</lidar_z>
+      <lidar_roll>0</lidar_roll>
+      <lidar_pitch>0</lidar_pitch>
+      <lidar_yaw>0</lidar_yaw>
+      <topicName>{{ topic_lidar }}</topicName>
+      <topicDiagName>{{ topic_diag }}</topicDiagName>
+      <lidarFrameName>{{ frame_lidar }}</lidarFrameName>
+      <min_range>0.1</min_range>
+      <max_range>{{ max_range }}</max_range>
+      <gaussianNoise>{{ noise }}</gaussianNoise>
+      <imu>false</imu>
+    </plugin>
+  </sensor>
+</link>
+
+<joint name="velodyne_joint" type="fixed">
+  <parent>{{ parent_link }}</parent>
+  <child>velodyne_link</child>
+</joint>
+{%- endmacro -%}
+<!--}-->
