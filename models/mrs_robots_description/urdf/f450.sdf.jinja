@@ -692,5 +692,22 @@
     <!--}-->
     {% endif %}
 
+    <!-- ========================== LIDAR sensors ========================= -->
+
+    {% if enable_scanse_sweep %}
+    <!-- Scanse Sweep {-->
+    {{ components.scanse_sweep_macro(
+      namespace = namespace,
+      parent_link = root,
+      x = 0.0,
+      y = 0.0,
+      z = 0.113,
+      roll = 0,
+      pitch = 0,
+      yaw = 0)
+    }}
+    <!--}-->
+    {% endif %}
+
   </model>
 </sdf>
