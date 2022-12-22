@@ -2,8 +2,7 @@
 
 <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
 <!-- !!    THIS DOCUMENT CONTAINS ONLY COMMON COMPONENTS MACRO AND    !! -->
-<!-- !!    PARAMETERS DEFINITIONS. IT SHOULD NOT CONTAIN ANY          !! -->
-<!-- !!                  ARGUMENTS "$(arg ...)"                       !! -->
+<!-- !!  PARAMETERS DEFINITIONS. IT SHOULD NOT CONTAIN ANY ARGUMENTS. !! -->
 <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
 
 <!-- License {-->
@@ -78,7 +77,7 @@ limitations under the License.
 {# macro to place the lowest mass and intertia that gazebo allows #}
 {%- macro zero_inertial_macro() -%}
 <inertial>
-  <mass>0.0001</mass>  <!-- [kg] -->
+  <mass>0.0001</mass>
   <inertia>
     <ixx>1e-7</ixx>
     <ixy>0</ixy>
@@ -280,7 +279,7 @@ limitations under the License.
 <!-- Multirotor physics macro {-->
 {%- macro multirotor_physics_macro(mass, body_radius, body_height, rotor_velocity_slowdown_sim, ixx, ixy, ixz, iyy, iyz, izz) -%}
 <inertial>
-  <mass>{{ mass }}</mass>  <!-- [kg] -->
+  <mass>{{ mass }}</mass>
   <inertia>
     <ixx>{{ ixx }}</ixx>
     <ixy>{{ ixy }}</ixy>
