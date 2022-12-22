@@ -1192,3 +1192,82 @@ limitations under the License.
 </joint>
 {%- endmacro -%}
 <!--}-->
+
+  <!-- Macro to add a RPlidar A3{-->
+{%- macro rplidar_macro(namespace, parent_link, x, y, z, roll, pitch, yaw) -%}
+<link name="rplidar_link">
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
+  {{ zero_inertial_macro() }}
+  <visual name="rplidar_base_visual">
+    <pose>0 0 -0.029 0 0 {{ rad180 }}</pose>
+    <geometry>
+      <mesh>
+        <uri>model://mrs_robots_description/meshes/sensors/rplidar.stl</uri>
+        <scale>0.001 0.001 0.001</scale>
+      </mesh>
+    </geometry>
+    <material>
+      <script>
+        <name>Gazebo/FlatBlack</name>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+      </script>
+    </material>
+  </visual>
+  <visual name="rplidar_base_purple_visual">
+    <pose>0 0 -0.011 0 0 0</pose>
+    <geometry>
+      <cylinder>
+        <length>0.001</length>
+        <radius>0.038</radius>
+      </cylinder>
+    </geometry>
+    <material>
+      <script>
+        <name>Gazebo/Purple</name>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+      </script>
+    </material>
+  </visual>
+  <sensor name='rplidar' type='ray'>
+    <visualize>false</visualize>
+    <update_rate>20</update_rate>
+    <ray>
+      <scan>
+        <horizontal>
+          <samples>{{ 14400/20 }}</samples>
+          <resolution>1</resolution>
+          <min_angle>-3.1241390751</min_angle>
+          <max_angle>3.1241390751</max_angle>
+        </horizontal>
+      </scan>
+      <range>
+        <min>0.15</min>
+        <max>14</max>
+        <resolution>0.01</resolution>
+      </range>
+      <noise>
+        <type>gaussian</type>
+        <mean>0.0</mean>
+        <stddev>0.01</stddev>
+      </noise>
+    </ray>
+    <plugin name='mrs_gazebo_2dlidar' filename='libMRSGazebo2DLidarPlugin.so'>
+        <topicName>rplidar/scan</topicName>
+        <frameName>{{ namespace }}/rplidar</frameName>
+        <parentFrameName>{{ namespace }}/fcu</parentFrameName>
+        <x>{{ x }}</x>
+        <y>{{ y }}</y>
+        <z>{{ z }}</z>
+        <roll>{{ roll }}</roll>
+        <pitch>{{ pitch }}</pitch>
+        <yaw>{{ yaw }}</yaw>
+      </plugin>
+    </sensor>
+</link>
+
+<joint name="rplidar_joint" type="fixed">
+  <parent>{{ parent_link }}</parent>
+  <child>rplidar_link</child>
+</joint>
+{%- endmacro -%}
+<!--}-->
