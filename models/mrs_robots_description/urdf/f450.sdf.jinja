@@ -124,7 +124,6 @@
         mesh_file = central_board_mesh_bottom,
         mesh_scale = mesh_scale,
         color = "DarkGrey",
-        parent = root,
         x = 0,
         y = 0,
         z = - body_height / 2,
@@ -138,7 +137,6 @@
         mesh_file = central_board_mesh_top,
         mesh_scale = mesh_scale,
         color = "DarkGrey",
-        parent = root,
         x = 0,
         y = 0,
         z = arm_height - body_height / 2,
@@ -154,7 +152,6 @@
         mesh_file = arm_mesh_file,
         mesh_scale = mesh_scale,
         color = "White",
-        parent = root,
         x = board_radius * components.sin45,
         y = -board_radius * components.sin45,
         z = arm_height - body_height / 2,
@@ -168,7 +165,6 @@
         mesh_file = arm_mesh_file,
         mesh_scale = mesh_scale,
         color = "White",
-        parent = root,
         x = board_radius * components.sin45,
         y = board_radius * components.sin45,
         z = arm_height - body_height / 2,
@@ -182,7 +178,6 @@
         mesh_file = arm_mesh_file,
         mesh_scale = mesh_scale,
         color = "Red",
-        parent = root,
         x = -board_radius * components.sin45,
         y = -board_radius * components.sin45,
         z = arm_height - body_height / 2,
@@ -196,7 +191,6 @@
         mesh_file = arm_mesh_file,
         mesh_scale = mesh_scale,
         color = "Red",
-        parent = root,
         x = -board_radius * components.sin45,
         y = board_radius * components.sin45,
         z = arm_height - body_height / 2,
@@ -212,7 +206,6 @@
         mesh_file = nuc_mesh_file,
         mesh_scale = mesh_scale_milimeters,
         color = "DarkGrey",
-        parent = root,
         x = 0,
         y = 0,
         z = 0.023,
@@ -228,7 +221,6 @@
         mesh_file = pixhawk_mesh_file,
         mesh_scale = mesh_scale,
         color = "DarkGrey",
-        parent = root,
         x = 0,
         y = 0,
         z = -body_height / 2 - pixhawk_offset,
@@ -310,7 +302,6 @@
         mesh_file = motor_mesh_file,
         mesh_scale = mesh_scale,
         color = "Black",
-        parent = root,
         x = arm_length * components.sin45,
         y = -arm_length * components.sin45,
         z = arm_height - body_height / 2,
@@ -324,7 +315,6 @@
         mesh_file = motor_mesh_file,
         mesh_scale = mesh_scale,
         color = "Black",
-        parent = root,
         x = arm_length * components.sin45,
         y = arm_length * components.sin45,
         z = arm_height - body_height / 2,
@@ -338,7 +328,6 @@
         mesh_file = motor_mesh_file,
         mesh_scale = mesh_scale,
         color = "Black",
-        parent = root,
         x = -arm_length * components.sin45,
         y = -arm_length * components.sin45,
         z = arm_height - body_height / 2,
@@ -352,7 +341,6 @@
         mesh_file = motor_mesh_file,
         mesh_scale = mesh_scale,
         color = "Black",
-        parent = root,
         x = -arm_length * components.sin45,
         y = arm_length * components.sin45,
         z = arm_height - body_height / 2,
@@ -369,7 +357,6 @@
         mesh_file = battery_mount_mesh,
         mesh_scale = mesh_scale_milimeters,
         color = "DarkGrey",
-        parent = root,
         x = 0.003,
         y = 0,
         z = -body_height / 2 - 0.029,
@@ -767,6 +754,30 @@
     <!--}-->
     {% endif %}
 
+    <!-- ========================= camera sensors ========================= -->
+
+    <!-- Fisheye camera placements{-->
+
+    {% if enable_fisheye_camera %}
+    <!-- classic {-->
+    {{ components.fisheye_camera_macro(
+      camera_name = "fisheye_camera",
+      parent_link = root,
+      frame_rate = 45,
+      noise = 0.0,
+      parent_frame_name = namespace + "/fcu",
+      camera_frame_name = namespace + "/fisheye_camera_optical",
+      sensor_base_frame_name = namespace  + "/fisheye_camera",
+      x = 0.05,
+      y = 0,
+      z = -arm_height + 0.055,
+      roll = 0,
+      pitch = rad90,
+      yaw = 0)
+    }}
+    <!--}-->
+    {% endif %}
+    <!--}-->
 
   </model>
 </sdf>

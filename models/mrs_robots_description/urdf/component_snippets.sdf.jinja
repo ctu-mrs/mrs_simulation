@@ -135,7 +135,7 @@ limitations under the License.
 <!--}-->
 
 <!-- Visual macro (generic mesh) {-->
-{%- macro visual_macro(name, mesh_file, mesh_scale, color, parent, x, y, z, roll, pitch, yaw) -%}
+{%- macro visual_macro(name, mesh_file, mesh_scale, color, x, y, z, roll, pitch, yaw) -%}
 <visual name="{{ name }}_visual">
   <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   <geometry>
@@ -161,7 +161,6 @@ limitations under the License.
   mesh_file = mesh_file,
   mesh_scale = mesh_scale,
   color = color,
-  parent = parent,
   x = x,
   y = y,
   z = z,
@@ -764,146 +763,155 @@ limitations under the License.
 <!--}-->
 
 <!-- Macro to add the camera_plugin {-->
-{%- macro camera_macro(parent_link, camera_suffix, camera_frame_name, sensor_base_frame_name, frame_rate, parent_frame_name, horizontal_fov, image_width, image_height, min_distance, max_distance, x, y, z, roll, pitch, yaw, noise_mean, noise_stddev) -%}
-<link name="camera_{{ camera_suffix }}_link">
+{%- macro camera_macro(parent_link, camera_name, camera_frame_name, sensor_base_frame_name, frame_rate, parent_frame_name, horizontal_fov, image_width, image_height, min_distance, max_distance, noise_mean, noise_stddev, mesh_file, mesh_scale, color, visual_x, visual_y, visual_z, visual_roll, visual_pitch, visual_yaw, x, y, z, roll, pitch, yaw) -%}
+<link name="{{ camera_name }}_link">
   <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
-  <visual name="camera_{{ camera_suffix }}_link_visual">
-  <material>
-      <script>
-        <name>Gazebo/{{ color }}</name>
-        <uri>file://media/materials/scripts/gazebo.material</uri>
-      </script>
-    </material>
-  </visual>
+  {{ zero_inertial_macro() }}
+  {{ visual_macro(
+    name = "",
+    mesh_file = mesh_file,
+    mesh_scale = mesh_scale,
+    color = color,
+    x = visual_x,
+    y = visual_y,
+    z = visual_z,
+    roll = visual_roll,
+    pitch = visual_pitch,
+    yaw = visual_yaw)
+  }}
+  <sensor name="{{ camera_name }}_sensor" type="camera">
+    <update_rate>{{ frame_rate }}</update_rate>
+    <camera name="head">
+      <horizontal_fov>{{ horizontal_fov }}</horizontal_fov>
+      <image>
+        <width>{{ image_width }}</width>
+        <height>{{ image_height }}</height>
+      </image>
+      <clip>
+        <near>{{ min_distance }}</near>
+        <far>{{ max_distance }}</far>
+      </clip>
+      <noise>
+        <type>gaussian</type>
+        <!-- Noise is sampled independently per pixel on each frame.
+        That pixel's noise value is added to each of its color
+        channels, which at that point lie in the range [0,1]. -->
+        <mean>{{ noise_mean }}</mean>
+        <stddev>{{ noise_stddev }}</stddev>
+      </noise>
+    </camera>
+    <plugin name="{{ camera_name }}_plugin" filename="libMRSGazeboCameraPlugin.so">
+      <alwaysOn>true</alwaysOn>
+      <updateRate>{{ frame_rate }}</updateRate>
+      <cameraName>{{ camera_name }}</cameraName>
+      <imageTopicName>image_raw</imageTopicName>
+      <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+      <frameName>/{{ camera_frame_name }}</frameName>
+      <hackBaseline>0.0</hackBaseline>
+      <distortionK1>0.0</distortionK1>
+      <distortionK2>0.0</distortionK2>
+      <distortionK3>0.0</distortionK3>
+      <distortionT1>0.0</distortionT1>
+      <distortionT2>0.0</distortionT2>
+      <parentFrameName>{{ parent_frame_name }}</parentFrameName>
+      <sensorBaseFrameName>{{ sensor_base_frame_name }}</sensorBaseFrameName>
+      <x>{{ x }}</x>
+      <y>{{ y }}</y>
+      <z>{{ z }}</z>
+      <roll>{{ roll }}</roll>
+      <pitch>{{ pitch }}</pitch>
+      <yaw>{{ yaw }}</yaw>
+    </plugin>
+  </sensor>
 </link>
 
-<joint name="camera_{{ camera_suffix }}_joint" type="fixed">
+<joint name="{{ camera_name }}_joint" type="fixed">
   <parent>{{ parent_link }}</parent>
-  <child>camera_{{ camera_suffix }}_link</child>
+  <child>{{ camera_name }}_link</child>
 </joint>
 
-<sensor type="camera" name="camera_{{ camera_suffix }}">
-  <update_rate>{{ frame_rate }}</update_rate>
-  <camera name="head">
-    <horizontal_fov>{{ horizontal_fov }}</horizontal_fov>
-    <image>
-      <width>{{ image_width }}</width>
-      <height>{{ image_height }}</height>
-    </image>
-    <clip>
-      <near>{{ min_distance }}</near>
-      <far>{{ max_distance }}</far>
-    </clip>
-    <noise>
-      <type>gaussian</type>
-      <!-- Noise is sampled independently per pixel on each frame.
-      That pixel's noise value is added to each of its color
-      channels, which at that point lie in the range [0,1]. -->
-      <mean>{{ noise_mean }}</mean>
-      <stddev>{{ noise_stddev }}</stddev>
-    </noise>
-  </camera>
-  <plugin name="camera_{{ camera_suffix }}_controller" filename="libMRSGazeboCameraPlugin.so">
-    <alwaysOn>true</alwaysOn>
-    <updateRate>{{ frame_rate }}</updateRate>
-    <cameraName>{{ camera_suffix }}</cameraName>
-    <imageTopicName>image_raw</imageTopicName>
-    <cameraInfoTopicName>camera_info</cameraInfoTopicName>
-    <frameName>/{{ camera_frame_name }}</frameName>
-    <hackBaseline>0.0</hackBaseline>
-    <distortionK1>0.0</distortionK1>
-    <distortionK2>0.0</distortionK2>
-    <distortionK3>0.0</distortionK3>
-    <distortionT1>0.0</distortionT1>
-    <distortionT2>0.0</distortionT2>
-    <parentFrameName>{{ parent_frame_name }}</parentFrameName>
-    <sensorBaseFrameName>{{ sensor_base_frame_name }}</sensorBaseFrameName>
-    <x>{{ x }}</x>
-    <y>{{ y }}</y>
-    <z>{{ z }}</z>
-    <roll>{{ roll }}</roll>
-    <pitch>{{ pitch }}</pitch>
-    <yaw>{{ yaw }}</yaw>
-  </plugin>
-</sensor>
 {%- endmacro -%}
 <!--}-->
 
 <!-- Macro to add the fisheye_camera_plugin {-->
-{%- macro fisheye_macro(parent_link, camera_suffix, camera_frame_name, sensor_base_frame_name, frame_rate, parent_frame_name, horizontal_fov, image_width, image_height, min_distance, max_distance, lens_type, lens_c1, lens_c2, lens_f, lens_fun, lens_scale, lens_cutoff_angle, lens_texture_size, x, y, z, roll, pitch, yaw, noise_mean, noise_stddev) -%}
-<link name="camera_{{ camera_suffix }}_link">
+{%- macro fisheye_macro(parent_link, camera_name, camera_frame_name, sensor_base_frame_name, frame_rate, parent_frame_name, horizontal_fov, image_width, image_height, min_distance, max_distance, lens_type, lens_c1, lens_c2, lens_f, lens_fun, lens_scale, lens_cutoff_angle, lens_texture_size, noise_mean, noise_stddev, mesh_file, mesh_scale, color, visual_x, visual_y, visual_z, visual_roll, visual_pitch, visual_yaw, x, y, z, roll, pitch, yaw) -%}
+<link name="{{ camera_name }}_link">
   <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
-  <visual name="visual">
-  <material>
-      <script>
-        <name>Gazebo/{{ color }}</name>
-        <uri>file://media/materials/scripts/gazebo.material</uri>
-      </script>
-    </material>
-  </visual>
+  {{ zero_inertial_macro() }}
+  {{ visual_macro(
+    name = "",
+    mesh_file = mesh_file,
+    mesh_scale = mesh_scale,
+    color = color,
+    x = visual_x,
+    y = visual_y,
+    z = visual_z,
+    roll = visual_roll,
+    pitch = visual_pitch,
+    yaw = visual_yaw)
+  }}
+  <sensor name="{{ camera_name }}_sensor" type="wideanglecamera">
+    <update_rate>{{ frame_rate }}</update_rate>
+    <camera>
+      <horizontal_fov>{{ horizontal_fov }}</horizontal_fov>
+      <image>
+        <width>{{ image_width }}</width>
+        <height>{{ image_height }}</height>
+      </image>
+      <clip>
+        <near>{{ min_distance }}</near>
+        <far>{{ max_distance }}</far>
+      </clip>
+      <noise>
+        <type>gaussian</type>
+        <!-- Noise is sampled independently per pixel on each frame.
+        That pixel's noise value is added to each of its color
+        channels, which at that point lie in the range [0,1]. -->
+        <mean>{{ noise_mean }}</mean>
+        <stddev>{{ noise_stddev }}</stddev>
+      </noise>
+      <lens>
+        <type>{{ lens_type }}</type>
+        <custom_function>
+          <c1>{{ lens_c1 }}</c1>
+          <c2>{{ lens_c2 }}</c2>
+          <f>{{ lens_f }}</f>
+          <fun>{{ lens_fun }}</fun>
+        </custom_function>
+        <scale_to_hfov>{{ lens_scale }}</scale_to_hfov>
+        <cutoff_angle>{{ lens_cutoff_angle }}</cutoff_angle>
+        <env_texture_size>{{ lens_texture_size }}</env_texture_size>
+      </lens>
+    </camera>
+    <plugin name="{{ camera_name }}_plugin" filename="libMRSGazeboCameraPlugin.so">
+      <alwaysOn>true</alwaysOn>
+      <updateRate>{{ frame_rate }}</updateRate>
+      <cameraName>{{ camera_name }}</cameraName>
+      <imageTopicName>camera/image_raw</imageTopicName>
+      <cameraInfoTopicName>camera/camera_info</cameraInfoTopicName>
+      <frameName>/{{ camera_frame_name }}</frameName>
+      <hackBaseline>0.0</hackBaseline>
+      <distortionK1>0.0</distortionK1>
+      <distortionK2>0.0</distortionK2>
+      <distortionK3>0.0</distortionK3>
+      <distortionT1>0.0</distortionT1>
+      <distortionT2>0.0</distortionT2>
+      <parentFrameName>{{ parent_frame_name }}</parentFrameName>
+      <sensorBaseFrameName>{{ sensor_base_frame_name }}</sensorBaseFrameName>
+      <x>{{ x }}</x>
+      <y>{{ y }}</y>
+      <z>{{ z }}</z>
+      <roll>{{ roll }}</roll>
+      <pitch>{{ pitch }}</pitch>
+      <yaw>{{ yaw }}</yaw>
+    </plugin>
+  </sensor>
 </link>
 
-<joint name="camera_{{ camera_suffix }}_joint" type="fixed">
+<joint name="{{ camera_name }}_joint" type="fixed">
   <parent>{{ parent_link }}</parent>
-  <child>camera_{{ camera_suffix }}_link</child>
+  <child>{{ camera_name }}_link</child>
 </joint>
-
-<sensor type="wideanglecamera" name="camera_{{ camera_suffix }}">
-  <update_rate>{{ frame_rate }}</update_rate>
-  <camera name="head">
-    <horizontal_fov>{{ horizontal_fov }}</horizontal_fov>
-    <image>
-      <width>{{ image_width }}</width>
-      <height>{{ image_height }}</height>
-    </image>
-    <clip>
-      <near>{{ min_distance }}</near>
-      <far>{{ max_distance }}</far>
-    </clip>
-    <noise>
-      <type>gaussian</type>
-      <!-- Noise is sampled independently per pixel on each frame.
-      That pixel's noise value is added to each of its color
-      channels, which at that point lie in the range [0,1]. -->
-      <mean>{{ noise_mean }}</mean>
-      <stddev>{{ noise_stddev }}</stddev>
-    </noise>
-    <lens>
-      <type>{{ lens_type }}</type>
-      <custom_function>
-        <c1>{{ lens_c1 }}</c1>
-        <c2>{{ lens_c2 }}</c2>
-        <f>{{ lens_f }}</f>
-        <fun>{{ lens_fun }}</fun>
-      </custom_function>
-      <scale_to_hfov>{{ lens_scale }}</scale_to_hfov>
-      <cutoff_angle>{{ lens_cutoff_angle }}</cutoff_angle>
-      <env_texture_size>{{ lens_texture_size }}</env_texture_size>
-    </lens>
-  </camera>
-  <plugin name="camera_{{ camera_suffix }}_controller" filename="libMRSGazeboCameraPlugin.so">
-    <alwaysOn>true</alwaysOn>
-    <updateRate>{{ frame_rate }}</updateRate>
-    <cameraName>{{ camera_suffix }}</cameraName>
-    <imageTopicName>camera/image_raw</imageTopicName>
-    <cameraInfoTopicName>camera/camera_info</cameraInfoTopicName>
-    <frameName>/{{ camera_frame_name }}</frameName>
-    <hackBaseline>0.0</hackBaseline>
-    <distortionK1>0.0</distortionK1>
-    <distortionK2>0.0</distortionK2>
-    <distortionK3>0.0</distortionK3>
-    <distortionT1>0.0</distortionT1>
-    <distortionT2>0.0</distortionT2>
-    <parentFrameName>{{ parent_frame_name }}</parentFrameName>
-    <sensorBaseFrameName>{{ sensor_base_frame_name }}</sensorBaseFrameName>
-    <x>{{ x }}</x>
-    <y>{{ y }}</y>
-    <z>{{ z }}</z>
-    <roll>{{ roll }}</roll>
-    <pitch>{{ pitch }}</pitch>
-    <yaw>{{ yaw }}</yaw>
-  </plugin>
-</sensor>
 {%- endmacro -%}
 <!--}-->
 
@@ -1699,7 +1707,51 @@ limitations under the License.
   pitch = pitch,
   yaw = yaw)
 }}
-
 {%- endmacro -%}
 
+<!--}-->
+
+<!-- ========================= camera sensors ========================= -->
+
+<!-- Macro to add a Fisheye camera {-->
+{%- macro fisheye_camera_macro(camera_name, parent_link, frame_rate, noise, camera_frame_name, sensor_base_frame_name, parent_frame_name, x, y, z, roll, pitch, yaw) -%}
+{{ fisheye_macro(
+  camera_name = camera_name,
+  parent_link = parent_link,
+  camera_frame_name = camera_frame_name,
+  sensor_base_frame_name = sensor_base_frame_name,
+  frame_rate = frame_rate,
+  horizontal_fov =  rad180,
+  image_width = 752,
+  image_height = 480,
+  lens_type = "custom",
+  lens_c1 = 1.05,
+  lens_c2 = 4,
+  lens_f = 1.0,
+  lens_fun = "tan",
+  lens_scale = True,
+  lens_cutoff_angle = rad90,
+  lens_texture_size = 512,
+  min_distance = 0.02,
+  max_distance = 40,
+  noise_mean = 0.0,
+  noise_stddev = noise,
+  parent_frame_name = parent_frame_name,
+  mesh_file = "model://mrs_robots_description/meshes/sensors/bluefox.dae",
+  mesh_scale = "1 1 1",
+  color = "DarkGrey",
+  visual_x = 0,
+  visual_y = 0,
+  visual_z = 0,
+  visual_roll = rad90,
+  visual_pitch = 0,
+  visual_yaw = 0,
+  x = x,
+  y = y,
+  z = z,
+  roll = roll,
+  pitch = pitch,
+  yaw = yaw)
+}}
+{%- endmacro -%}
 <!--}-->
