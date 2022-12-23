@@ -761,14 +761,12 @@
     {% if enable_bluefox_camera_reverse %}
     <!-- reverse {-->
     {{ components.bluefox_camera_macro(
+      namespace = namespace,
       camera_name = "bluefox_optflow",
       parent_link = root,
       frame_rate = 100.0,
       hfov = 2.1,
       noise = 0.0,
-      parent_frame_name = namespace + "/fcu",
-      camera_frame_name = namespace + "/bluefox_optflow_optical",
-      sensor_base_frame_name = namespace  + "/bluefox_optflow",
       x = 0.05,
       y = 0,
       z = - (arm_height + 0.055),
@@ -782,14 +780,12 @@
     {% if enable_bluefox_camera %}
     <!-- classic {-->
     {{ components.bluefox_camera_macro(
+      namespace = namespace,
       camera_name = "bluefox_optflow",
       parent_link = root,
       frame_rate = 100.0,
       hfov = 2.1,
       noise = 0.0,
-      parent_frame_name = namespace + "/fcu",
-      camera_frame_name = namespace + "/bluefox_optflow_optical",
-      sensor_base_frame_name = namespace  + "/bluefox_optflow",
       x = 0.05,
       y = 0,
       z = - (arm_height + 0.055),
@@ -800,20 +796,18 @@
     <!--}-->
     {% endif %}
 
-    <!--} Other camera placements -->
+    <!--}-->
 
     <!-- Fisheye camera placements{-->
 
     {% if enable_fisheye_camera %}
     <!-- classic {-->
     {{ components.fisheye_camera_macro(
+      namespace = namespace,
       camera_name = "fisheye_camera",
       parent_link = root,
       frame_rate = 45,
       noise = 0.0,
-      parent_frame_name = namespace + "/fcu",
-      camera_frame_name = namespace + "/fisheye_camera_optical",
-      sensor_base_frame_name = namespace  + "/fisheye_camera",
       x = 0.05,
       y = 0,
       z = - (arm_height + 0.055),
@@ -824,6 +818,7 @@
     <!--}-->
     {% endif %}
     <!--}-->
+
 
   </model>
 </sdf>

@@ -1715,12 +1715,13 @@ limitations under the License.
 
 
 <!-- Macro to add a Bluefox camera {-->
-{%- macro bluefox_camera_macro(camera_name, parent_link, frame_rate, hfov, noise, camera_frame_name, sensor_base_frame_name, parent_frame_name, x, y, z, roll, pitch, yaw) -%}
+{%- macro bluefox_camera_macro(namespace, camera_name, parent_link, frame_rate, hfov, noise, x, y, z, roll, pitch, yaw) -%}
 {{ camera_macro(
   parent_link = parent_link,
   camera_name = camera_name,
-  camera_frame_name = camera_frame_name,
-  sensor_base_frame_name = sensor_base_frame_name,
+  parent_frame_name = namespace + "/fcu",
+  camera_frame_name = namespace + "/" + camera_name + "_optical",
+  sensor_base_frame_name = namespace  + "/" + camera_name,
   frame_rate = frame_rate,
   horizontal_fov = hfov,
   image_width = 752,
@@ -1729,7 +1730,6 @@ limitations under the License.
   max_distance = 80,
   noise_mean = 0.0,
   noise_stddev = noise,
-  parent_frame_name = parent_frame_name,
   mesh_file = "model://mrs_robots_description/meshes/sensors/bluefox.dae",
   mesh_scale = "1 1 1",
   color = "DarkGrey",
@@ -1750,12 +1750,13 @@ limitations under the License.
   <!--}-->
 
 <!-- Macro to add a Fisheye camera {-->
-{%- macro fisheye_camera_macro(camera_name, parent_link, frame_rate, noise, camera_frame_name, sensor_base_frame_name, parent_frame_name, x, y, z, roll, pitch, yaw) -%}
+{%- macro fisheye_camera_macro(namespace, camera_name, parent_link, frame_rate, noise, x, y, z, roll, pitch, yaw) -%}
 {{ fisheye_macro(
   camera_name = camera_name,
+  parent_frame_name = namespace + "/fcu",
+  camera_frame_name = namespace + "/" + camera_name + "_optical",
+  sensor_base_frame_name = namespace  + "/" + camera_name,
   parent_link = parent_link,
-  camera_frame_name = camera_frame_name,
-  sensor_base_frame_name = sensor_base_frame_name,
   frame_rate = frame_rate,
   horizontal_fov = rad180,
   image_width = 752,
@@ -1772,7 +1773,6 @@ limitations under the License.
   max_distance = 40,
   noise_mean = 0.0,
   noise_stddev = noise,
-  parent_frame_name = parent_frame_name,
   mesh_file = "model://mrs_robots_description/meshes/sensors/bluefox.dae",
   mesh_scale = "1 1 1",
   color = "DarkGrey",
