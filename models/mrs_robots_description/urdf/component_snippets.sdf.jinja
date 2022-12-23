@@ -112,7 +112,7 @@ limitations under the License.
 <link name="{{ name }}_link">
   <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   {{ zero_inertial_macro() }}
-  <visual name="{{ name }}_link_visual">
+  <visual name="visual">
     <geometry>
       <box>
         <size>{{ size_x }} {{ size_y }} {{ size_z }}</size>
@@ -207,7 +207,7 @@ limitations under the License.
       <izz>{{ izz }}</izz>
     </inertia>
   </inertial>
-  <visual name="prop_{{ motor_number }}_link_visual">
+  <visual name="visual">
     <geometry>
       <mesh>
         <uri>{{ mesh_file }}</uri>
@@ -431,7 +431,7 @@ limitations under the License.
   <link name="link">
     <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
     {{ zero_inertial_macro() }}
-    <sensor name="gps" type="gps">
+    <sensor name="gps_sensor" type="gps">
       <plugin name="gps_plugin" filename="libgazebo_gps_plugin.so">
         <robotNamespace/>
         <update_rate>{{ update_rate }}</update_rate>
@@ -471,7 +471,7 @@ limitations under the License.
 
 <!-- Macro to add the GPS groundtruth_plugin{-->
 {%- macro gps_groundtruth_plugin_macro(home_latitude, home_longitude, home_altitude) -%}
-<plugin name="gps_groundtruth_plugin_macro" filename="libgazebo_groundtruth_plugin.so">
+<plugin name="gps_groundtruth_plugin" filename="libgazebo_groundtruth_plugin.so">
   <robotNamespace/>
   <homeLatitude>{{ home_latitude }}</homeLatitude>
   <homeLongitude>{{ home_longitude }}</homeLongitude>
@@ -541,12 +541,12 @@ limitations under the License.
   <child>{{ sensor_name }}_link</child>
 </joint>
 
-<sensor name="{{ sensor_name }}" type="imu">
+<sensor name="{{ sensor_name }}_sensor" type="imu">
   <always_on>true</always_on>
   <update_rate>{{ update_rate }}</update_rate>
   <visualize>true</visualize>
   <topic>__default_topic__</topic>
-  <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+  <plugin filename="libgazebo_ros_imu_sensor.so" name="{{ sensor_name }}_plugin">
     <topicName>{{ topic_name }}</topicName>
     <bodyName>{{ sensor_name }}_link</bodyName>
     <updateRateHZ>{{ imu_rate }}</updateRateHZ>
@@ -597,7 +597,7 @@ limitations under the License.
     <use_parent_model_frame>1</use_parent_model_frame>
   </axis>
 </joint>
-<plugin filename="libgazebo_ros_p3d.so" name="{{ odometry_sensor_name }}">
+<plugin name="{{ odometry_sensor_name }}_plugin" filename="libgazebo_ros_p3d.so">
   <alwaysOn>true</alwaysOn>
   <updateRate>{{ frame_rate }}</updateRate>
   <bodyName>{{ odometry_sensor_name }}_link</bodyName>
@@ -612,7 +612,7 @@ limitations under the License.
 
 <!-- Macro to add the rangefinder sensor plugin {-->
 {%- macro rangefinder_sensor_macro(name, parent_frame_name, rangefinder_frame_name, topic, frame_rate, fov, min_distance, max_distance, resolution, noise, x, y, z, roll, pitch, yaw) -%}
-<sensor name="{{ name }}" type='ray'>
+<sensor name="{{ name }}_sensor" type='ray'>
   <update_rate>{{ frame_rate }}</update_rate>
   <ray>
     <scan>
@@ -635,7 +635,7 @@ limitations under the License.
       <resolution>{{ resolution }}</resolution>
     </range>
   </ray>
-  <plugin name='mrs_gazebo_rangefinder' filename='libMRSGazeboRangefinderPlugin.so'>
+  <plugin name='{{ name }}_plugin' filename='libMRSGazeboRangefinderPlugin.so'>
     <gaussianNoise>{{ noise }}</gaussianNoise>
     <alwaysOn>true</alwaysOn>
     <updateRate>{{ frame_rate }}</updateRate>
@@ -661,7 +661,7 @@ limitations under the License.
 <!-- visual links and joints {-->
 <link name="camera_{{ camera_suffix }}_link">
   <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
-  <visual name="camera_{{ camera_suffix }}_link_visual">
+  <visual name="visual">
   <material>
       <script>
         <name>Gazebo/{{ color }}</name>
@@ -682,7 +682,7 @@ limitations under the License.
 <link name="camera_{{ camera_suffix }}_glass_link">
   <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   <!-- <xacro:insert_block name="visual_glass" /> -->
-  <visual name="camera_{{ camera_suffix }}_link_visual">
+  <visual name="visual">
   <material>
       <script>
         <name>Gazebo/{{ color }}</name>
@@ -833,7 +833,7 @@ limitations under the License.
 {%- macro fisheye_macro(parent_link, camera_suffix, camera_frame_name, sensor_base_frame_name, frame_rate, parent_frame_name, horizontal_fov, image_width, image_height, min_distance, max_distance, lens_type, lens_c1, lens_c2, lens_f, lens_fun, lens_scale, lens_cutoff_angle, lens_texture_size, x, y, z, roll, pitch, yaw, noise_mean, noise_stddev) -%}
 <link name="camera_{{ camera_suffix }}_link">
   <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
-  <visual name="camera_{{ camera_suffix }}_link_visual">
+  <visual name="visual">
   <material>
       <script>
         <name>Gazebo/{{ color }}</name>
@@ -920,7 +920,7 @@ limitations under the License.
 <link name="{{ sensor_name }}::link">
   <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   {{ zero_inertial_macro() }}
-  <visual name="garmin_link_visual">
+  <visual name="visual">
     <origin xyz="0.015 0 0" rpy="0 0 0" />
     <geometry>
       <mesh>
@@ -935,7 +935,7 @@ limitations under the License.
       </script>
     </material>
   </visual>
-  <sensor name="garmin" type="ray">
+  <sensor name="garmin_sensor" type="ray">
     <always_on>true</always_on>
     <update_rate>100</update_rate>
     <visualize>false</visualize>
@@ -959,7 +959,7 @@ limitations under the License.
         <stddev>0.01</stddev>
       </noise>
     </ray>
-    <plugin name="{{ sensor_name }}_garmin" filename="libgazebo_lidar_plugin.so">
+    <plugin name="{{ sensor_name }}_plugin" filename="libgazebo_lidar_plugin.so">
       <robotNamespace/>
       <min_distance>0.1</min_distance>
       <max_distance>35.0</max_distance>
@@ -980,7 +980,7 @@ limitations under the License.
 <link name="garmin{{ orientation }}_link">
   <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   {{ zero_inertial_macro() }}
-  <visual name="garmin{{ orientation }}_link_visual">
+  <visual name="visual">
     <origin xyz="0.015 0 0" rpy="0 0 0" />
     <geometry>
       <mesh>
@@ -1027,7 +1027,7 @@ limitations under the License.
 <link name="teraranger_link">
   <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   {{ zero_inertial_macro() }}
-  <visual name="teraranger_link_visual">
+  <visual name="visual">
     <geometry>
       <box>
         <size>0.015 0.027 0.033</size>
@@ -1072,7 +1072,7 @@ limitations under the License.
 <link name="ultrasound{{ suffix }}_link">
   <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   {{ zero_inertial_macro() }}
-  <visual name="ultrasound{{ suffix }}_link_visual">
+  <visual name="visual">
     <geometry>
       <mesh>
         <uri>model://mrs_robots_description/meshes/sensors/ultrasonic_URM37.dae</uri>
@@ -1120,7 +1120,7 @@ limitations under the License.
 <link name="sweeper_link">
   <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   {{ zero_inertial_macro() }}
-  <visual name="sweeper_base_visual">
+  <visual name="base_visual">
     <pose>0 0 -0.031 0 0 0</pose>
     <geometry>
       <cylinder>
@@ -1135,7 +1135,7 @@ limitations under the License.
       </script>
     </material>
   </visual>
-  <visual name="sweeper_rotator_visual">
+  <visual name="rotator_visual">
     <geometry>
       <cylinder>
         <length>0.0385</length>
@@ -1149,7 +1149,7 @@ limitations under the License.
       </script>
     </material>
   </visual>
-  <sensor name='sweeper' type='ray'>
+  <sensor name='sweeper_sensor' type='ray'>
     <visualize>false</visualize>
     <update_rate>10</update_rate>
     <ray>
@@ -1172,7 +1172,7 @@ limitations under the License.
         <stddev>0.01</stddev>
       </noise>
     </ray>
-    <plugin name='mrs_gazebo_2dlidar' filename='libMRSGazebo2DLidarPlugin.so'>
+    <plugin name='sweeper_plugin' filename='libMRSGazebo2DLidarPlugin.so'>
       <topicName>scanse_sweep/range</topicName>
       <frameName>{{ namespace }}/scanse_sweep</frameName>
       <parentFrameName>{{ namespace}}/fcu</parentFrameName>
@@ -1198,7 +1198,7 @@ limitations under the License.
 <link name="rplidar_link">
   <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   {{ zero_inertial_macro() }}
-  <visual name="rplidar_base_visual">
+  <visual name="base_visual">
     <pose>0 0 -0.029 0 0 {{ rad180 }}</pose>
     <geometry>
       <mesh>
@@ -1213,7 +1213,7 @@ limitations under the License.
       </script>
     </material>
   </visual>
-  <visual name="rplidar_base_purple_visual">
+  <visual name="purple_visual">
     <pose>0 0 -0.011 0 0 0</pose>
     <geometry>
       <cylinder>
@@ -1228,7 +1228,7 @@ limitations under the License.
       </script>
     </material>
   </visual>
-  <sensor name='rplidar' type='ray'>
+  <sensor name='rplidar_sensor' type='ray'>
     <visualize>false</visualize>
     <update_rate>20</update_rate>
     <ray>
@@ -1251,7 +1251,7 @@ limitations under the License.
         <stddev>0.01</stddev>
       </noise>
     </ray>
-    <plugin name='mrs_gazebo_2dlidar' filename='libMRSGazebo2DLidarPlugin.so'>
+    <plugin name='rplidar_plugin' filename='libMRSGazebo2DLidarPlugin.so'>
         <topicName>rplidar/scan</topicName>
         <frameName>{{ namespace }}/rplidar</frameName>
         <parentFrameName>{{ namespace }}/fcu</parentFrameName>
@@ -1308,7 +1308,7 @@ limitations under the License.
 <link name="velodyne_link">
   <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   {{ zero_inertial_macro() }}
-  <visual name="velodyne_base_visual">
+  <visual name="base_visual">
     <pose>0 0 0.0094 0 0 0</pose>
     <geometry>
       <cylinder>
@@ -1323,7 +1323,7 @@ limitations under the License.
       </script>
     </material>
   </visual>
-  <visual name="velodyne_top_visual">
+  <visual name="top_visual">
     <pose>0 0 0.0643 0 0 0</pose>
     <geometry>
       <cylinder>
@@ -1338,7 +1338,7 @@ limitations under the License.
       </script>
     </material>
   </visual>
-  <visual name="velodyne_window_visual">
+  <visual name="window_visual">
     <pose>0 0 0.03785 0 0 0</pose>
     <geometry>
       <cylinder>
@@ -1353,7 +1353,7 @@ limitations under the License.
       </script>
     </material>
   </visual>
-  <sensor type="{{ sensor_type }}" name="{{ sensor_name }}_lidar_sensor">
+  <sensor name="{{ sensor_name }}_lidar_sensor" type="{{ sensor_type }}">
     <pose>{{ lidar_x }} {{ lidar_y }} {{ lidar_z }} {{ lidar_roll }} {{ lidar_pitch }} {{ lidar_yaw }}</pose>
     {# <pose>0 0 0 0 0 0</pose> #}
     <visualize>false</visualize>
