@@ -715,7 +715,7 @@ limitations under the License.
 <!-- sensor {-->
 <sensor type="depth" name="camera_{{ camera_suffix }}">
   <update_rate>30.0</update_rate>
-  <camera name="head">
+  <camera>
     <horizontal_fov>{{ horizontal_fov }}</horizontal_fov>
     <image>
       <width>{{ image_width }}</width>
@@ -781,7 +781,7 @@ limitations under the License.
   }}
   <sensor name="{{ camera_name }}_sensor" type="camera">
     <update_rate>{{ frame_rate }}</update_rate>
-    <camera name="head">
+    <camera>
       <horizontal_fov>{{ horizontal_fov }}</horizontal_fov>
       <image>
         <width>{{ image_width }}</width>
@@ -1713,6 +1713,42 @@ limitations under the License.
 
 <!-- ========================= camera sensors ========================= -->
 
+
+<!-- Macro to add a Bluefox camera {-->
+{%- macro bluefox_camera_macro(camera_name, parent_link, frame_rate, hfov, noise, camera_frame_name, sensor_base_frame_name, parent_frame_name, x, y, z, roll, pitch, yaw) -%}
+{{ camera_macro(
+  parent_link = parent_link,
+  camera_name = camera_name,
+  camera_frame_name = camera_frame_name,
+  sensor_base_frame_name = sensor_base_frame_name,
+  frame_rate = frame_rate,
+  horizontal_fov = hfov,
+  image_width = 752,
+  image_height = 480,
+  min_distance = 0.02,
+  max_distance = 80,
+  noise_mean = 0.0,
+  noise_stddev = noise,
+  parent_frame_name = parent_frame_name,
+  mesh_file = "model://mrs_robots_description/meshes/sensors/bluefox.dae",
+  mesh_scale = "1 1 1",
+  color = "DarkGrey",
+  visual_x = 0,
+  visual_y = 0,
+  visual_z = 0,
+  visual_roll = rad90,
+  visual_pitch = 0,
+  visual_yaw = 0,
+  x = x,
+  y = y,
+  z = z,
+  roll = roll,
+  pitch = pitch,
+  yaw = yaw)
+}}
+{%- endmacro -%}
+  <!--}-->
+
 <!-- Macro to add a Fisheye camera {-->
 {%- macro fisheye_camera_macro(camera_name, parent_link, frame_rate, noise, camera_frame_name, sensor_base_frame_name, parent_frame_name, x, y, z, roll, pitch, yaw) -%}
 {{ fisheye_macro(
@@ -1721,7 +1757,7 @@ limitations under the License.
   camera_frame_name = camera_frame_name,
   sensor_base_frame_name = sensor_base_frame_name,
   frame_rate = frame_rate,
-  horizontal_fov =  rad180,
+  horizontal_fov = rad180,
   image_width = 752,
   image_height = 480,
   lens_type = "custom",
