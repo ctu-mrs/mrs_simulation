@@ -1884,3 +1884,38 @@ limitations under the License.
 }}
 {%- endmacro -%}
 <!--}-->
+
+<!-- Macro to add a Mobius camera {-->
+{%- macro mobius_camera_macro(namespace, camera_name, parent_link, frame_rate, x, y, z, roll, pitch, yaw) -%}
+{{ camera_macro(
+  parent_link = parent_link,
+  camera_name = camera_name,
+  parent_frame_name = namespace + "/fcu",
+  camera_frame_name = namespace + "/" + camera_name + "_optical",
+  sensor_base_frame_name = namespace  + "/" + camera_name,
+  frame_rate = frame_rate,
+  horizontal_fov = 2.28638,
+  image_width = 1280,
+  image_height = 720,
+  min_distance = 0.02,
+  max_distance = 40,
+  noise_mean = 0.0,
+  noise_stddev = 0.007,
+  mesh_file = "model://mrs_robots_description/meshes/sensors/mobius.dae",
+  mesh_scale = "1 1 1",
+  color = "DarkGrey",
+  visual_x = -0.004,
+  visual_y = 0.0045,
+  visual_z = 0,
+  visual_roll = 0,
+  visual_pitch = 0,
+  visual_yaw = 0,
+  x = x,
+  y = y,
+  z = z,
+  roll = roll,
+  pitch = pitch,
+  yaw = yaw)
+}}
+{%- endmacro -%}
+<!--}-->

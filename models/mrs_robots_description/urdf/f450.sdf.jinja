@@ -756,6 +756,27 @@
 
     <!-- ========================= camera sensors ========================= -->
 
+    <!-- Fisheye camera placements{-->
+
+    {% if enable_fisheye_camera %}
+    <!-- classic {-->
+    {{ components.fisheye_camera_macro(
+      namespace = namespace,
+      camera_name = "fisheye_camera",
+      parent_link = root,
+      frame_rate = 45,
+      noise = 0.0,
+      x = 0.05,
+      y = 0,
+      z = - (arm_height + 0.055),
+      roll = 0,
+      pitch = components.rad90,
+      yaw = 0)
+    }}
+    <!--}-->
+    {% endif %}
+    <!--}-->
+
     <!-- Bluefox placements{-->
 
     {% if enable_bluefox_camera_reverse %}
@@ -796,27 +817,6 @@
     <!--}-->
     {% endif %}
 
-    <!--}-->
-
-    <!-- Fisheye camera placements{-->
-
-    {% if enable_fisheye_camera %}
-    <!-- classic {-->
-    {{ components.fisheye_camera_macro(
-      namespace = namespace,
-      camera_name = "fisheye_camera",
-      parent_link = root,
-      frame_rate = 45,
-      noise = 0.0,
-      x = 0.05,
-      y = 0,
-      z = - (arm_height + 0.055),
-      roll = 0,
-      pitch = components.rad90,
-      yaw = 0)
-    }}
-    <!--}-->
-    {% endif %}
     <!--}-->
 
     <!-- Realsense placements {-->
@@ -894,6 +894,77 @@
     {% endif %}
 
     <!--}-->
+
+    <!-- Mobius placements {-->
+
+    {% if enable_mobius_camera_down %}
+    <!-- down {-->
+    {{ components.mobius_camera_macro(
+      namespace = namespace,
+      camera_name = "mobius_down",
+      parent_link = root,
+      frame_rate = 30.0,
+      x = 0.144,
+      y = 0.0,
+      z = -0.092,
+      roll = 0,
+      pitch = components.rad90,
+      yaw = 0)
+    }}
+    <!--}-->
+    {% endif %}
+
+    {% if enable_mobius_camera_front %}
+    <!-- front {-->
+    {{ components.mobius_camera_macro(
+      namespace = namespace,
+      camera_name = "mobius_front",
+      parent_link = root,
+      frame_rate = 30.0,
+      x = 0.2,
+      y = 0.0,
+      z = -0.04,
+      roll = 0,
+      pitch = 0,
+      yaw = 0)
+    }}
+    <!--}-->
+    {% endif %}
+
+    {% if enable_mobius_camera_back_left %}
+    <!-- back left {-->
+    {{ components.mobius_camera_macro(
+      namespace = namespace,
+      camera_name = "mobius_back_left",
+      parent_link = root,
+      frame_rate = 30.0,
+      x = -0.1,
+      y = 0.1732,
+      z = -0.04,
+      roll = 0,
+      pitch = 0,
+      yaw = components.rad120)
+    }}
+    <!--}-->
+    {% endif %}
+
+    {% if enable_mobius_camera_back_right %}
+    <!-- back right {-->
+    {{ components.mobius_camera_macro(
+      namespace = namespace,
+      camera_name = "mobius_back_right",
+      parent_link = root,
+      frame_rate = 30.0,
+      x = -0.1,
+      y = -0.1732,
+      z = -0.04,
+      roll = 0,
+      pitch = 0,
+      yaw = -components.rad120)
+    }}
+    <!--}-->
+    {% endif %}
+    <!--} -->
 
   </model>
 </sdf>
