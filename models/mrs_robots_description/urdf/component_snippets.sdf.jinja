@@ -1921,7 +1921,7 @@ limitations under the License.
 <!--}-->
 
 <!-- Macro to add a thermal camera {-->
-{%- macro thermal_camera_macro(camera_name, camera_topic_name, parent_frame_name, camera_frame_name, sensor_base_frame_name, parent_link, frame_rate, hfov, image_width, image_height x, y, z, roll, pitch, yaw) -%}
+{%- macro thermal_camera_macro(camera_name, camera_topic_name, parent_frame_name, camera_frame_name, sensor_base_frame_name, parent_link, frame_rate, hfov, image_width, image_height, x, y, z, roll, pitch, yaw) -%}
 <link name="{{ camera_name }}_link">
   <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   {{ zero_inertial_macro() }}
@@ -1939,49 +1939,90 @@ limitations under the License.
         <uri>file://media/materials/scripts/gazebo.material</uri>
       </script>
     </material>
-    <sensor type="camera" name="mrs_thermal_camera_sensor">
-      <update_rate>{{ frame_rate }}</update_rate>
-      <camera>
-        <horizontal_fov>{{ hfov }}</horizontal_fov>
-        <image>
-          <format>R8G8B8</format>
-          <width>{{ 3 * image_width }}</width>
-          <height>{{ 3 * image_height }}</height>
-        </image>
-        <clip>
-          <near>0.1</near>
-          <far>300</far>
-        </clip>
-      </camera>
-      <plugin name="{{camera_name}}_plugin" filename="libMRSGazeboThermalCameraPlugin.so">
-        <alwaysOn>true</alwaysOn>
-        <cameraName>{{ camera_name }}</cameraName>
-        <updateRate>{{ frame_rate }}</updateRate>
-        <imageTopicName>{{ camera_topic_name }}/rgb_image</imageTopicName>
-        <cameraInfoTopicName>{{ camera_topic_name }}/camera_info</cameraInfoTopicName>
-        <rawTemperatureTopicName>{{ camera_topic_name }}/raw_temp_array</rawTemperatureTopicName>
-        <surroundingTemperature>20</surroundingTemperature>
-        <maximalTemperature>150</maximalTemperature>
-        <minimalTemperatureGreenColor>0.2</minimalTemperatureGreenColor>
-        <noiseStdDev>4.0</noiseStdDev>
-        <noiseStdDevMaxTemp>20.0</noiseStdDevMaxTemp>
-        <frameName>{{ camera_frame_name }}</frameName>
-        <parentFrameName>{{ parent_frame_name }}</parentFrameName>
-        <sensorBaseFrameName>{{ sensor_base_frame_name }}</sensorBaseFrameName>
-        <x>{{ x }}</x>
-        <y>{{ y }}</y>
-        <z>{{ z }}</z>
-        <roll>{{ roll }}</roll>
-        <pitch>{{ pitch }}</pitch>
-        <yaw>{{ yaw }}</yaw>
-      </plugin>
-    </sensor>
-  </link>
+  </visual>
+  <sensor type="camera" name="mrs_thermal_camera_sensor">
+    <update_rate>{{ frame_rate }}</update_rate>
+    <camera>
+      <horizontal_fov>{{ hfov }}</horizontal_fov>
+      <image>
+        <format>R8G8B8</format>
+        <width>{{ 3 * image_width }}</width>
+        <height>{{ 3 * image_height }}</height>
+      </image>
+      <clip>
+        <near>0.1</near>
+        <far>300</far>
+      </clip>
+    </camera>
+    <plugin name="{{camera_name}}_plugin" filename="libMRSGazeboThermalCameraPlugin.so">
+      <alwaysOn>true</alwaysOn>
+      <cameraName>{{ camera_name }}</cameraName>
+      <updateRate>{{ frame_rate }}</updateRate>
+      <imageTopicName>{{ camera_topic_name }}/rgb_image</imageTopicName>
+      <cameraInfoTopicName>{{ camera_topic_name }}/camera_info</cameraInfoTopicName>
+      <rawTemperatureTopicName>{{ camera_topic_name }}/raw_temp_array</rawTemperatureTopicName>
+      <surroundingTemperature>20</surroundingTemperature>
+      <maximalTemperature>150</maximalTemperature>
+      <minimalTemperatureGreenColor>0.2</minimalTemperatureGreenColor>
+      <noiseStdDev>4.0</noiseStdDev>
+      <noiseStdDevMaxTemp>20.0</noiseStdDevMaxTemp>
+      <frameName>{{ camera_frame_name }}</frameName>
+      <parentFrameName>{{ parent_frame_name }}</parentFrameName>
+      <sensorBaseFrameName>{{ sensor_base_frame_name }}</sensorBaseFrameName>
+      <x>{{ x }}</x>
+      <y>{{ y }}</y>
+      <z>{{ z }}</z>
+      <roll>{{ roll }}</roll>
+      <pitch>{{ pitch }}</pitch>
+      <yaw>{{ yaw }}</yaw>
+    </plugin>
+  </sensor>
+</link>
 
 <joint name="{{ camera_name }}_joint" type="fixed">
   <parent>{{ parent_link }}</parent>
   <child>{{ camera_name }}_link</child>
 </joint>
+{%- endmacro -%}
+<!--}-->
 
-</xacro:macro>
+<!-- Macro to add a UV Camera {-->
+{%- macro uvcam_macro(parent_link, calibration_file, occlusions, frame_rate, number, camera_publish_topic, x, y, z, roll, pitch, yaw) -%}
+<link name="uvcam_{{ number }}_link">
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
+  {{ zero_inertial_macro() }}
+  <visual name="visual">
+    <pose>0 0 0 {{ rad90 }} 0 0</pose>
+    <geometry>
+      <mesh>
+        <uri>model://mrs_robots_description/meshes/sensors/bluefox.dae</uri>
+        <scale>1 1 1</scale>
+      </mesh>
+    </geometry>
+    <material>
+      <script>
+        <name>Gazebo/Black</name>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+      </script>
+    </material>
+  </visual>
+  <sensor name="uvcam_{{ number }}_sensor" type="rfid" >
+    <update_rate>1</update_rate>
+    <plugin name='uvcam_{{ number }}_plugin' filename="libuvdar_cam.so">
+      <alwaysOn>false</alwaysOn>
+      <updateRate>{{ frame_rate }}</updateRate>
+      <occlusion>{{ occlusions }}</occlusion>
+      <framerate>{{ frame_rate }}</framerate>
+      <calibration_file>{{ calibration_file }}</calibration_file>
+      <number>{{ number }}</number>
+      <camera_publish_topic>{{ camera_publish_topic }}</camera_publish_topic>
+    </plugin>
+  </sensor>
+</link>
+
+<joint name="uvcam_{{ number }}_joint" type="fixed">
+  <parent>{{ parent_link }}</parent>
+  <child>uvcam_{{ number }}_link</child>
+</joint>
+{%- endmacro -%}
 <!--}-->
