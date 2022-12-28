@@ -2449,3 +2449,72 @@ limitations under the License.
 </joint>
 {%- endmacro -%}
 <!--}-->
+
+<!-- Macro to add a Timepix detector {-->
+{%- macro timepix_macro(parent_link, name,  x, y, z, roll, pitch, yaw) -%}
+<link name="{{ name }}_link">
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
+  {{ zero_inertial_macro() }}
+  <visual name="visual">
+    <pose>0 0.05 0 0 0</pose>
+    <geometry>
+      <box>
+        <size>0.02 0.09 0.02</size>
+      </box>
+    </geometry>
+    <material>
+      <script>
+        <name>Gazebo/Green</name>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+      </script>
+    </material>
+  </visual>
+</link>
+
+<plugin name="{{ name }}_plugin" filename="libgazebo_timepix.so" >
+  <exposition_time>0.1</exposition_time>  <!-- [s] -->
+  <material>si</material>                 <!-- string -->
+  <size>0.0003 0.01408 0.01408</size>     <!-- [m m m] -->
+</plugin>
+
+<joint name="{{ name }}_joint" type="fixed">
+  <parent>{{ parent_link }}</parent>
+  <child>{{ name }}_link</child>
+</joint>
+{%- endmacro -%}
+<!--}-->
+
+<!-- Macro to add a Timepix3 event camera {-->
+{%- macro timepix3_macro(parent_link, name, material, thickness, max_message_window, sensor_suffix, x, y, z, roll, pitch, yaw) -%}
+<link name="{{ name }}_link">
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
+  {{ zero_inertial_macro() }}
+  <visual name="visual">
+    <pose>0 0.05 0 0 0</pose>
+    <geometry>
+      <box>
+        <size>0.02 0.09 0.02</size>
+      </box>
+    </geometry>
+    <material>
+      <script>
+        <name>Gazebo/Green</name>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+      </script>
+    </material>
+  </visual>
+</link>
+
+<plugin name="{{ name }}_plugin" filename="libgazebo_timepix3.so" >
+  <material>{{ material }}</material>               <!-- string -->
+  <size>{{ thickness }} 0.01408 0.01408</size>     <!-- [m m m] -->
+  <max_message_window>{{ max_message_window }}</max_message_window> <!-- [s] -->
+  <sensor_suffix>{{ sensor_suffix }}</sensor_suffix> <!-- string -->
+</plugin>
+
+<joint name="{{ name }}_joint" type="fixed">
+  <parent>{{ parent_link }}</parent>
+  <child>{{ name }}_link</child>
+</joint>
+{%- endmacro -%}
+<!--}-->

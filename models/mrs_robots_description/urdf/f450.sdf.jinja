@@ -1094,5 +1094,39 @@
     <!--}-->
     {% endif %}
 
+    {% if enable_timepix %}
+    <!-- Timepix {-->
+    {{ components.timepix_macro(
+      parent_link = root,
+      name = "timepix",
+      x = 0.115,
+      y = -0.05,
+      z = -0.05,
+      roll = 0,
+      pitch = 0,
+      yaw = 0)
+    }}
+    <!--}-->
+    {% endif %}
+
+    {% if enable_timepix3 %}
+    <!-- Timepix3 {-->
+    {{ components.timepix3_macro(
+      parent_link = root,
+      name = "timepix3",
+      material = "cdte",
+      thickness = 0.002,
+      max_message_window = 1.0,
+      sensor_suffix = "",
+      x = 0.115,
+      y = -0.05,
+      z = -0.05,
+      roll = 0,
+      pitch = 0,
+      yaw = 0)
+    }}
+    <!--}-->
+    {% endif %}
+
   </model>
 </sdf>
