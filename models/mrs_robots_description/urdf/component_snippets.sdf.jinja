@@ -529,33 +529,33 @@ limitations under the License.
 <!--}-->
 
 <!-- Macro to add imu with configurable rate {-->
-{%- macro custom_imu_macro(sensor_name, parent_link, update_rate, topic_name, noise_mean, x, y, z, roll, pitch, yaw) -%}
+{%- macro custom_imu_macro(sensor_name, parent_link, update_rate, topic_name, frame_name, noise_mean, x, y, z, roll, pitch, yaw) -%}
 <link name="{{ sensor_name }}_link">
   <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   {{ zero_inertial_macro() }}
+  <sensor name="{{ sensor_name }}_sensor" type="imu">
+    <gravity>true</gravity>
+    <always_on>true</always_on>
+    <update_rate>{{ update_rate }}</update_rate>
+    <visualize>false</visualize>
+    <topic>__default_topic__</topic>
+    <plugin name="{{ sensor_name }}_plugin" filename="libgazebo_ros_imu_sensor.so">
+      <robotNamespace></robotNamespace>
+      <topicName>{{ topic_name }}</topicName>
+      <bodyName>{{ update_rate }}</bodyName>
+      <updateRateHZ>{{ imu_rate }}</updateRateHZ>
+      <gaussianNoise>{{ noise_mean }}</gaussianNoise>
+      <xyzOffset>0 0 0</xyzOffset>
+      <rpyOffset>0 0 0</rpyOffset>
+      <frameName>{{ frame_name }}</frameName>
+    </plugin>
+  </sensor>
 </link>
 
 <joint name="{{ sensor_name }}_joint" type="fixed">
   <parent>{{ parent_link }}</parent>
   <child>{{ sensor_name }}_link</child>
 </joint>
-
-<sensor name="{{ sensor_name }}_sensor" type="imu">
-  <always_on>true</always_on>
-  <update_rate>{{ update_rate }}</update_rate>
-  <visualize>true</visualize>
-  <topic>__default_topic__</topic>
-  <plugin filename="libgazebo_ros_imu_sensor.so" name="{{ sensor_name }}_plugin">
-    <topicName>{{ topic_name }}</topicName>
-    <bodyName>{{ sensor_name }}_link</bodyName>
-    <updateRateHZ>{{ imu_rate }}</updateRateHZ>
-    <gaussianNoise>{{ imu_noise_mean }}</gaussianNoise>
-    <xyzOffset>0 0 0</xyzOffset>
-    <rpyOffset>0 0 0</rpyOffset>
-    <frameName>{{ parent_link }}</frameName>
-    <initialOrientationAsReference>false</initialOrientationAsReference>
-  </plugin>
-</sensor>
 {%- endmacro -%}
 <!--}-->
 
@@ -726,7 +726,11 @@ limitations under the License.
 <!--}-->
 
 <!-- Macro to add the fisheye_camera_plugin {-->
-{%- macro fisheye_macro(parent_link, camera_name, camera_frame_name, sensor_base_frame_name, frame_rate, parent_frame_name, horizontal_fov, image_width, image_height, min_distance, max_distance, lens_type, lens_c1, lens_c2, lens_f, lens_fun, lens_scale, lens_cutoff_angle, lens_texture_size, noise_mean, noise_stddev, mesh_file, mesh_scale, color, visual_x, visual_y, visual_z, visual_roll, visual_pitch, visual_yaw, x, y, z, roll, pitch, yaw) -%}
+{%- macro fisheye_macro(parent_link, camera_name, topic_ns_prefix, camera_frame_name, sensor_base_frame_name, frame_rate, parent_frame_name, horizontal_fov, image_width, image_height, min_distance, max_distance, lens_type, lens_c1, lens_c2, lens_f, lens_fun, lens_scale, lens_cutoff_angle, lens_texture_size, noise_mean, noise_stddev, mesh_file, mesh_scale, color, visual_x, visual_y, visual_z, visual_roll, visual_pitch, visual_yaw, x, y, z, roll, pitch, yaw) -%}
+{# -- topics -- #}
+{%- set topic_image = topic_ns_prefix + "image_raw" -%}
+{%- set topic_camera_ifo = topic_ns_prefix + "camera_info" -%}
+
 <link name="{{ camera_name }}_link">
   <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   {{ zero_inertial_macro() }}
@@ -779,8 +783,8 @@ limitations under the License.
       <alwaysOn>true</alwaysOn>
       <updateRate>{{ frame_rate }}</updateRate>
       <cameraName>{{ camera_name }}</cameraName>
-      <imageTopicName>image_raw</imageTopicName>
-      <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+      <imageTopicName>{{ topic_image }}</imageTopicName>
+      <cameraInfoTopicName>{{ topic_camera_ifo }}</cameraInfoTopicName>
       <frameName>/{{ camera_frame_name }}</frameName>
       <hackBaseline>0.0</hackBaseline>
       <distortionK1>0.0</distortionK1>
@@ -1843,9 +1847,10 @@ limitations under the License.
 <!--}-->
 
 <!-- Macro to add a Fisheye camera {-->
-{%- macro fisheye_camera_macro(namespace, camera_name, parent_link, frame_rate, noise, x, y, z, roll, pitch, yaw) -%}
+{%- macro fisheye_camera_macro(namespace, camera_name, topic_ns_prefix, parent_link, frame_rate, noise, x, y, z, roll, pitch, yaw) -%}
 {{ fisheye_macro(
   camera_name = camera_name,
+  topic_ns_prefix = topic_ns_prefix,
   parent_frame_name = namespace + "/fcu",
   camera_frame_name = namespace + "/" + camera_name + "_optical",
   sensor_base_frame_name = namespace  + "/" + camera_name,
@@ -2178,5 +2183,39 @@ limitations under the License.
   </axis>
 </joint>
 
+{%- endmacro -%}
+<!--}-->
+
+<!-- Macro to add a fisheye camera with integrated imu {-->
+{%- macro vio_macro(namespace, sensor_name, parent_link, frame_rate, noise, imu_rate, imu_noise_mean, x, y, z, roll, pitch, yaw) -%}
+{{ fisheye_camera_macro(
+  namespace = namespace,
+  camera_name = sensor_name,
+  topic_ns_prefix = "camera/",
+  parent_link = parent_link,
+  frame_rate = frame_rate,
+  noise = noise,
+  x = x,
+  y = y,
+  z = z,
+  roll = roll,
+  pitch = pitch,
+  yaw = yaw)
+}}
+
+{{ custom_imu_macro(
+  sensor_name = sensor_name + "_imu",
+  parent_link = parent_link,
+  update_rate = imu_rate,
+  topic_name = "/" + namespace + "/" + sensor_name + "/imu",
+  frame_name = namespace + "/" + sensor_name,
+  noise_mean = imu_noise_mean,
+  x = x,
+  y = y,
+  z = z,
+  roll = roll,
+  pitch = pitch,
+  yaw = yaw)
+}}
 {%- endmacro -%}
 <!--}-->
