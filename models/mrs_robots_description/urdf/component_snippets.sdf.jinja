@@ -2341,3 +2341,47 @@ limitations under the License.
 {%- endmacro -%}
 <!--}-->
 <!--}-->
+
+<!-- Macro to add a gps satelite blocking sensor {-->
+{%- macro gps_satelites_blocking_macro(parent_link) -%}
+{# not supported in the current version #}
+<link name="gps_blocking_link">
+  <pose>0 0 0 0 {{ -rad90 }} 0</pose>
+  {{ zero_inertial_macro() }}
+  <sensor name='gps_blocking_sensor' type='ray'>
+    <visualize>false</visualize>
+    <update_rate>2</update_rate>
+    <ray>
+      <scan>
+        <horizontal>
+          <samples>4</samples>
+          <resolution>1</resolution>
+          <min_angle>-1.1</min_angle>
+          <max_angle>1.1</max_angle>
+        </horizontal>
+        <vertical>
+          <samples>4</samples>
+          <resolution>1</resolution>
+          <min_angle>-0.9</min_angle>
+          <max_angle>0.9</max_angle>
+        </vertical>
+      </scan>
+      <range>
+        <min>0.5</min>
+        <max>50</max>
+        <resolution>0.5</resolution>
+      </range>
+    </ray>
+    <plugin name='gps_blocking_plugin' filename='libgazebo_ros_laser.so'>
+      <topicName>gps_sat_blocking</topicName>
+      <frameName>gps_blocking</frameName>
+    </plugin>
+  </sensor>
+</link>
+
+<joint name="gps_blocking_joint" type="fixed">
+  <parent>{{ parent_link }}</parent>
+  <child>gps_blocking_link</child>
+</joint>
+{%- endmacro -%}
+<!--}-->
