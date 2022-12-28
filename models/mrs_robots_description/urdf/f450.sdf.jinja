@@ -1059,5 +1059,25 @@
     <!--}-->
     {% endif %}
 
+    <!-- ========================== other sensors ========================= -->
+
+    {% if enable_teraranger_tower_evo %}
+    <!-- Teraranger Tower Evo {-->
+    {{ components.teraranger_evo_tower_macro(
+      parent_link = root,
+      visualize = False,
+      frame_name = namespace + "/teraranger_tower",
+      parent_frame_name = namespace + "/fcu",
+      gaussian_noise = 0.0,
+      x = 0.0,
+      y = 0.0,
+      z = 0.1,
+      roll = 0,
+      pitch = 0,
+      yaw = 0)
+    }}
+    <!--}-->
+    {% endif %}
+
   </model>
 </sdf>
