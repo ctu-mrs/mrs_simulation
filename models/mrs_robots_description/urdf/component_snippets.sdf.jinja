@@ -2456,7 +2456,7 @@ limitations under the License.
   <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   {{ zero_inertial_macro() }}
   <visual name="visual">
-    <pose>0 0.05 0 0 0</pose>
+    <pose>0 0.05 0 0 0 0</pose>
     <geometry>
       <box>
         <size>0.02 0.09 0.02</size>
@@ -2490,7 +2490,7 @@ limitations under the License.
   <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   {{ zero_inertial_macro() }}
   <visual name="visual">
-    <pose>0 0.05 0 0 0</pose>
+    <pose>0 0.05 0 0 0 0</pose>
     <geometry>
       <box>
         <size>0.02 0.09 0.02</size>
@@ -2515,6 +2515,59 @@ limitations under the License.
 <joint name="{{ name }}_joint" type="fixed">
   <parent>{{ parent_link }}</parent>
   <child>{{ name }}_link</child>
+</joint>
+{%- endmacro -%}
+<!--}-->
+
+<!-- Macro to add a water gun {-->
+{%- macro water_gun_macro(parent_link, muzzle_velocity, particle_capacity, spread, spawning_reservoir, nozzle_offset_x, nozzle_offset_y, nozzle_offset_z, x, y, z, roll, pitch, yaw) -%}
+<link name="water_gun_link">
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
+  {{ zero_inertial_macro() }}
+  <visual name="water_bag_visual">
+    <pose>0 0 0 0 0 0</pose>
+    <geometry>
+      <box>
+        <size>0.02 0.08 0.03</size>
+      </box>
+    </geometry>
+    <material>
+      <script>
+        <name>Gazebo/Blue</name>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+      </script>
+    </material>
+  </visual>
+  <visual name="nozzle_visual">
+    <pose>{{ nozzle_offset_x - 0.08/2 }} {{ nozzle_offset_y }} {{ offset_z - 0.006/2 }} 0 {{ rad90 }} 0</pose>
+    <geometry>
+      <cylinder>
+        <length>0.08</length>
+        <radius>0.006</radius>
+      </cylinder>
+    </geometry>
+    <material>
+      <script>
+        <name>Gazebo/DarkGrey</name>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+      </script>
+    </material>
+  </visual>
+</link>
+
+<plugin name="water_gun_plugin" filename="libMRSGazeboWaterGunPlugin.so">
+  <muzzle_velocity>{{ muzzle_velocity }}</muzzle_velocity>
+  <offset_x>{{ nozzle_offset_x }}</offset_x>
+  <offset_y>{{ nozzle_offset_y }}</offset_y>
+  <offset_z>{{ nozzle_offset_z }}</offset_z>
+  <spread>{{ spread }}</spread>
+  <particle_capacity>{{ particle_capacity }}</particle_capacity>
+  <spawning_reservoir>{{ spawning_reservoir }}</spawning_reservoir>
+</plugin>
+
+<joint name="water_gun_joint" type="fixed">
+  <parent>{{ parent_link }}</parent>
+  <child>water_gun_link</child>
 </joint>
 {%- endmacro -%}
 <!--}-->
