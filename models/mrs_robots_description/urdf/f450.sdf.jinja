@@ -1079,5 +1079,20 @@
     <!--}-->
     {% endif %}
 
+
+    {% if enable_magnetic_gripper %}
+    <!-- Magnetic gripper {-->
+    {{ components.magnet_gripper_visualization_macro(
+      parent_link = root,
+      x = 0.0,
+      y = 0.0,
+      z = - (0.20/2 + 0.01),
+      roll = 0,
+      pitch = 0,
+      yaw = components.rad90)
+    }}
+    <!--}-->
+    {% endif %}
+
   </model>
 </sdf>

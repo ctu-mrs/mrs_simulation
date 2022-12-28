@@ -2226,7 +2226,7 @@ limitations under the License.
 
 <!-- Macro to add a single Teraranger Evo {-->
 {%- macro teraranger_evo_macro(parent_link, id, visualize, frame_name, parent_frame_name, gaussian_noise, x, y, z, roll, pitch, yaw) -%}
-<visual name="teraranger_evo_{{ id }}">
+<visual name="teraranger_evo_{{ id }}_visual">
   <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   <geometry>
     <mesh>
@@ -2382,6 +2382,70 @@ limitations under the License.
 <joint name="gps_blocking_joint" type="fixed">
   <parent>{{ parent_link }}</parent>
   <child>gps_blocking_link</child>
+</joint>
+{%- endmacro -%}
+<!--}-->
+
+<!-- Macro to add a magnetic gripper {-->
+{%- macro magnet_gripper_visualization_macro(parent_link, x, y, z, roll, pitch, yaw) -%}
+<link name="magnet_gripper_visualization_link">
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
+  {{ zero_inertial_macro() }}
+  <visual name="front_visual">
+    <pose>-0.09 0 0.03 0 0 0</pose>
+    <geometry>
+      <box>
+        <size>0.005 0.05 0.06</size>
+      </box>
+    </geometry>
+    <material>
+      <script>
+        <name>Gazebo/Black</name>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+      </script>
+    </material>
+  </visual>
+  <visual name="back_visual">
+    <pose>0.09 0 0.03 0 0 0</pose>
+    <geometry>
+      <box>
+        <size>0.005 0.05 0.06</size>
+      </box>
+    </geometry>
+    <material>
+      <script>
+        <name>Gazebo/Black</name>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+      </script>
+    </material>
+  </visual>
+  <visual name="down_visual">
+    <pose>0 0 0 0 0 0</pose>
+    <geometry>
+      <box>
+        <size>0.18 0.05 0.005</size>
+      </box>
+    </geometry>
+    <material>
+      <script>
+        <name>Gazebo/Black</name>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+      </script>
+    </material>
+  </visual>
+  <collision name="collision">
+    <pose>0 0 0 0 0 0</pose>
+    <geometry>
+      <box>
+        <size>0.18 0.05 0.005</size>
+      </box>
+    </geometry>
+  </collision>
+</link>
+
+<joint name="magnet_gripper_visualization_joint" type="fixed">
+  <parent>{{ parent_link }}</parent>
+  <child>magnet_gripper_visualization_link</child>
 </joint>
 {%- endmacro -%}
 <!--}-->
