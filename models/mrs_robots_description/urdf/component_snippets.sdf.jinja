@@ -2159,7 +2159,7 @@ limitations under the License.
       <velocity>10</velocity>
     </limit>
     <dynamics>
-      <damping>0,05</damping>
+      <damping>0.05</damping>
       <friction>0.05</friction>
     </dynamics>
   </axis>
@@ -2177,7 +2177,7 @@ limitations under the License.
       <velocity>10</velocity>
     </limit>
     <dynamics>
-      <damping>0,05</damping>
+      <damping>0.05</damping>
       <friction>0.05</friction>
     </dynamics>
   </axis>
@@ -2568,6 +2568,61 @@ limitations under the License.
 <joint name="water_gun_joint" type="fixed">
   <parent>{{ parent_link }}</parent>
   <child>water_gun_link</child>
+</joint>
+{%- endmacro -%}
+<!--}-->
+
+<!-- Macro to add a light {-->
+{%- macro light_macro(parent_link, update_rate, max_pitch_rate, initial_on, compensate_tilt, x, y, z, roll, pitch, yaw) -%}
+<link name="light_macro_link">
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
+  {{ zero_inertial_macro() }}
+  <visual name="visual">
+    <pose>0 0 0 0 0 0</pose>
+    <geometry>
+      <box>
+        <size>0.01 0.01 0.01</size>
+      </box>
+    </geometry>
+    <material>
+      <script>
+        <name>Gazebo/Yellow</name>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+      </script>
+    </material>
+  </visual>
+</link>
+
+<plugin name="light_plugin" filename="libMRSGazeboLightPlugin.so">
+  <offset_x>{{ x }}</offset_x>
+  <offset_y>{{ y }}</offset_y>
+  <offset_z>{{ z }}</offset_z>
+  <offset_roll>{{ roll }}</offset_roll>
+  <offset_pitch>{{ pitch }}</offset_pitch>
+  <offset_yaw>{{ yaw }}</offset_yaw>
+  <spawning_frame>{{ parent_link }}</spawning_frame>
+  <update_rate>{{ update_rate }}</update_rate>
+  <max_pitch_rate>{{ max_pitch_rate }}</max_pitch_rate>
+  <initial_on>{{ initial_on }}</initial_on>
+  <compensate_tilt>{{ compensate_tilt }}</compensate_tilt>
+</plugin>
+
+<joint name="light_macro_joint" type="revolute">
+  <parent>{{ parent_link }}</parent>
+  <child>light_macro_link</child>
+  <axis>
+    <xyz>0 1 0</xyz>
+    <limit>
+      <lower>-1.57</lower>
+      <upper>1.57</upper>
+      <effort>1</effort>
+      <velocity>10</velocity>
+    </limit>
+    <dynamics>
+      <damping>0.05</damping>
+      <friction>0.05</friction>
+    </dynamics>
+  </axis>
 </joint>
 {%- endmacro -%}
 <!--}-->

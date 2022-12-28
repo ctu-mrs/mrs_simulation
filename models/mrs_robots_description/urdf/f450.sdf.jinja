@@ -1128,5 +1128,23 @@
     <!--}-->
     {% endif %}
 
+    {% if enable_light %}
+    <!-- Light {-->
+    {{ components.light_macro(
+      parent_link = root,
+      update_rate = 30,
+      max_pitch_rate = 0.1,
+      initial_on = True,
+      compensate_tilt = True,
+      x = 0.2,
+      y = 0.0,
+      z = -0.1,
+      roll = 0,
+      pitch = 0,
+      yaw = 0)
+    }}
+    <!--}-->
+    {% endif %}
+
   </model>
 </sdf>
