@@ -974,7 +974,7 @@
       calibration_file = uvcam_calib_file,
       occlusions = uvcam_occlusions,
       frame_rate = 60,
-      number="1",
+      number = 1,
       x = 0.03,
       y = 0.1,
       z = 0.06,
@@ -989,7 +989,7 @@
       calibration_file = uvcam_calib_file,
       occlusions = uvcam_occlusions,
       frame_rate = 60,
-      number="2",
+      number = 2,
       x = 0.03,
       y = -0.1,
       z = 0.06,
@@ -1008,13 +1008,52 @@
       calibration_file = uvcam_calib_file,
       occlusions = uvcam_occlusions,
       frame_rate = 60,
-      number="3",
+      number = 3,
       x = -0.1,
       y = 0.0,
       z = -0.02,
       roll = components.rad90,
       pitch = 0,
       yaw = components.rad180)
+    }}
+    <!--}-->
+    {% endif %}
+
+    {% if enable_servo_camera %}
+    <!-- Servo camera {-->
+    {{ components.servo_camera_macro(
+      parent = root,
+      parent_frame_name = namespace + "/fcu",
+      camera_frame_name = namespace + "/servo_camera_optical",
+      sensor_base_frame_name = namespace + "/servo_camera",
+      offset_pitch_link_x = 0.0,
+      offset_pitch_link_y = 0.0,
+      offset_pitch_link_z = 0.0,
+      offset_pitch_link_roll = 0.0,
+      offset_pitch_link_yaw = 0.0,
+      offset_pitch_link_pitch = 0.0,
+      offset_roll_link_x = 0.2,
+      offset_roll_link_y = 0.0,
+      offset_roll_link_z = -0.1,
+      offset_roll_link_roll = 0.0,
+      offset_roll_link_yaw = 0.0,
+      offset_roll_link_pitch = 0.0,
+      tilt_update_rate = 5.0,
+      min_pitch = -1.57,
+      max_pitch = 1.57,
+      min_roll = -0.6,
+      max_roll = 0.6,
+      max_pitch_rate = 0.1,
+      max_roll_rate = 0.1,
+      camera_update_rate = 30,
+      horizontal_fov = 1.92,
+      img_width = 1920,
+      img_height = 1080,
+      compensate_tilt_roll = true,
+      compensate_tilt_pitch = true,
+      pitch_link_mesh_file = "",
+      roll_link_mesh_file = "",
+      mesh_scale = "")
     }}
     <!--}-->
     {% endif %}
