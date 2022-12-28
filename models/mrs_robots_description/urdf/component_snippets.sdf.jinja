@@ -2626,3 +2626,29 @@ limitations under the License.
 </joint>
 {%- endmacro -%}
 <!--}-->
+
+<!-- Macro to add a safety_led {-->
+{%- macro safety_led_macro(parent_link, failure_duration_threshold, x, y, z, roll, pitch, yaw) -%}
+<link name="safety_led_link">
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
+  {{ zero_inertial_macro() }}
+</link>
+
+<plugin name="safety_led_plugin" filename="libMRSSafetyLedPlugin.so">
+  <model_name>safety_led</model_name>
+  <failure_duration_threshold>{{ failure_duration_threshold }}</failure_duration_threshold>
+  <model_spawn_delay>5.0</model_spawn_delay>
+  <x>{{ x }}</x>
+  <y>{{ y }}</y>
+  <z>{{ z }}}</z>
+  <roll>{{ roll }}</roll>
+  <pitch>{{ pitch }}</pitch>
+  <yaw>{{ yaw }}</yaw>
+</plugin>
+
+<joint name="safety_led_joint" type="fixed">
+  <parent>{{ parent_link }}</parent>
+  <child>safety_led_link</child>
+</joint>
+{%- endmacro -%}
+<!--}-->
