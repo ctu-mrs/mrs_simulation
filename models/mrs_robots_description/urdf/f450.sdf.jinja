@@ -1061,7 +1061,7 @@
 
     <!-- ========================== other sensors ========================= -->
 
-    {% if enable_teraranger_tower_evo %}
+    {% if enable_teraranger_evo_tower %}
     <!-- Teraranger Tower Evo {-->
     {{ components.teraranger_evo_tower_macro(
       parent_link = root,
@@ -1143,6 +1143,34 @@
       pitch = 0,
       yaw = 0)
     }}
+    <!--}-->
+    {% endif %}
+
+    {% if enable_uv_leds %}
+    <!-- UV leds {-->
+    {# -- leds configuration -- (id, signal_id, x, y, z, roll, pitch, yaw) #}
+    {%- set uv_leds_macro_parameters = [(1, uvled_s_l, -0.1697045,  0.1767755, -0.05, 0.0, components.rad90,  components.rad90),
+                                        (2, uvled_s_l, -0.1767755,  0.1697045, -0.05, 0.0, components.rad90,  components.rad180),
+                                        (3, uvled_s_r, -0.1767755, -0.1697045, -0.05, 0.0, components.rad90, -components.rad180),
+                                        (4, uvled_s_r, -0.1697045, -0.1767755, -0.05, 0.0, components.rad90, -components.rad90),
+                                        (5, uvled_s_r,  0.1697045, -0.1767755, -0.05, 0.0, components.rad90, -components.rad90),
+                                        (6, uvled_s_r,  0.1767755, -0.1697045, -0.05, 0.0, components.rad90,  0.0),
+                                        (7, uvled_s_l,  0.1767755,  0.1697045, -0.05, 0.0, components.rad90,  0.0),
+                                        (8, uvled_s_l,  0.1697045,  0.1767755, -0.05, 0.0, components.rad90,  components.rad90)] -%}
+
+    {% for id_, signal_id_, x_, y_, z_, roll_, pitch_, yaw_ in uv_leds_macro_parameters %}
+      {{ components.uvled_macro(
+        parent_link = root,
+        number = id_,
+        signal_id = signal_id_,
+        x = x_,
+        y = y_,
+        z = z_,
+        roll = roll_,
+        pitch = pitch_,
+        yaw = yaw_)
+      }}
+    {% endfor %}
     <!--}-->
     {% endif %}
 
