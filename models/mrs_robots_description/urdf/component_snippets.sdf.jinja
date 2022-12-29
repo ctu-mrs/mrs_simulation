@@ -2721,3 +2721,45 @@ limitations under the License.
 </joint>
 {%- endmacro -%}
 <!--}-->
+
+<!-- ================================================================== -->
+<!-- ||         other equipment definitions (holders, boxes ...)     || -->
+<!-- ================================================================== -->
+
+<!-- Macro to add a parachute {-->
+{%- macro parachute_macro(parent_link, x, y, z, roll, pitch, yaw) -%}
+<link name="parachute_link">
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
+  {{ zero_inertial_macro() }}
+  <visual name="visual">
+    <pose>0 0 0 0 0 0</pose>
+    <geometry>
+      <cylinder>
+        <length>0.1</length>
+        <radius>0.048</radius>
+      </cylinder>
+    </geometry>
+    <material>
+      <script>
+        <name>Gazebo/DarkGrey</name>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+      </script>
+    </material>
+  </visual>
+</link>
+
+<plugin name="parachute_plugin" filename="libMRSGazeboParachutePlugin.so">
+  <air_density>1.225</air_density>
+  <drag_coeff>500</drag_coeff>
+  <cross_section>0.25</cross_section>
+  <offset_x>0</offset_x>
+  <offset_y>0</offset_y>
+  <offset_z>-1.56</offset_z>
+</plugin>
+
+<joint name="parachute_joint" type="fixed">
+  <parent>{{ parent_link }}</parent>
+  <child>parachute_link</child>
+</joint>
+{%- endmacro -%}
+<!--}-->
