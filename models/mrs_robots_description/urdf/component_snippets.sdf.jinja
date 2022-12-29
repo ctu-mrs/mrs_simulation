@@ -2763,3 +2763,26 @@ limitations under the License.
 </joint>
 {%- endmacro -%}
 <!--}-->
+
+<!-- Macro to add a whycon box {-->
+{%- macro whycon_box_macro(parent_link, mesh_scale, x, y, z, roll, pitch, yaw) -%}
+<link name="whycon_box_link">
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
+  {{ zero_inertial_macro() }}
+  <visual name="visual">
+    <pose>0 0 0 0 0 0</pose>
+    <geometry>
+      <mesh>
+        <uri>model://mrs_robots_description/meshes/sensors/whycon_box.dae</uri>
+        <scale>{{ mesh_scale }}</scale>
+      </mesh>
+    </geometry>
+  </visual>
+</link>
+
+<joint name="whycon_box_joint" type="fixed">
+  <parent>{{ parent_link }}</parent>
+  <child>whycon_box_link</child>
+</joint>
+{%- endmacro -%}
+<!--}-->

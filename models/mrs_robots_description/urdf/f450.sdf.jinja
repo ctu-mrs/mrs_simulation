@@ -1173,5 +1173,22 @@
     <!--}-->
     {% endif %}
 
+<!-- ========================== other sensors ========================= -->
+
+    {% if enable_whycon_box %}
+    <!-- Whycon box {-->
+    {{ components.whycon_box_macro(
+      parent_link = root,
+      mesh_scale = "1 1 1",
+      x = 0,
+      y = 0,
+      z = 0.25,
+      roll = 0,
+      pitch = 0,
+      yaw = 0)
+    }}
+    <!--}-->
+    {% endif %}
+
   </model>
 </sdf>
