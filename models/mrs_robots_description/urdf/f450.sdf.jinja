@@ -500,6 +500,23 @@
       <!--}-->
       {% endif %}
 
+      {% if enable_dual_uv_cameras %}
+      <!-- UVDAR mount {-->
+      {{ components.visual_mesh_macro(
+        name = "uvdar_mount",
+        mesh_file = uvdar_mount_mesh,
+        mesh_scale = mesh_scale_milimeters,
+        color = "DarkGrey",
+        x = 0.025,
+        y = 0,
+        z = 0.036,
+        roll = 0,
+        pitch = 0,
+        yaw = 0)
+      }}
+      <!--}-->
+      {% endif %}
+
       <!--}-->
 
     </link>
@@ -1111,9 +1128,9 @@
       occlusions = uvcam_occlusions,
       frame_rate = 60,
       number = 1,
-      x = 0.03,
-      y = 0.1,
-      z = 0.06,
+      x = 0.037,
+      y = 0.1175,
+      z = 0.05,
       roll = 0,
       pitch = 0,
       yaw = components.rad70)
@@ -1126,9 +1143,9 @@
       occlusions = uvcam_occlusions,
       frame_rate = 60,
       number = 2,
-      x = 0.03,
-      y = -0.1,
-      z = 0.06,
+      x = 0.037,
+      y = -0.1175,
+      z = 0.05,
       roll = 0,
       pitch = 0,
       yaw = -components.rad70)
