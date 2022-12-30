@@ -910,7 +910,7 @@
     <!-- Fisheye camera placements{-->
 
     {% if enable_fisheye_camera %}
-    <!-- classic {-->
+    <!-- fisheye classic {-->
     {{ components.fisheye_camera_macro(
       namespace = namespace,
       camera_name = "fisheye_camera",
@@ -929,10 +929,10 @@
     {% endif %}
     <!--}-->
 
-    <!-- Bluefox placements{-->
+    <!-- Bluefox camera placements{-->
 
     {% if enable_bluefox_camera_reverse %}
-    <!-- reverse {-->
+    <!-- bluefox reverse {-->
     {{ components.bluefox_camera_macro(
       namespace = namespace,
       camera_name = "bluefox_optflow",
@@ -951,7 +951,7 @@
     {% endif %}
 
     {% if enable_bluefox_camera %}
-    <!-- classic {-->
+    <!-- bluefox classic {-->
     {{ components.bluefox_camera_macro(
       namespace = namespace,
       camera_name = "bluefox_optflow",
@@ -974,7 +974,7 @@
     <!-- Realsense placements {-->
 
     {% if enable_realsense_down %}
-    <!-- down {-->
+    <!-- realsense down {-->
     {{ components.realsense_macro(
       namespace = namespace,
       camera_name = "rgbd",
@@ -992,7 +992,7 @@
     {% endif %}
 
     {% if enable_realsense_front_pitched %}
-    <!-- front pitched {-->
+    <!-- realsense front pitched {-->
     {{ components.realsense_macro(
       namespace = namespace,
       camera_name = "rgbd",
@@ -1010,7 +1010,7 @@
     {% endif %}
 
     {% if enable_realsense_front %}
-    <!-- front pitched {-->
+    <!-- realsense front pitched {-->
     {{ components.realsense_macro(
       namespace = namespace,
       camera_name = "rgbd",
@@ -1028,7 +1028,7 @@
     {% endif %}
 
     {% if enable_realsense_up %}
-    <!-- front pitched {-->
+    <!-- realsense front pitched {-->
     {{ components.realsense_macro(
       namespace = namespace,
       camera_name = "rgbd",
@@ -1050,7 +1050,7 @@
     <!-- Mobius placements {-->
 
     {% if enable_mobius_camera_down %}
-    <!-- down {-->
+    <!-- mobius down {-->
     {{ components.mobius_camera_macro(
       namespace = namespace,
       camera_name = "mobius_down",
@@ -1067,7 +1067,7 @@
     {% endif %}
 
     {% if enable_mobius_camera_front %}
-    <!-- front {-->
+    <!-- mobius front {-->
     {{ components.mobius_camera_macro(
       namespace = namespace,
       camera_name = "mobius_front",
@@ -1084,7 +1084,7 @@
     {% endif %}
 
     {% if enable_mobius_camera_back_left %}
-    <!-- back left {-->
+    <!-- mobius back left {-->
     {{ components.mobius_camera_macro(
       namespace = namespace,
       camera_name = "mobius_back_left",
@@ -1101,7 +1101,7 @@
     {% endif %}
 
     {% if enable_mobius_camera_back_right %}
-    <!-- back right {-->
+    <!-- mobius back right {-->
     {{ components.mobius_camera_macro(
       namespace = namespace,
       camera_name = "mobius_back_right",
@@ -1215,6 +1215,45 @@
     <!--}-->
     {% endif %}
     {# <!--}--> #}
+
+    <!-- VIO placements {-->
+
+    {% if enable_vio %}
+    <!-- VIO classic {-->
+    {{ components.vio_macro(
+      namespace = namespace,
+      sensor_name = "vio",
+      parent_link = root,
+      frame_rate = 45,
+      noise = 0.0,
+      x = 0.107,
+      y = 0,
+      z = -0.002,
+      roll = 0,
+      pitch = 0,
+      yaw = 0)
+    }}
+    <!--}-->
+    {% endif %}
+
+    {% if enable_vio_down %}
+    <!-- VIO down {-->
+    {{ components.vio_macro(
+      namespace = namespace,
+      sensor_name = "vio",
+      parent_link = root,
+      frame_rate = 45,
+      noise = 0.0,
+      x = 0.1,
+      y = 0,
+      z = -0.15,
+      roll = 0,
+      pitch = components.rad90,
+      yaw = 0)
+    }}
+    <!--}-->
+    {% endif %}
+    <!--}-->
 
     <!-- ========================== other sensors ========================= -->
 
