@@ -432,6 +432,23 @@
       <!--}-->
       {% endif %}
 
+      {% if enable_bluefox_camera or enable_bluefox_camera_reverse %}
+      <!-- Bluefox mount {-->
+      {{ components.visual_mesh_macro(
+        name = "Bluefox_mount",
+        mesh_file = bluefox_mount_mesh,
+        mesh_scale = mesh_scale_milimeters,
+        color = "DarkGrey",
+        x = 0.051,
+        y = 0,
+        z = -(arm_height + 0.02),
+        roll = components.rad90,
+        pitch = 0,
+        yaw = -components.rad90)
+      }}
+      <!--}-->
+      {% endif %}
+
       <!--}-->
 
     </link>
