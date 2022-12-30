@@ -449,6 +449,57 @@
       <!--}-->
       {% endif %}
 
+      {% if enable_realsense_front %}
+      <!-- Realsense front mount {-->
+      {{ components.visual_mesh_macro(
+        name = "realsense_front_mount",
+        mesh_file = realsense_front_mount_mesh,
+        mesh_scale = mesh_scale_milimeters,
+        color = "DarkGrey",
+        x = 0.153,
+        y = 0,
+        z = -0.089,
+        roll = 0,
+        pitch = 0,
+        yaw = 0)
+      }}
+      <!--}-->
+      {% endif %}
+
+      {% if enable_realsense_front_pitched %}
+      <!-- Realsense front pitched mount {-->
+      {{ components.visual_mesh_macro(
+        name = "realsense_front_pitched_mount",
+        mesh_file = realsense_front_pitched_mount_mesh,
+        mesh_scale = mesh_scale_milimeters,
+        color = "DarkGrey",
+        x = 0.153,
+        y = 0,
+        z = -0.089,
+        roll = 0,
+        pitch = 0,
+        yaw = 0)
+      }}
+      <!--}-->
+      {% endif %}
+
+      {% if enable_realsense_down %}
+      <!-- Realsense down mount {-->
+      {{ components.visual_mesh_macro(
+        name = "realsense_down_mount",
+        mesh_file = realsense_front_down_mount_mesh,
+        mesh_scale = mesh_scale_milimeters,
+        color = "DarkGrey",
+        x = 0.153,
+        y = 0,
+        z = -0.089,
+        roll = 0,
+        pitch = 0,
+        yaw = 0)
+      }}
+      <!--}-->
+      {% endif %}
+
       <!--}-->
 
     </link>
