@@ -2792,7 +2792,7 @@ limitations under the License.
 <!-- Macro to add a single chain in the pendulum {-->
 {%- macro single_chain_pendulum_macro(parent_link, id, chain_mass, chain_radius, chain_length, joint_offset_x, joint_offset_y, joint_offset_z) -%}
 <link name="pendulum_chain_{{ id }}_link">
-  <pose relative_to = "pendulum_chain_{{ id }}_joint"> 0 0 {{ -chain_length }} 0 0 0</pose>
+  <pose relative_to = "pendulum_chain_{{ id }}_joint"> 0 0 {{ -chain_length/2 }} 0 0 0</pose>
   <inertial>
     <mass>{{ chain_mass }}</mass>
     {{
@@ -2804,7 +2804,7 @@ limitations under the License.
   </inertial>
   <gravity>1</gravity>
   <visual name="chain_visual">
-    <pose>0 0 {{ chain_length/2 }} 0 0 0</pose>
+    <pose>0 0 0 0 0 0</pose>
     <geometry>
       <cylinder>
         <length>{{ chain_length }}</length>
@@ -2819,7 +2819,7 @@ limitations under the License.
     </material>
   </visual>
   <visual name="connection_visual">
-    <pose>0 0 {{ chain_length }} 0 0 0</pose>
+    <pose>0 0 {{ chain_length/2 }} 0 0 0</pose>
     <geometry>
       <sphere>
         <radius>0.012</radius>
@@ -2891,7 +2891,7 @@ limitations under the License.
     chain_length = chain_length,
     joint_offset_x = 0,
     joint_offset_y = 0,
-    joint_offset_z = 0,
+    joint_offset_z = -chain_length/2,
     )
   }}
 {% endfor %}
