@@ -1190,5 +1190,20 @@
     <!--}-->
     {% endif %}
 
+    {% if enable_pendulum %}
+    <!-- pendelum {-->
+    {{ components.pendulum_macro(
+      parent_link = root,
+      number_of_chains = 30,
+      chain_length = 0.1,
+      chain_radius = 0.01,
+      chain_mass = 0.5 / 30,
+      x = 0,
+      y = 0,
+      z = -0.10)
+    }}
+    <!--}-->
+    {% endif %}
+
   </model>
 </sdf>
