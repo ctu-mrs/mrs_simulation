@@ -415,6 +415,23 @@
       <!--}-->
       {% endif %}
 
+      {% if enable_rangefinder %}
+      <!-- Garmin mount {-->
+      {{ components.visual_mesh_macro(
+        name = "garmin_mount",
+        mesh_file = garmin_mount_mesh,
+        mesh_scale = mesh_scale_milimeters,
+        color = "DarkGrey",
+        x = -0.055,
+        y = 0,
+        z = -(arm_height + 0.016),
+        roll = components.rad90,
+        pitch = 0,
+        yaw = components.rad90)
+      }}
+      <!--}-->
+      {% endif %}
+
       <!--}-->
 
     </link>
