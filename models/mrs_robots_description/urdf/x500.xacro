@@ -782,12 +782,12 @@
 
   <!-- Realsense placements {-->
 
-  <!-- front {-->
-  <xacro:if value="${optionals['enable_realsense_front']}">
+  <!-- up {-->
+  <xacro:if value="${optionals['enable_realsense_up_down']}">
     <!-- sensor -->
     <xacro:realsense_macro
       namespace="${namespace}"
-      camera_name="rgbd"
+      camera_name="up_rgbd"
       camera_suffix=""
       parent_link="base_link"
       parent_frame_name="${namespace}/fcu"
@@ -796,10 +796,31 @@
       y="0"
       z="0.04"
       roll="0"
-      pitch="0"
+      pitch="-${rad90}"
       yaw="0">
     </xacro:realsense_macro>
   </xacro:if>
   <!--}-->
+
+  <!-- down {-->
+  <xacro:if value="${optionals['enable_realsense_up_down']}">
+    <!-- sensor -->
+    <xacro:realsense_macro
+      namespace="${namespace}"
+      camera_name="down_rgbd"
+      camera_suffix=""
+      parent_link="base_link"
+      parent_frame_name="${namespace}/fcu"
+      enable_realistic_realsense="${optionals['use_realistic_realsense']}"
+      x="0.075"
+      y="0"
+      z="0.04"
+      roll="0"
+      pitch="${rad90}"
+      yaw="0">
+    </xacro:realsense_macro>
+  </xacro:if>
+  <!--}-->
+
 
 </robot>

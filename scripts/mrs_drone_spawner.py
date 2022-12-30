@@ -26,7 +26,7 @@ MAVLINK_TCP_BASE_PORT = 4560
 MAVLINK_UDP_BASE_PORT = 14560
 LAUNCH_BASE_PORT = 14900
 DEFAULT_VEHICLE_TYPE = 't650'
-VEHICLE_TYPES = ['f450', 'f550', 't650', 'x500', 'eaglemk2', 'f330', 'brus', 'naki']
+VEHICLE_TYPES = ['f450', 'f550', 't650', 'x500', 'eaglemk2', 'f330', 'brus', 'naki', 'big_dofec']
 SPAWNING_DELAY_SECONDS = 6
 
 class MrsDroneSpawner():
@@ -361,7 +361,7 @@ class MrsDroneSpawner():
         ports['udp_offboard_port_local'] = VEHICLE_BASE_PORT + (4 * ID) + 1
         ports['mavlink_tcp_port'] = MAVLINK_TCP_BASE_PORT + ID
         ports['mavlink_udp_port'] = MAVLINK_UDP_BASE_PORT + ID
-        ports['fcu_url'] = 'udp://:' + str(ports['udp_offboard_port_remote']) + '@localhost:' + str(ports['udp_offboard_port_local'])
+        ports['fcu_url'] = 'udp://127.0.0.1:' + str(ports['udp_offboard_port_remote']) + '@127.0.0.1:' + str(ports['udp_offboard_port_local'])
         return ports
     # #}
 
@@ -442,13 +442,11 @@ class MrsDroneSpawner():
 
     # #{ get_vehicle_type
     def get_vehicle_type(self, params_list):
-        vehicle_type = DEFAULT_VEHICLE_TYPE
         for p in params_list:
             for v in VEHICLE_TYPES:
                 if v in p:
-                    vehicle_type = v
-                    break
-        return vehicle_type
+                    return v
+        return DEFAULT_VEHICLE_TYPE
     # #}
 
     # #{ get_spawn_poses
