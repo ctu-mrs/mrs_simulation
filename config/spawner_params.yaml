@@ -30,7 +30,6 @@ ouster_model: ['OS1-16', 'Choose the Ouster model. Options: OS0-32, OS0-64, OS0-
 use_gpu_ray: [False, 'Laser ray casting will be handled by GPU shaders', [f330, f450, f550, t650, x500, eaglemk2, naki]]
 enable_light: [False, 'Add light to the vehicle', [f450, f550, t650, x500, naki]]
 enable_servo_camera: [False, 'Add camera on virtual servo to the vehicle', [f450, f550, t650, naki]]
-enable_ball_holder: [False, 'Add ball holder to the vehicle', [f450, f550, t650]]
 enable_water_gun: [False, 'Add water gun for fire fighting', [t650]]
 enable_parachute: [False, 'Add parachute for emergency flight termination', [t650]]
 wall_challenge: [False, 'Configuration for the MBZIRC wall challenge (T650 with 2x bluefox down, realsense down pitched, rangefinder down)', [t650]]
