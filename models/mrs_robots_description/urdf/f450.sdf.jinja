@@ -398,6 +398,23 @@
       <!--}-->
       {% endif %}
 
+      {% if enable_rplidar or enable_scanse_sweep %}
+      <!-- Rplidar and scanse mount {-->
+      {{ components.visual_mesh_macro(
+        name = "rplidar_mount",
+        mesh_file = rplidar_mount_mesh,
+        mesh_scale = mesh_scale_milimeters,
+        color = "DarkGrey",
+        x = 0,
+        y = 0,
+        z = 0.068,
+        roll = 0,
+        pitch = 0,
+        yaw = components.rad90)
+      }}
+      <!--}-->
+      {% endif %}
+
       <!--}-->
 
     </link>
