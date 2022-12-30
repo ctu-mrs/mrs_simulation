@@ -357,12 +357,12 @@
         mesh_file = battery_mount_mesh,
         mesh_scale = mesh_scale_milimeters,
         color = "DarkGrey",
-        x = 0.003,
+        x = 0,
         y = 0,
         z = -body_height / 2 - 0.028,
         roll = 0,
         pitch = 0,
-        yaw = components.rad(180))
+        yaw = components.rad90)
       }}
 
       {{ components.visual_colored_box_macro(
@@ -371,12 +371,12 @@
         size_y = 0.042,
         size_z = 0.044,
         color = "Grey",
-        x = 0.003,
+        x = 0,
         y = 0,
         z = -body_height / 2 - 0.027,
         roll = 0,
         pitch = 0,
-        yaw = components.rad(180))
+        yaw = components.rad90)
       }}
       <!--}-->
       {% endif %}
@@ -691,7 +691,7 @@
       namespace = namespace,
       parent_link = root,
       orientation = "",
-      x = -0.077,
+      x = -0.057,
       y = 0,
       z = -0.069,
       roll = 0,
