@@ -381,6 +381,23 @@
       <!--}-->
       {% endif %}
 
+      {% if enable_ouster or enable_velodyne %}
+      <!-- battery mount and battery {-->
+      {{ components.visual_mesh_macro(
+        name = "ouster_mount",
+        mesh_file = ouster_mount_mesh,
+        mesh_scale = mesh_scale_milimeters,
+        color = "DarkGrey",
+        x = 0,
+        y = 0,
+        z = 0.061,
+        roll = 0,
+        pitch = 0,
+        yaw = 0)
+      }}
+      <!--}-->
+      {% endif %}
+
       <!--}-->
 
     </link>
