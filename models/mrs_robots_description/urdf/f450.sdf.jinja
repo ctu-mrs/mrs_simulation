@@ -610,6 +610,7 @@
     <!-- ||                  optional sensor definitions                 || -->
     <!-- ================================================================== -->
 
+    {# Ground truth {--> #}
     {% if enable_ground_truth %}
     <!-- Ground truth {-->
     {{ components.odometry_plugin_macro(
@@ -628,9 +629,11 @@
     }}
     <!--}-->
     {% endif %}
+    {# <!--}--> #}
 
-  <!-- ======================= rangefinder sensors ======================-->
+    <!-- ======================= rangefinder sensors ======================-->
 
+    {# Garmin {--> #}
     {% if enable_rangefinder %}
     <!-- Garmin {-->
     {# {{ components.garmin_macro("lidar0", root, -0.077, 0, -0.069, 0, components.rad(90), 0) }} - uncomment when simulation will work with pixgarm #}
@@ -647,7 +650,9 @@
     }}
     <!--}-->
     {% endif %}
+    {# <!--}--> #}
 
+    {# Garmin Up {--> #}
     {% if enable_rangefinder_up %}
     <!-- Garmin Up {-->
     {{ components.external_garmin_macro(
@@ -663,7 +668,9 @@
     }}
     <!--}-->
     {% endif %}
+    {# <!--}--> #}
 
+    {# Teraranger One {--> #}
     {% if enable_teraranger %}
     <!-- Teraranger One {-->
     {{ components.teraranger_macro(
@@ -678,9 +685,11 @@
     }}
     <!--}-->
     {% endif %}
+    {# <!--}--> #}
 
     <!-- ========================== LIDAR sensors ========================= -->
 
+    {# Scanse Sweep {--> #}
     {% if enable_scanse_sweep %}
     <!-- Scanse Sweep {-->
     {{ components.scanse_sweep_macro(
@@ -695,7 +704,9 @@
     }}
     <!--}-->
     {% endif %}
+    {# <!--}--> #}
 
+    {# Rplidar {--> #}
     {% if enable_rplidar %}
     <!-- Rplidar {-->
     {{ components.rplidar_macro(
@@ -710,7 +721,9 @@
     }}
     <!--}-->
     {% endif %}
+    {# <!--}--> #}
 
+    {# Velodyne {--> #}
     {% if enable_velodyne %}
     <!-- Velodyne  {-->
     <!-- VLP-16 (default) -->
@@ -733,7 +746,9 @@
     }}
     <!--}-->
     {% endif %}
+    {# <!--}--> #}
 
+    {# Ouster {--> #}
     {% if enable_ouster %}
     <!-- Ouster  {-->
     {{ components.ouster_macro(
@@ -753,6 +768,7 @@
     }}
     <!--}-->
     {% endif %}
+    {# <!--}--> #}
 
     <!-- ========================= camera sensors ========================= -->
 
@@ -967,6 +983,7 @@
     {% endif %}
     <!--} -->
 
+    {# Dual UV cameras {--> #}
     {% if enable_dual_uv_cameras %}
     <!-- Dual UV cameras {-->
     {{ components.uvcam_macro(
@@ -1000,7 +1017,9 @@
     }}
     <!--}-->
     {% endif %}
+    {# <!--}--> #}
 
+    {# Back UV cameras {--> #}
     {% if enable_back_uv_camera %}
     <!-- Back UV camera {-->
     {{ components.uvcam_macro(
@@ -1019,7 +1038,9 @@
     }}
     <!--}-->
     {% endif %}
+    {# <!--}--> #}
 
+    {# Servo camera {--> #}
     {% if enable_servo_camera %}
     <!-- Servo camera {-->
     {{ components.servo_camera_macro(
@@ -1058,9 +1079,11 @@
     }}
     <!--}-->
     {% endif %}
+    {# <!--}--> #}
 
     <!-- ========================== other sensors ========================= -->
 
+    {# Teraranger Tower Evo {--> #}
     {% if enable_teraranger_evo_tower %}
     <!-- Teraranger Tower Evo {-->
     {{ components.teraranger_evo_tower_macro(
@@ -1078,7 +1101,9 @@
     }}
     <!--}-->
     {% endif %}
+    {# <!--}--> #}
 
+    {# Magnetic gripper {--> #}
     {% if enable_magnetic_gripper %}
     <!-- Magnetic gripper {-->
     {{ components.magnet_gripper_visualization_macro(
@@ -1092,7 +1117,9 @@
     }}
     <!--}-->
     {% endif %}
+    {# <!--}--> #}
 
+    {# Timepix {--> #}
     {% if enable_timepix %}
     <!-- Timepix {-->
     {{ components.timepix_macro(
@@ -1107,7 +1134,9 @@
     }}
     <!--}-->
     {% endif %}
+    {# <!--}--> #}
 
+    {# Timepix3 {--> #}
     {% if enable_timepix3 %}
     <!-- Timepix3 {-->
     {{ components.timepix3_macro(
@@ -1126,7 +1155,9 @@
     }}
     <!--}-->
     {% endif %}
+    {# <!--}--> #}
 
+    {# Light {--> #}
     {% if enable_light %}
     <!-- Light {-->
     {{ components.light_macro(
@@ -1144,7 +1175,9 @@
     }}
     <!--}-->
     {% endif %}
+    {# <!--}--> #}
 
+    {# UV leds {--> #}
     {% if enable_uv_leds %}
     <!-- UV leds {-->
     {# -- leds configuration -- (id, signal_id, x, y, z, roll, pitch, yaw) #}
@@ -1172,9 +1205,9 @@
     {% endfor %}
     <!--}-->
     {% endif %}
+    {# <!--}--> #}
 
-<!-- ========================== other sensors ========================= -->
-
+    {# Whycon box {--> #}
     {% if enable_whycon_box %}
     <!-- Whycon box {-->
     {{ components.whycon_box_macro(
@@ -1189,9 +1222,11 @@
     }}
     <!--}-->
     {% endif %}
+    {# <!--}--> #}
 
+    {# Pendelum {--> #}
     {% if enable_pendulum %}
-    <!-- pendelum {-->
+    <!-- Pendelum {-->
     {{ components.pendulum_macro(
       parent_link = root,
       number_of_chains = 30,
@@ -1204,6 +1239,7 @@
     }}
     <!--}-->
     {% endif %}
+    {# <!--}--> #}
 
   </model>
 </sdf>
