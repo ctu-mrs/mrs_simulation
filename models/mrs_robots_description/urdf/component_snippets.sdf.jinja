@@ -107,35 +107,27 @@ limitations under the License.
 <!-- ||   generic macro definitions (visualization, collision ...)   || -->
 <!-- ================================================================== -->
 
-<!-- Colored box {-->
-{%- macro colored_box(name, size_x, size_y, size_z, color, parent, x, y, z, roll, pitch, yaw) -%}
-<link name="{{ name }}_link">
+<!-- Visual colored box macro {-->
+{%- macro visual_colored_box_macro(name, size_x, size_y, size_z, color, x, y, z, roll, pitch, yaw) -%}
+<visual name="{{ name }}visual">
   <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
-  {{ zero_inertial_macro() }}
-  <visual name="visual">
-    <geometry>
-      <box>
-        <size>{{ size_x }} {{ size_y }} {{ size_z }}</size>
-      </box>
-    </geometry>
-    <material>
-      <script>
-        <name>Gazebo/{{ color }}</name>
-        <uri>file://media/materials/scripts/gazebo.material</uri>
-      </script>
-    </material>
-  </visual>
-</link>
-
-<joint name="{{ name }}_joint" type="fixed">
-  <parent>{{ parent }}</parent>
-  <child>{{ name }}_link</child>
-</joint>
+  <geometry>
+    <box>
+      <size>{{ size_x }} {{ size_y }} {{ size_z }}</size>
+    </box>
+  </geometry>
+  <material>
+    <script>
+      <name>Gazebo/{{ color }}</name>
+      <uri>file://media/materials/scripts/gazebo.material</uri>
+    </script>
+  </material>
+</visual>
 {%- endmacro -%}
 <!--}-->
 
-<!-- Visual macro (generic mesh) {-->
-{%- macro visual_macro(name, mesh_file, mesh_scale, color, x, y, z, roll, pitch, yaw) -%}
+<!-- Visual mesh macro {-->
+{%- macro visual_mesh_macro(name, mesh_file, mesh_scale, color, x, y, z, roll, pitch, yaw) -%}
 <visual name="{{ name }}_visual">
   <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   <geometry>
@@ -156,7 +148,7 @@ limitations under the License.
 
 <!-- Leg macro {-->
 {%- macro leg_macro(name, mesh_file, mesh_scale, color, parent, x, y, z, roll, pitch, yaw, collision_height, collision_radius) -%}
-{{ visual_macro(
+{{ visual_mesh_macro(
   name = name,
   mesh_file = mesh_file,
   mesh_scale = mesh_scale,
@@ -659,7 +651,7 @@ limitations under the License.
 <link name="{{ camera_name }}_link">
   <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   {{ zero_inertial_macro() }}
-  {{ visual_macro(
+  {{ visual_mesh_macro(
     name = "",
     mesh_file = mesh_file,
     mesh_scale = mesh_scale,
@@ -734,7 +726,7 @@ limitations under the License.
 <link name="{{ camera_name }}_link">
   <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   {{ zero_inertial_macro() }}
-  {{ visual_macro(
+  {{ visual_mesh_macro(
     name = "",
     mesh_file = mesh_file,
     mesh_scale = mesh_scale,

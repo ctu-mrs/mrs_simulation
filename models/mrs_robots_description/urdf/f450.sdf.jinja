@@ -119,7 +119,7 @@
       <!-- Body visuals {-->
 
       <!-- Boards {-->
-      {{ components.visual_macro(
+      {{ components.visual_mesh_macro(
         name = "lower_central_board",
         mesh_file = central_board_mesh_bottom,
         mesh_scale = mesh_scale,
@@ -132,7 +132,7 @@
         yaw = 0)
       }}
 
-      {{ components.visual_macro(
+      {{ components.visual_mesh_macro(
         name = "upper_central_board",
         mesh_file = central_board_mesh_top,
         mesh_scale = mesh_scale,
@@ -147,7 +147,7 @@
       <!--}-->
 
       <!-- Arms {-->
-      {{ components.visual_macro(
+      {{ components.visual_mesh_macro(
         name = "front_right_arm",
         mesh_file = arm_mesh_file,
         mesh_scale = mesh_scale,
@@ -160,7 +160,7 @@
         yaw = components.rad(-45))
       }}
 
-      {{ components.visual_macro(
+      {{ components.visual_mesh_macro(
         name = "front_left_arm",
         mesh_file = arm_mesh_file,
         mesh_scale = mesh_scale,
@@ -173,7 +173,7 @@
         yaw = components.rad(45))
       }}
 
-      {{ components.visual_macro(
+      {{ components.visual_mesh_macro(
         name = "back_right_arm",
         mesh_file = arm_mesh_file,
         mesh_scale = mesh_scale,
@@ -186,7 +186,7 @@
         yaw = components.rad(-135))
       }}
 
-      {{ components.visual_macro(
+      {{ components.visual_mesh_macro(
         name = "back_left_arm",
         mesh_file = arm_mesh_file,
         mesh_scale = mesh_scale,
@@ -201,7 +201,7 @@
       <!--}-->
 
       <!-- intel nuc {-->
-      {{ components.visual_macro(
+      {{ components.visual_mesh_macro(
         name = "NUC",
         mesh_file = nuc_mesh_file,
         mesh_scale = mesh_scale_milimeters,
@@ -216,7 +216,7 @@
       <!--}-->
 
       <!-- pixhawk {-->
-      {{ components.visual_macro(
+      {{ components.visual_mesh_macro(
         name = "pixhawk",
         mesh_file = pixhawk_mesh_file,
         mesh_scale = mesh_scale,
@@ -297,7 +297,7 @@
       <!--}-->
 
       <!-- motors {-->
-      {{ components.visual_macro(
+      {{ components.visual_mesh_macro(
         name = "front_right_motor",
         mesh_file = motor_mesh_file,
         mesh_scale = mesh_scale,
@@ -310,7 +310,7 @@
         yaw = 0)
       }}
 
-      {{ components.visual_macro(
+      {{ components.visual_mesh_macro(
         name = "front_left_motor",
         mesh_file = motor_mesh_file,
         mesh_scale = mesh_scale,
@@ -323,7 +323,7 @@
         yaw = 0)
       }}
 
-      {{ components.visual_macro(
+      {{ components.visual_mesh_macro(
         name = "back_right_motor",
         mesh_file = motor_mesh_file,
         mesh_scale = mesh_scale,
@@ -336,7 +336,7 @@
         yaw = 0)
       }}
 
-      {{ components.visual_macro(
+      {{ components.visual_mesh_macro(
         name = "back_left_motor",
         mesh_file = motor_mesh_file,
         mesh_scale = mesh_scale,
@@ -352,26 +352,25 @@
 
       {% if use_battery_mount %}
       <!-- battery mount and battery {-->
-      {{ components.visual_macro(
+      {{ components.visual_mesh_macro(
         name = "battery_mount",
         mesh_file = battery_mount_mesh,
         mesh_scale = mesh_scale_milimeters,
         color = "DarkGrey",
         x = 0.003,
         y = 0,
-        z = -body_height / 2 - 0.029,
+        z = -body_height / 2 - 0.028,
         roll = 0,
         pitch = 0,
         yaw = components.rad(180))
       }}
 
-      {{ components.colored_box(
+      {{ components.visual_colored_box_macro(
         name = "battery",
         size_x = 0.13,
         size_y = 0.042,
         size_z = 0.044,
         color = "Grey",
-        parent = root,
         x = 0.003,
         y = 0,
         z = -body_height / 2 - 0.027,
