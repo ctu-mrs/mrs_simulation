@@ -750,7 +750,7 @@
     <!-- Ground truth {-->
     {{ components.odometry_plugin_macro(
       odometry_sensor_name = "ground_truth",
-      parent_link = "base_link",
+      parent_link = root,
       topic_name = "ground_truth",
       noise = "0",
       frame_name = "world",
