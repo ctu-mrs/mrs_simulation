@@ -146,6 +146,20 @@ limitations under the License.
 {%- endmacro -%}
 <!--}-->
 
+<!-- Visual mesh textured macro {-->
+{%- macro visual_mesh_textured_macro(name, mesh_file, mesh_scale, x, y, z, roll, pitch, yaw) -%}
+<visual name="{{ name }}_visual">
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
+  <geometry>
+    <mesh>
+      <uri>{{ mesh_file }}</uri>
+      <scale>{{ mesh_scale }}</scale>
+    </mesh>
+  </geometry>
+</visual>
+{%- endmacro -%}
+<!--}-->
+
 <!-- Leg macro {-->
 {%- macro leg_macro(name, mesh_file, mesh_scale, color, parent, x, y, z, roll, pitch, yaw, collision_height, collision_radius) -%}
 {{ visual_mesh_macro(
@@ -1937,7 +1951,7 @@ limitations under the License.
       </script>
     </material>
   </visual>
-  <sensor type="camera" name="mrs_thermal_camera_sensor">
+  <sensor name="mrs_thermal_camera_sensor" type="camera">
     <update_rate>{{ frame_rate }}</update_rate>
     <camera>
       <horizontal_fov>{{ hfov }}</horizontal_fov>
@@ -1950,6 +1964,11 @@ limitations under the License.
         <near>0.1</near>
         <far>300</far>
       </clip>
+      <noise>
+        <type>gaussian</type>
+        <mean>0.0</mean>
+        <stddev>0.0</stddev>
+      </noise>
     </camera>
     <plugin name="{{camera_name}}_plugin" filename="libMRSGazeboThermalCameraPlugin.so">
       <alwaysOn>true</alwaysOn>
