@@ -406,6 +406,57 @@
       <!--}-->
       {% endif %}
      
+      {% if enable_realsense_front %}
+      <!-- Realsense mount {-->
+      {{ components.visual_mesh_macro(
+        name = "realsense_front_mount",
+        mesh_file = realsense_front_mount_mesh,
+        mesh_scale = mesh_scale_milimeters,
+        color = "White",
+        x = 0.125,
+        y = 0.0,
+        z = -0.046,
+        roll = 0,
+        pitch = 0,
+        yaw = 0)
+      }}
+      <!--}-->
+      {% endif %}
+     
+      {% if enable_ouster or enable_velodyne %}
+      <!-- Ouster mount {-->
+      {{ components.visual_mesh_macro(
+        name = "ouster_mount",
+        mesh_file = ouster_mount_mesh,
+        mesh_scale = mesh_scale_milimeters,
+        color = "White",
+        x = 0.0,
+        y = 0.0,
+        z = 0.068,
+        roll = 0,
+        pitch = 0,
+        yaw = components.rad90)
+      }}
+      <!--}-->
+      {% endif %}
+     
+      {% if enable_uv_camera %}
+      <!-- UVDAR mount {-->
+      {{ components.visual_mesh_macro(
+        name = "uvdar_mount",
+        mesh_file = uvdar_mount_mesh,
+        mesh_scale = mesh_scale_milimeters,
+        color = "White",
+        x = 0.025,
+        y = 0.0,
+        z = 0.043,
+        roll = 0,
+        pitch = 0,
+        yaw = 0)
+      }}
+      <!--}-->
+      {% endif %}
+     
       <!--}-->
     </link>
 
@@ -899,7 +950,68 @@
 
     <!--} -->
 
-    <!-- TODO - THERMAL CAMERA -->
+    {# Thermal cameras {--> #}
+    {% if enable_thermal_camera %}
+    <!-- Three thermal cameras {-->
+    {{ components.thermal_camera_macro(
+      camera_name = "thermal_top",
+      camera_topic_name = "/" + namespace + "/thermal/top",
+      parent_frame_name = namespace + "/fcu",
+      camera_frame_name = "thermal/top_optical",
+      sensor_base_frame_name = namespace + "/thermal/top",
+      parent_link = root,
+      frame_rate = 14.0,
+      hfov = 0.575959,
+      image_width = 32,
+      image_height = 32,
+      x = 0.15,
+      y = 0.06,
+      z = -0.025,
+      roll = 0,
+      pitch = components.rad(-30),
+      yaw = 0)
+    }}
+
+    {{ components.thermal_camera_macro(
+      camera_name = "thermal_middle",
+      camera_topic_name = "/" + namespace + "/thermal/middle",
+      parent_frame_name = namespace + "/fcu",
+      camera_frame_name = "thermal/middle_optical",
+      sensor_base_frame_name = namespace + "/thermal/middle",
+      parent_link = root,
+      frame_rate = 14.0,
+      hfov = 0.575959,
+      image_width = 32,
+      image_height = 32,
+      x = 0.16,
+      y = 0.06,
+      z = -0.055,
+      roll = 0,
+      pitch = 0,
+      yaw = 0)
+    }}
+
+    {{ components.thermal_camera_macro(
+      camera_name = "thermal_bottom",
+      camera_topic_name = "/" + namespace + "/thermal/bottom",
+      parent_frame_name = namespace + "/fcu",
+      camera_frame_name = "thermal/bottom_optical",
+      sensor_base_frame_name = namespace + "/thermal/bottom",
+      parent_link = root,
+      frame_rate = 14.0,
+      hfov = 0.575959,
+      image_width = 32,
+      image_height = 32,
+      x = 0.15,
+      y = 0.06,
+      z = -0.085,
+      roll = 0,
+      pitch = components.rad(30),
+      yaw = 0)
+    }}
+    <!--}-->
+    {% endif %}
+    {# <!--}--> #}
 
     {# UV cameras {--> #}
     {% if enable_uv_camera %}
@@ -932,6 +1044,25 @@
       roll = 0,
       pitch = 0,
       yaw = -components.rad70)
+    }}
+    <!--}-->
+    {% endif %}
+
+    {% if enable_downward_uv_camera %}
+    <!-- Downward UV camera {-->
+    {{ components.uvcam_macro(
+      parent_link = root,
+      camera_publish_topic = "/" + namespace + "/uvdar_bluefox_bottom/image_raw",
+      calibration_file = uvcam_calib_file,
+      occlusions = uvcam_occlusions,
+      frame_rate = 60,
+      number = 1,
+      x = 0.0,
+      y = 0.0,
+      z = -0.1,
+      roll = 0,
+      pitch = components.rad(90),
+      yaw = 0)
     }}
     <!--}-->
     {% endif %}
@@ -1054,8 +1185,6 @@
     {% endif %}
     {# <!--}--> #}
 
-    <!-- TODO - WATER GUN -->
-
     {# Light {--> #}
     {% if enable_light %}
     <!-- Light {-->
@@ -1115,7 +1244,30 @@
       chain_mass = 0.5 / 30,
       x = 0,
       y = 0,
-      z = -0.20)
+      z = -0.1)
+    }}
+    <!--}-->
+    {% endif %}
+    {# <!--}--> #}
+
+    {# Water gun {--> #}
+    {% if enable_water_gun %}
+    <!-- Water gun {-->
+    {{ components.water_gun_macro(
+      parent_link = root,
+      muzzle_velocity = 15.0,
+      particle_capacity = 30,
+      spread = 1.0,
+      spawning_reservoir = "the_void",
+      nozzle_offset_x = 0.21,
+      nozzle_offset_y = 0.0,
+      nozzle_offset_z = -0.085,
+      x = 0,
+      y = 0,
+      z = -0.11,
+      roll = 0,
+      pitch = 0,
+      yaw = 0)
     }}
     <!--}-->
     {% endif %}
@@ -1269,8 +1421,5 @@
     {% endif %}
     {# <!--}--> #}
 
-   <!-- TODO - BALL HODLER -->
-    <!-- TODO - MBZIRC PROFILES -->
-    <!-- TODO - DOWN UV -->
   </model>
 </sdf>
