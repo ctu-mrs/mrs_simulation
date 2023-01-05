@@ -21,6 +21,7 @@
   {%- set holder_offset = 0.02 -%} {# [m] #}
   {%- set leg_offset_z = 0.098 -%} {# [m] #}
   {%- set leg_offset_r = 0.0072 -%} {# [m] #}
+  {%- set leg_radius = 0.012 -%} {# [m] #}
   {%- set leg_height = 0.17 -%} {# [m] #}
   {%- set pixhawk_offset = -0.0075 -%} {# [m] #}
   {%- set use_battery_mount = true -%} {# [bool] #}
@@ -244,7 +245,7 @@
         pitch = 0,
         yaw = components.rad(135),
         collision_height = leg_height,
-        collision_radius = leg_offset_r)
+        collision_radius = leg_radius)
       }}
 
       {{ components.leg_macro(
@@ -260,7 +261,7 @@
         pitch = 0,
         yaw = components.rad(-135),
         collision_height = leg_height,
-        collision_radius = leg_offset_r)
+        collision_radius = leg_radius)
       }}
 
       {{ components.leg_macro(
@@ -276,7 +277,7 @@
         pitch = 0,
         yaw = components.rad(45),
         collision_height = leg_height,
-        collision_radius = leg_offset_r)
+        collision_radius = leg_radius)
       }}
 
       {{ components.leg_macro(
@@ -292,7 +293,7 @@
         pitch = 0,
         yaw = components.rad(-45),
         collision_height = leg_height,
-        collision_radius = leg_offset_r)
+        collision_radius = leg_radius)
       }}
       <!--}-->
 
