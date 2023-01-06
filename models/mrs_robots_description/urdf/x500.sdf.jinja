@@ -9,8 +9,8 @@
 
   {# Robot parameters and arguments {--> #}
   {%- set mass = 2.0 -%} {# [kg] #}
-  {%- set body_radius = 0.275 -%} {# [m] #}
-  {%- set body_height = 0.15 -%} {# [m] #}
+  {%- set body_radius = 0.2 -%} {# [m] #}
+  {%- set body_height = 0.1 -%} {# [m] #}
   {%- set mass_rotor = 0.005 -%} {# [kg] #}
   {%- set mass_prop = 0.005 -%} {# [kg] #}
   {%- set radius_rotor = 0.127 -%} {# [m] #}
@@ -248,7 +248,7 @@
       <!--}-->
 
       <!-- legs {-->
-      {{ components.leg_macro(
+      {{ components.leg_macro_collision_offset(
         name = "front_right_leg",
         mesh_file = leg_mesh_file,
         mesh_scale = mesh_scale,
@@ -261,10 +261,11 @@
         pitch = 0,
         yaw = components.rad(-45),
         collision_height = leg_height,
-        collision_radius = leg_radius)
+        collision_radius = leg_radius,
+        collision_offset = 0.08)
       }}
 
-      {{ components.leg_macro(
+      {{ components.leg_macro_collision_offset(
         name = "front_left_leg",
         mesh_file = leg_mesh_file,
         mesh_scale = mesh_scale,
@@ -277,10 +278,11 @@
         pitch = 0,
         yaw = components.rad(45),
         collision_height = leg_height,
-        collision_radius = leg_radius)
+        collision_radius = leg_radius,
+        collision_offset = 0.08)
       }}
 
-      {{ components.leg_macro(
+      {{ components.leg_macro_collision_offset(
         name = "rear_left_leg",
         mesh_file = leg_mesh_file,
         mesh_scale = mesh_scale,
@@ -293,10 +295,11 @@
         pitch = 0,
         yaw = components.rad(135),
         collision_height = leg_height,
-        collision_radius = leg_radius)
+        collision_radius = leg_radius,
+        collision_offset = 0.08)
       }}
 
-      {{ components.leg_macro(
+      {{ components.leg_macro_collision_offset(
         name = "rear_right_leg",
         mesh_file = leg_mesh_file,
         mesh_scale = mesh_scale,
@@ -309,7 +312,8 @@
         pitch = 0,
         yaw = components.rad(-135),
         collision_height = leg_height,
-        collision_radius = leg_radius)
+        collision_radius = leg_radius,
+        collision_offset = 0.08)
       }}
       <!--}-->
 
