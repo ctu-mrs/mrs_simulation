@@ -1382,6 +1382,32 @@
     {% endif %}
     {# <!--}--> #}
 
+    {# UV leds beacon {--> #}
+    {% if enable_uv_leds_beacon %}
+    <!-- UV led beacon {-->
+    {# -- leds configuration -- (id, signal_id, x, y, z, roll, pitch, yaw) #}
+    {%- set uv_leds_macro_parameters = [("b1", uvled_beacon_f,  0.01, 0.0,  0.15, 0.0, components.rad90, 0.0),
+                                        ("b2", uvled_beacon_f,  0.0,  0.01, 0.15, 0.0, components.rad90, components.rad90),
+                                        ("b3", uvled_beacon_f, -0.01, 0.0,  0.15, 0.0, components.rad90, components.rad180),
+                                        ("b4", uvled_beacon_f,  0.0, -0.01, 0.15, 0.0, components.rad90, components.rad270)] -%}
+
+    {% for id_, signal_id_, x_, y_, z_, roll_, pitch_, yaw_ in uv_leds_macro_parameters %}
+      {{ components.uvled_macro(
+        parent_link = root,
+        number = id_,
+        signal_id = signal_id_,
+        x = x_,
+        y = y_,
+        z = z_,
+        roll = roll_,
+        pitch = pitch_,
+        yaw = yaw_)
+      }}
+    {% endfor %}
+    <!--}-->
+    {% endif %}
+    {# <!--}--> #}
+
     {# Whycon box {--> #}
     {% if enable_whycon_box %}
     <!-- Whycon box {-->
