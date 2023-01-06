@@ -226,6 +226,43 @@ limitations under the License.
 {%- endmacro -%}
 <!--}-->
 
+<!-- Leg macro with collision offset {-->
+{%- macro leg_macro_collision_offset(name, mesh_file, mesh_scale, color, parent, x, y, z, roll, pitch, yaw, collision_height, collision_radius, collision_offset) -%}
+{{ visual_mesh_macro(
+  name = name,
+  mesh_file = mesh_file,
+  mesh_scale = mesh_scale,
+  color = color,
+  x = x,
+  y = y,
+  z = z,
+  roll = roll,
+  pitch = pitch,
+  yaw = yaw)
+}}
+<collision name="{{ name }}_link_collision">
+  <pose>{{ x }} {{ y }} {{ z + collision_offset }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
+  <geometry>
+    <cylinder>
+      <length>{{ collision_height }}</length>
+      <radius>{{ collision_radius }}</radius>
+    </cylinder>
+  </geometry>
+  <surface>
+    <contact>
+      <ode>
+        <min_depth>0.001</min_depth>
+        <max_vel>0.0</max_vel>
+      </ode>
+    </contact>
+    <friction>
+      <ode/>
+    </friction>
+  </surface>
+</collision>
+{%- endmacro -%}
+<!--}-->
+
 <!-- Prop macro {-->
 {%- macro prop_macro(direction, rotor_velocity_slowdown_sim, motor_constant, moment_constant, parent, mass, radius, time_constant_up, time_constant_down, max_rot_velocity, motor_number, rotor_drag_coefficient, rolling_moment_coefficient, color, mesh_file, mesh_scale, x, y, z, roll, pitch, yaw, ixx, ixy, ixz, iyy, iyz, izz) -%}
 <link name="prop_{{ motor_number }}_link">
