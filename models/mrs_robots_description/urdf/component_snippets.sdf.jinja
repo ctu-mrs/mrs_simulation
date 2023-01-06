@@ -55,6 +55,8 @@ limitations under the License.
 {%- set rad150 = 150 * pi / 180 -%}
 {%- set rad180 = 180 * pi / 180 -%}
 {%- set rad210 = 210 * pi / 180 -%}
+{%- set rad270 = 270 * pi / 180 -%}
+{%- set rad330 = 330 * pi / 180 -%}
 
 {%- set sin30 = 0.5 -%}
 {%- set sin45 = 0.70710678118 -%}
@@ -123,6 +125,33 @@ limitations under the License.
     </script>
   </material>
 </visual>
+{%- endmacro -%}
+<!--}-->
+
+<!-- Visual colored box with collision macro {-->
+{%- macro visual_colored_box_with_collision_macro(name, size_x, size_y, size_z, color, x, y, z, roll, pitch, yaw) -%}
+<visual name="{{ name }}_visual">
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
+  <geometry>
+    <box>
+      <size>{{ size_x }} {{ size_y }} {{ size_z }}</size>
+    </box>
+  </geometry>
+  <material>
+    <script>
+      <name>Gazebo/{{ color }}</name>
+      <uri>file://media/materials/scripts/gazebo.material</uri>
+    </script>
+  </material>
+</visual>
+<collision name="{{ name }}_collision">
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
+  <geometry>
+    <box>
+      <size>{{ size_x }} {{ size_y }} {{ size_z }}</size>
+    </box>
+  </geometry>
+</collision>
 {%- endmacro -%}
 <!--}-->
 
