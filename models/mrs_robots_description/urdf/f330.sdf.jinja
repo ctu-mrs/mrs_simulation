@@ -24,7 +24,7 @@
   {%- set leg_offset_r = 0.0072 -%} {# [m] #}
   {%- set leg_radius = 0.006 -%} {# [m] #}
   {%- set leg_height = 0.11 -%} {# [m] #}
-  {%- set pixhawk_offset = -0.0073 -%} {# [m] #}
+  {%- set pixhawk_offset = 0.0073 -%} {# [m] #}
   {%- set use_battery_mount = true -%} {# [bool] #}
   {%- set root = "base_link" -%}
   {# <!--}--> #}
@@ -200,7 +200,7 @@
       {{ components.visual_mesh_macro(
         name = "NUC",
         mesh_file = nuc_mesh_file,
-        mesh_scale = mesh_scale_milimeters,
+        mesh_scale = mesh_scale,
         color = "DarkGrey",
         x = 0,
         y = 0,
@@ -230,7 +230,7 @@
       {{ components.leg_macro_collision_offset(
         name = "front_right_leg",
         mesh_file = leg_mesh_file,
-        mesh_scale = mesh_scale_milimeters,
+        mesh_scale = mesh_scale,
         color = "Black",
         parent = root,
         x = arm_length * components.sin45,
@@ -247,7 +247,7 @@
       {{ components.leg_macro_collision_offset(
         name = "front_left_leg",
         mesh_file = leg_mesh_file,
-        mesh_scale = mesh_scale_milimeters,
+        mesh_scale = mesh_scale,
         color = "Black",
         parent = root,
         x = arm_length * components.sin45,
@@ -264,7 +264,7 @@
       {{ components.leg_macro_collision_offset(
         name = "back_right_leg",
         mesh_file = leg_mesh_file,
-        mesh_scale = mesh_scale_milimeters,
+        mesh_scale = mesh_scale,
         color = "Red",
         parent = root,
         x = -arm_length * components.sin45,
@@ -281,7 +281,7 @@
       {{ components.leg_macro_collision_offset(
         name = "back_left_leg",
         mesh_file = leg_mesh_file,
-        mesh_scale = mesh_scale_milimeters,
+        mesh_scale = mesh_scale,
         color = "Red",
         parent = root,
         x = -arm_length * components.sin45,
@@ -355,7 +355,7 @@
       {{ components.visual_mesh_macro(
         name = "battery_mount",
         mesh_file = battery_mount_mesh,
-        mesh_scale = mesh_scale_milimeters,
+        mesh_scale = mesh_scale,
         color = "DarkGrey",
         x = 0,
         y = 0,
