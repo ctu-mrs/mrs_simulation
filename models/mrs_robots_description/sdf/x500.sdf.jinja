@@ -7,6 +7,10 @@
   {# ||                    parameters definition                     || #}
   {# ================================================================== #}
 
+
+
+
+
   {# Robot parameters and arguments {--> #}
   {%- set mass = 2.0 -%} {# [kg] #}
   {%- set body_radius = 0.2 -%} {# [m] #}
@@ -43,14 +47,21 @@
   {# Meshes {--> #}
 
   {# Drone parts {--> #}
-  {%- set top_board_mesh_file = "model://mrs_robots_description/meshes/holybro/holybro_x500_top_board.dae" -%}
-  {%- set bottom_board_mesh_file = "model://mrs_robots_description/meshes/holybro/holybro_x500_bottom_board.dae" -%}
+  {# {%- set top_board_mesh_file = "model://mrs_robots_description/meshes/holybro/holybro_x500_top_board.dae" -%} #}
+  {# {%- set bottom_board_mesh_file = "model://mrs_robots_description/meshes/holybro/holybro_x500_bottom_board.dae" -%} #}
   {%- set arm_mesh_file_front = "model://mrs_robots_description/meshes/holybro/holybro_x500_arm.dae" -%}
   {%- set arm_mesh_file_back = "model://mrs_robots_description/meshes/holybro/holybro_x500_arm.dae" -%}
   {%- set leg_mesh_file = "model://mrs_robots_description/meshes/holybro/holybro_x500_leg.dae" -%}
   {%- set rotor_mesh_file = "model://mrs_robots_description/meshes/holybro/holybro_x500_motor.dae" -%}
   {%- set prop_mesh_file = "model://mrs_robots_description/meshes/holybro/holybro_x500_prop.dae" -%}
   {%- set pixhawk_mesh_file = "model://mrs_robots_description/meshes/sensors/pixhawk.dae" -%}
+
+  {%- set top_board_mesh_file = "model://mrs_robots_description/meshes/x500v2/top_board_mesh_file.stl" -%}
+  {%- set bottom_board_mesh_file = "model://mrs_robots_description/meshes/x500v2/bottom_board_mesh_file.stl" -%}
+  {%- set arm_carbon_mesh_file = "model://mrs_robots_description/meshes/x500v2/arm_carbon_mesh_file.stl" -%}
+  {%- set arm_plastic1_mesh_file = "model://mrs_robots_description/meshes/x500v2/arm_plastic1_mesh_file.stl" -%}
+  {%- set arm_plastic2_mesh_file = "model://mrs_robots_description/meshes/x500v2/arm_plastic2_mesh_file.stl" -%}
+  {%- set arm_3d_print_mesh_file = "model://mrs_robots_description/meshes/x500v2/arm_3d_print_mesh_file.stl" -%}
   {# <!--}--> #}
 
   {# Holders {--> #}
@@ -111,10 +122,10 @@
 
       <!-- Boards {-->
       {{ components.visual_mesh_macro(
-        name = "bottom_board",
-        mesh_file = bottom_board_mesh_file,
+        name = "top_board",
+        mesh_file = top_board_mesh_file,
         mesh_scale = mesh_scale,
-        color = "DarkGrey",
+        color = "FlatBlack",
         x = 0,
         y = 0,
         z = 0,
@@ -124,10 +135,10 @@
       }}
 
       {{ components.visual_mesh_macro(
-        name = "top_board",
-        mesh_file = top_board_mesh_file,
-        mesh_scale = mesh_scale,
-        color = "DarkGrey",
+        name = "bottom_board",
+        mesh_file = bottom_board_mesh_file,
+        mesh_scale = mesh_scale_milimeters,
+        color = "FlatBlack",
         x = 0,
         y = 0,
         z = 0,
@@ -138,113 +149,184 @@
       <!--}-->
 
       <!-- Arms {-->
-      {{ components.visual_mesh_macro(
-        name = "front_right_arm",
-        mesh_file = arm_mesh_file_front,
-        mesh_scale = mesh_scale,
-        color = "DarkGrey",
-        x = 0,
-        y = 0,
-        z = 0,
-        roll = 0,
-        pitch = 0,
-        yaw = components.rad(-45))
-      }}
 
-      {{ components.visual_mesh_macro(
-        name = "back_right_arm",
-        mesh_file = arm_mesh_file_back,
-        mesh_scale = mesh_scale,
-        color = "DarkGrey",
-        x = 0,
-        y = 0,
-        z = 0,
-        roll = 0,
-        pitch = 0,
-        yaw = components.rad(-135))
-      }}
+      {% for id in range(0, 4) %}
 
-      {{ components.visual_mesh_macro(
-        name = "front_left_arm",
-        mesh_file = arm_mesh_file_front,
-        mesh_scale = mesh_scale,
-        color = "DarkGrey",
-        x = 0,
-        y = 0,
-        z = 0,
-        roll = 0,
-        pitch = 0,
-        yaw = components.rad(45))
-      }}
+        {%- set affix = "front_left" -%}
+        {%- set print_color = "Black" -%}
+        {% if id == 1 %}
+          {%- set affix = "front_right" -%}
+        {% endif %}
+        {% if id == 2 %}
+          {%- set affix = "back_left" -%}
+          {%- set print_color = "BrightRed" -%}
+        {% endif %}
+        {% if id == 3 %}
+          {%- set affix = "back_right" -%}
+          {%- set print_color = "BrightRed" -%}
+        {% endif %}
 
-      {{ components.visual_mesh_macro(
-        name = "back_left_arm",
-        mesh_file = arm_mesh_file_back,
-        mesh_scale = mesh_scale,
-        color = "DarkGrey",
-        x = 0,
-        y = 0,
-        z = 0,
-        roll = 0,
-        pitch = 0,
-        yaw = components.rad(135))
-      }}
+        {{ components.visual_mesh_macro(
+          name = "arm_carbon_" + affix,
+          mesh_file = arm_carbon_mesh_file,
+          mesh_scale = mesh_scale,
+          color = "FlatBlack",
+          x = 0,
+          y = 0,
+          z = 0,
+          roll = 0,
+          pitch = 0,
+          yaw = id * 1.57079633)
+        }}
+
+        {{ components.visual_mesh_macro(
+          name = "arm_plastic1_" + affix,
+          mesh_file = arm_plastic1_mesh_file,
+          mesh_scale = mesh_scale,
+          color = "SkyBlue",
+          x = 0,
+          y = 0,
+          z = 0,
+          roll = 0,
+          pitch = 0,
+          yaw = id * 1.57079633)
+        }}
+  
+        {{ components.visual_mesh_macro(
+          name = "arm_plastic2_" + affix,
+          mesh_file = arm_plastic2_mesh_file,
+          mesh_scale = mesh_scale,
+          color = "SkyBlue",
+          x = 0,
+          y = 0,
+          z = 0,
+          roll = 0,
+          pitch = 0,
+          yaw = id * 1.57079633)
+        }}
+  
+        {{ components.visual_mesh_macro(
+          name = "arm_3d_print_" + affix,
+          mesh_file = arm_3d_print_mesh_file,
+          mesh_scale = mesh_scale,
+          color = print_color,
+          x = 0,
+          y = 0,
+          z = 0,
+          roll = 0,
+          pitch = 0,
+          yaw = id * 1.57079633)
+        }}
+
+      {% endfor %}
+
+      {# {{ components.visual_mesh_macro( #}
+      {#   name = "front_right_arm", #}
+      {#   mesh_file = arm_mesh_file_front, #}
+      {#   mesh_scale = mesh_scale, #}
+      {#   color = "darkgrey", #}
+      {#   x = 0, #}
+      {#   y = 0, #}
+      {#   z = 0, #}
+      {#   roll = 0, #}
+      {#   pitch = 0, #}
+      {#   yaw = components.rad(-45)) #}
+      {# }} #}
+
+      {# {{ components.visual_mesh_macro( #}
+      {#   name = "back_right_arm", #}
+      {#   mesh_file = arm_mesh_file_back, #}
+      {#   mesh_scale = mesh_scale, #}
+      {#   color = "DarkGrey", #}
+      {#   x = 0, #}
+      {#   y = 0, #}
+      {#   z = 0, #}
+      {#   roll = 0, #}
+      {#   pitch = 0, #}
+      {#   yaw = components.rad(-135)) #}
+      {# }} #}
+
+      {# {{ components.visual_mesh_macro( #}
+      {#   name = "front_left_arm", #}
+      {#   mesh_file = arm_mesh_file_front, #}
+      {#   mesh_scale = mesh_scale, #}
+      {#   color = "DarkGrey", #}
+      {#   x = 0, #}
+      {#   y = 0, #}
+      {#   z = 0, #}
+      {#   roll = 0, #}
+      {#   pitch = 0, #}
+      {#   yaw = components.rad(45)) #}
+      {# }} #}
+
+      {# {{ components.visual_mesh_macro( #}
+      {#   name = "back_left_arm", #}
+      {#   mesh_file = arm_mesh_file_back, #}
+      {#   mesh_scale = mesh_scale, #}
+      {#   color = "DarkGrey", #}
+      {#   x = 0, #}
+      {#   y = 0, #}
+      {#   z = 0, #}
+      {#   roll = 0, #}
+      {#   pitch = 0, #}
+      {#   yaw = components.rad(135)) #}
+      {# }} #}
       <!--}-->
 
       <!-- intel nuc {-->
-      {{ components.visual_mesh_macro(
-        name = "pc_mount",
-        mesh_file = pc_mount_mesh,
-        mesh_scale = mesh_scale,
-        color = "Deafault",
-        x = 0,
-        y = 0,
-        z = 0,
-        roll = 0,
-        pitch = 0,
-        yaw = 0)
-      }}
-      {{ components.visual_colored_box_macro(
-        name = "computer_board",
-        size_x = 0.125,
-        size_y = 0.125,
-        size_z = 0.002,
-        color = "Grass",
-        x = 0,
-        y = 0,
-        z = 0.058,
-        roll = 0,
-        pitch = 0,
-        yaw = 0)
-      }}
-      {{ components.visual_colored_box_macro(
-        name = "computer_heatsink",
-        size_x = 0.071,
-        size_y = 0.071,
-        size_z = 0.027,
-        color = "Grey",
-        x = 0.009,
-        y = 0.012,
-        z = 0.074,
-        roll = 0,
-        pitch = 0,
-        yaw = 0)
-      }}
+      {# {{ components.visual_mesh_macro( #}
+      {#   name = "pc_mount", #}
+      {#   mesh_file = pc_mount_mesh, #}
+      {#   mesh_scale = mesh_scale, #}
+      {#   color = "Deafault", #}
+      {#   x = 0, #}
+      {#   y = 0, #}
+      {#   z = 0, #}
+      {#   roll = 0, #}
+      {#   pitch = 0, #}
+      {#   yaw = 0) #}
+      {# }} #}
+      {# {{ components.visual_colored_box_macro( #}
+      {#   name = "computer_board", #}
+      {#   size_x = 0.125, #}
+      {#   size_y = 0.125, #}
+      {#   size_z = 0.002, #}
+      {#   color = "Grass", #}
+      {#   x = 0, #}
+      {#   y = 0, #}
+      {#   z = 0.058, #}
+      {#   roll = 0, #}
+      {#   pitch = 0, #}
+      {#   yaw = 0) #}
+      {# }} #}
+      {# {{ components.visual_colored_box_macro( #}
+      {#   name = "computer_heatsink", #}
+      {#   size_x = 0.071, #}
+      {#   size_y = 0.071, #}
+      {#   size_z = 0.027, #}
+      {#   color = "Grey", #}
+      {#   x = 0.009, #}
+      {#   y = 0.012, #}
+      {#   z = 0.074, #}
+      {#   roll = 0, #}
+      {#   pitch = 0, #}
+      {#   yaw = 0) #}
+      {# }} #}
       <!--}-->
       
       <!-- pixhawk {-->
-      {{ components.visual_mesh_macro(
-        name = "pixhawk",
-        mesh_file = pixhawk_mesh_file,
-        mesh_scale = mesh_scale,
-        color = "DarkGrey",
-        x = 0,
-        y = 0,
-        z = 0.038,
-        roll = 0,
-        pitch = 0,
-        yaw = 0)
-      }}
+      {# {{ components.visual_mesh_macro( #}
+      {#   name = "pixhawk", #}
+      {#   mesh_file = pixhawk_mesh_file, #}
+      {#   mesh_scale = mesh_scale, #}
+      {#   color = "DarkGrey", #}
+      {#   x = 0, #}
+      {#   y = 0, #}
+      {#   z = 0.038, #}
+      {#   roll = 0, #}
+      {#   pitch = 0, #}
+      {#   yaw = 0) #}
+      {# }} #}
       <!--}-->
 
       <!-- legs {-->
@@ -373,35 +455,35 @@
 
       {% if use_battery_mount %}
       <!-- battery mount and battery {-->
-      {{ components.visual_mesh_macro(
-        name = "battery_mount",
-        mesh_file = battery_mount_mesh,
-        mesh_scale = mesh_scale,
-        color = "DarkGrey",
-        x = 0,
-        y = 0,
-        z = 0,
-        roll = 0,
-        pitch = 0,
-        yaw = 0)
-      }}
+      {# {{ components.visual_mesh_macro( #}
+      {#   name = "battery_mount", #}
+      {#   mesh_file = battery_mount_mesh, #}
+      {#   mesh_scale = mesh_scale, #}
+      {#   color = "DarkGrey", #}
+      {#   x = 0, #}
+      {#   y = 0, #}
+      {#   z = 0, #}
+      {#   roll = 0, #}
+      {#   pitch = 0, #}
+      {#   yaw = 0) #}
+      {# }} #}
       <!--}-->
       {% endif %}
 
       {% if enable_rplidar or enable_ouster %}
       <!-- rplidar mount {-->
-      {{ components.visual_mesh_macro(
-        name = "rplidar_mount",
-        mesh_file = rplidar_mount_mesh,
-        mesh_scale = mesh_scale,
-        color = "Default",
-        x = 0,
-        y = 0,
-        z = 0,
-        roll = 0,
-        pitch = 0,
-        yaw = 0)
-      }}
+      {# {{ components.visual_mesh_macro( #}
+      {#   name = "rplidar_mount", #}
+      {#   mesh_file = rplidar_mount_mesh, #}
+      {#   mesh_scale = mesh_scale, #}
+      {#   color = "Default", #}
+      {#   x = 0, #}
+      {#   y = 0, #}
+      {#   z = 0, #}
+      {#   roll = 0, #}
+      {#   pitch = 0, #}
+      {#   yaw = 0) #}
+      {# }} #}
       {# TODO: BATTERY ITSELF #}
       <!--}-->
       {% endif %}
