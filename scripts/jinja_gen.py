@@ -59,7 +59,7 @@ if __name__ == "__main__":
     if os.path.exists(args.filename) and os.path.isfile(args.filename):
         filename = args.filename
     else:
-        temp_filename = os.path.join(mrs_simulation_path, 'models', 'mrs_robots_description', 'urdf', args.filename)
+        temp_filename = os.path.join(mrs_simulation_path, 'models', 'mrs_robots_description', 'sdf', args.filename)
         if os.path.exists(temp_filename) and os.path.isfile(temp_filename):
             # print('Loaded "%s" from "%s"' % (args.filename, temp_filename))
             filename = temp_filename
