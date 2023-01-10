@@ -20,7 +20,8 @@
 
 . ${R}etc/init.d/rc.mc_defaults
 
+param set-default MAV_TYPE 13
+
+set PWM_OUT 12345678
 
 set MIXER hexa_cox
-set MAV_TYPE 13
-set PWM_OUT 12345678

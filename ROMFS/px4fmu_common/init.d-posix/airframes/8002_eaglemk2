@@ -9,6 +9,6 @@
 
 . ${R}etc/init.d/rc.mc_defaults
 
-set MAV_TYPE 14
+param set-default MAV_TYPE 14
 
 set MIXER octo_x_reversed

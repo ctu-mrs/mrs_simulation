@@ -10,6 +10,7 @@ import threading
 import yaml
 import math
 import random
+import json
 
 from utils import print_error, print_info, print_ok, is_number, rinfo, rwarn, rerr
 
@@ -35,6 +36,9 @@ class MrsDroneSpawner():
 
         self.verbose = verbose
         self.rospack = rospkg.RosPack()
+
+        # check that mrs_uav_general package can be found
+        self.rospack.get_path('mrs_uav_general')
 
         pkg_path = self.rospack.get_path('mrs_simulation')
         path_to_spawner_params = pkg_path + os.sep + 'config' + os.sep + 'spawner_params.yaml'
@@ -333,12 +337,10 @@ class MrsDroneSpawner():
 
             # generate a yaml file for the custom model config
             fd, path = tempfile.mkstemp(prefix='simulation_', suffix='_uav' + str(ID) + '.yaml')
+            json_object = json.dumps(params_dict, indent = 2)
             with os.fdopen(fd, 'w') as f:
-                for pname, pvalue in params_dict.items():
-                    f.write(str(pname) + ': ' + str(pvalue) + '\n')
+                f.write(json_object)
             uav_args_sequence.append('model_config_file:=' + path)
-
-            uav_args_sequence.append('resource_package_path:=' + self.rospack.get_path(str(params_dict['model_package'])))
 
             print('UAV' + str(ID) + ' ARGS_SEQUENCE:')
             print(uav_args_sequence)

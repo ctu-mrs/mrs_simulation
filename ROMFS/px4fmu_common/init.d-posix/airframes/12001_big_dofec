@@ -40,6 +40,8 @@
 # param set MPC_THR_MIN 0.15
 # param set MPC_Z_VEL_MAX_DN 2
 
-set MIXER octo_cox_w
-set MAV_TYPE 14
+param set-default MAV_TYPE 14
+
 set PWM_OUT 12345678
+
+set MIXER octo_cox_w
