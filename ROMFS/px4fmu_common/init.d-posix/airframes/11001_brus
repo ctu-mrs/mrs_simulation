@@ -22,6 +22,6 @@
 
 param set-default MAV_TYPE 13
 
-param set-default PWM_OUT 12345678
+set PWM_OUT 12345678
 
 set MIXER hexa_cox
