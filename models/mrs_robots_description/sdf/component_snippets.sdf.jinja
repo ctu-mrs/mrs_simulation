@@ -637,8 +637,7 @@ limitations under the License.
     <plugin name="{{ sensor_name }}_plugin" filename="libgazebo_ros_imu_sensor.so">
       <robotNamespace></robotNamespace>
       <topicName>{{ topic_name }}</topicName>
-      <bodyName>{{ update_rate }}</bodyName>
-      <updateRateHZ>{{ imu_rate }}</updateRateHZ>
+      <updateRateHZ>{{ update_rate }}</updateRateHZ>
       <gaussianNoise>{{ noise_mean }}</gaussianNoise>
       <xyzOffset>0 0 0</xyzOffset>
       <rpyOffset>0 0 0</rpyOffset>
@@ -1690,7 +1689,7 @@ limitations under the License.
   vfov_angle = vfov_angle,
   max_range = range,
   noise = noise,
-  enable_gpu_ray = use_gpu_ray,
+  enable_gpu_ray = enable_gpu_ray,
   x = x,
   y = y,
   z = z,
