@@ -84,6 +84,8 @@
   {%- set nuc_board_mesh_file = "model://mrs_robots_description/meshes/x500v2/nuc_board_mesh_file.stl" -%}
   {%- set nuc_cooler_mesh_file = "model://mrs_robots_description/meshes/x500v2/nuc_cooler_mesh_file.stl" -%}
   {%- set gps_module_mesh_file = "model://mrs_robots_description/meshes/x500v2/gps_module_mesh_file.stl" -%}
+
+  {%- set garmin_mount_mesh_file = "model://mrs_robots_description/meshes/x500v2/garmin_mount_mesh_file.stl" -%}
   {# <!--}--> #}
 
   {# Holders {--> #}
@@ -468,6 +470,22 @@
       <!--}-->
       {% endif %}
 
+      {% if enable_rangefinder %}
+      <!-- rplidar mount {-->
+      {{ components.visual_mesh_macro(
+        name = "garmin_mount",
+        mesh_file = garmin_mount_mesh_file,
+        mesh_scale = mesh_scale,
+        color = "Black",
+        x = 0,
+        y = 0,
+        z = 0,
+        roll = 0,
+        pitch = 0,
+        yaw = components.rad(90))
+      }}
+      <!--}-->
+      {% endif %}
       <!--}-->
     </link>
 
@@ -739,11 +757,11 @@
       parent_link = root,
       orientation = "",
       x = 0.0,
-      y = -0.05,
-      z = -0.002,
+      y = 0.0625,
+      z = -0.023,
       roll = 0,
       pitch = components.rad(90),
-      yaw = 0)
+      yaw = components.rad(-90))
     }}
     <!--}-->
     {% endif %}
