@@ -7,26 +7,14 @@
   {# ||                    parameters definition                     || #}
   {# ================================================================== #}
 
-
-
-
-
   {# Robot parameters and arguments {--> #}
   {%- set mass = 2.0 -%} {# [kg] #}
   {%- set body_radius = 0.2 -%} {# [m] #}
   {%- set body_height = 0.1 -%} {# [m] #}
-  {%- set mass_rotor = 0.005 -%} {# [kg] #}
   {%- set mass_prop = 0.005 -%} {# [kg] #}
-  {%- set radius_rotor = 0.127 -%} {# [m] #}
-  {%- set rotor_offset = 0.021 -%} {# [m] #}
-  {%- set propeller_offset = 0.057 -%} {# [m] #}
-  {%- set arm_length = 0.251 -%} {# [m] #}
-  {%- set leg_height = 0.157 -%} {# [m] #}
-  {%- set leg_radius = 0.012 -%} {# [m] #}
-  {%- set leg_offset_r = 0.021 -%} {# [m] #}
+  {%- set radius_rotor = 0.126 -%} {# [m] #}
 
-
-  {%- set motor_mesh_z_offset = -0.0315 -%} {# [m] #}
+  {%- set motor_mesh_z_offset = -0.0086 -%} {# [m] #}
   {%- set rotor_xy_offset = 0.1812 -%} {# [m] #}
   {%- set rotor_z_offset = 0.057 -%} {# [m] #}
 
@@ -83,15 +71,12 @@
   {%- set gps_mount_mesh_file = "model://mrs_robots_description/meshes/x500v2/gps_mount_mesh_file.stl" -%}
   {%- set nuc_board_mesh_file = "model://mrs_robots_description/meshes/x500v2/nuc_board_mesh_file.stl" -%}
   {%- set nuc_cooler_mesh_file = "model://mrs_robots_description/meshes/x500v2/nuc_cooler_mesh_file.stl" -%}
+  {%- set nuc_hex_posts_mesh_file = "model://mrs_robots_description/meshes/x500v2/nuc_hex_posts_mesh_file.stl" -%}
   {%- set gps_module_mesh_file = "model://mrs_robots_description/meshes/x500v2/gps_module_mesh_file.stl" -%}
 
   {%- set garmin_mount_mesh_file = "model://mrs_robots_description/meshes/x500v2/garmin_mount_mesh_file.stl" -%}
-  {# <!--}--> #}
-
-  {# Holders {--> #}
-  {%- set pc_mount_mesh = "model://mrs_robots_description/meshes/holybro/holybro_x500_pc_mount.dae" -%}
-  {%- set battery_mount_mesh = "model://mrs_robots_description/meshes/holybro/holybro_x500_battery.dae" -%}
-  {%- set rplidar_mount_mesh = "model://mrs_robots_description/meshes/holybro/holybro_x500_rplidar_mount.dae" -%}
+  {%- set lidar_mount_mesh_file = "model://mrs_robots_description/meshes/x500v2/lidar_mount_mesh_file.stl" -%}
+  {%- set realsense_mount_mesh_file = "model://mrs_robots_description/meshes/x500v2/realsense_mount_mesh_file.stl" -%}
   {# <!--}--> #}
 
   {# Scales {--> #}
@@ -173,7 +158,6 @@
       <!--}-->
 
       <!-- Arms and legs {-->
-      {# TODO: collisions for legs #}
       {% for id in range(0, 4) %}
 
         {%- set affix = "front_left" -%}
@@ -242,7 +226,7 @@
           yaw = id * 1.57079633)
         }}
 
-        {{ components.visual_mesh_macro(
+        {{ components.visual_mesh_with_collision_macro(
           name = "leg_3d_print_" + affix,
           mesh_file = leg_3d_print_mesh_file,
           mesh_scale = mesh_scale,
@@ -335,12 +319,9 @@
         pitch = 0,
         yaw = components.rad(90))
       }}
-      <!--}-->
-
-      <!-- gps mount and gps {-->
       {{ components.visual_mesh_macro(
-        name = "gps_mount",
-        mesh_file = gps_mount_mesh_file,
+        name = "nuc_hex_posts",
+        mesh_file = nuc_hex_posts_mesh_file,
         mesh_scale = mesh_scale,
         color = "Grey",
         x = 0,
@@ -350,19 +331,8 @@
         pitch = 0,
         yaw = components.rad(90))
       }}
-      {{ components.visual_mesh_macro(
-        name = "gps_module",
-        mesh_file = gps_module_mesh_file,
-        mesh_scale = mesh_scale,
-        color = "Black",
-        x = 0,
-        y = 0,
-        z = 0,
-        roll = 0,
-        pitch = 0,
-        yaw = components.rad(90))
-      }}
       <!--}-->
+
 
       <!-- pixhawk {-->
       {{ components.visual_mesh_macro(
@@ -453,23 +423,49 @@
       {% endif %}
 
       {% if enable_rplidar or enable_ouster %}
-      <!-- rplidar mount {-->
-      {# {{ components.visual_mesh_macro( #}
-      {#   name = "rplidar_mount", #}
-      {#   mesh_file = rplidar_mount_mesh, #}
-      {#   mesh_scale = mesh_scale, #}
-      {#   color = "Default", #}
-      {#   x = 0, #}
-      {#   y = 0, #}
-      {#   z = 0, #}
-      {#   roll = 0, #}
-      {#   pitch = 0, #}
-      {#   yaw = 0) #}
-      {# }} #}
-      {# TODO: BATTERY ITSELF #}
+      <!-- lidar mount {-->
+      {{ components.visual_mesh_macro(
+        name = "rplidar_mount",
+        mesh_file = lidar_mount_mesh_file,
+        mesh_scale = mesh_scale,
+        color = "FlatBlack",
+        x = 0,
+        y = 0,
+        z = 0,
+        roll = 0,
+        pitch = 0,
+        yaw = components.rad(90))
+      }}
+      <!--}-->
+      {% else %}
+      <!-- gps mount and gps {-->
+      {{ components.visual_mesh_macro(
+        name = "gps_mount",
+        mesh_file = gps_mount_mesh_file,
+        mesh_scale = mesh_scale,
+        color = "Grey",
+        x = 0,
+        y = 0,
+        z = 0,
+        roll = 0,
+        pitch = 0,
+        yaw = components.rad(90))
+      }}
+      {{ components.visual_mesh_macro(
+        name = "gps_module",
+        mesh_file = gps_module_mesh_file,
+        mesh_scale = mesh_scale,
+        color = "Black",
+        x = 0,
+        y = 0,
+        z = 0,
+        roll = 0,
+        pitch = 0,
+        yaw = components.rad(90))
+      }}
       <!--}-->
       {% endif %}
-
+      
       {% if enable_rangefinder %}
       <!-- rplidar mount {-->
       {{ components.visual_mesh_macro(
@@ -486,7 +482,25 @@
       }}
       <!--}-->
       {% endif %}
+
+      {% if enable_realsense_front or enable_realsense_down or enable_realsense_up%}
+      <!-- realsense mount {-->
+      {{ components.visual_mesh_macro(
+        name = "realsense_mount",
+        mesh_file = realsense_mount_mesh_file,
+        mesh_scale = mesh_scale,
+        color = "Black",
+        x = 0,
+        y = 0,
+        z = 0,
+        roll = 0,
+        pitch = 0,
+        yaw = components.rad(90))
+      }}
       <!--}-->
+      {% endif %}
+      <!--}-->
+    
     </link>
 
     <!-- Propellers {-->
@@ -777,7 +791,7 @@
       parent_link = root,
       x = 0.0,
       y = 0.0,
-      z = 0.127,
+      z = 0.136,
       roll = 0,
       pitch = 0,
       yaw = 0)
@@ -799,7 +813,7 @@
       enable_gpu_ray = use_gpu_ray,
       x = 0.0,
       y = 0.0,
-      z = 0.096,
+      z = 0.107,
       roll = 0,
       pitch = 0,
       yaw = 0)
@@ -816,13 +830,13 @@
     <!-- realsense front {-->
     {{ components.realsense_macro(
       namespace = namespace,
-      camera_name = "rgbd",
+      camera_name = "front_rgbd",
       camera_suffix="",
       parent_link = root,
       enable_realistic_realsense = enable_realistic_realsense,
-      x = 0.075,
+      x = 0.092,
       y = 0.0,
-      z = 0.04,
+      z = 0.016,
       roll = 0,
       pitch = 0,
       yaw = 0)
@@ -830,32 +844,35 @@
     <!--}-->
     {% endif %}
 
-    {% if enable_realsense_up_down %}
+    {% if enable_realsense_up%}
     <!-- realsense up {-->
     {{ components.realsense_macro(
       namespace = namespace,
       camera_name = "up_rgbd",
-      camera_suffix="_up",
+      camera_suffix="",
       parent_link = root,
       enable_realistic_realsense = enable_realistic_realsense,
-      x = 0.075,
+      x = 0.086,
       y = 0,
-      z = 0.04,
+      z = 0.03,
       roll = 0,
       pitch = - components.rad90,
       yaw = 0)
     }}
     <!--}-->
+    {% endif %}
+
+    {% if enable_realsense_down%}
     <!-- realsense down {-->
     {{ components.realsense_macro(
       namespace = namespace,
       camera_name = "down_rgbd",
-      camera_suffix="_down",
+      camera_suffix="",
       parent_link = root,
       enable_realistic_realsense = enable_realistic_realsense,
-      x = 0.075,
+      x = 0.086,
       y = 0,
-      z = 0.04,
+      z = 0.002,
       roll = 0,
       pitch = components.rad90,
       yaw = 0)
@@ -866,47 +883,6 @@
     <!--}-->
 
     <!-- ========================== other sensors ========================= -->
-
-    {# Timepix3 {--> #}
-    {% if enable_timepix3 %}
-    <!-- Timepix3 {-->
-    {{ components.timepix3_macro(
-      parent_link = root,
-      name = "timepix3",
-      material = "cdte",
-      thickness = 0.002,
-      max_message_window = 1.0,
-      sensor_suffix = "",
-      x = 0.115,
-      y = -0.05,
-      z = -0.05,
-      roll = 0,
-      pitch = 0,
-      yaw = 0)
-    }}
-    <!--}-->
-    {% endif %}
-    {# <!--}--> #}
-
-    {# Light {--> #}
-    {% if enable_light %}
-    <!-- Light {-->
-    {{ components.light_macro(
-      parent_link = root,
-      update_rate = 30,
-      max_pitch_rate = 0.1,
-      initial_on = True,
-      compensate_tilt = True,
-      x = 0.2,
-      y = 0.0,
-      z = -0.1,
-      roll = 0,
-      pitch = 0,
-      yaw = 0)
-    }}
-    <!--}-->
-    {% endif %}
-    {# <!--}--> #}
 
   </model>
 </sdf>
