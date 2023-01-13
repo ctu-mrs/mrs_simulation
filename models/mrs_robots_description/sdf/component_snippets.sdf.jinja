@@ -626,7 +626,7 @@ limitations under the License.
 <!-- Macro to add imu with configurable rate {-->
 {%- macro custom_imu_macro(sensor_name, parent_link, update_rate, topic_name, frame_name, noise_mean, x, y, z, roll, pitch, yaw) -%}
 <link name="{{ sensor_name }}_link">
-  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
+  <pose relative_to = "{{ parent_link }}">{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   {{ zero_inertial_macro() }}
   <sensor name="{{ sensor_name }}_sensor" type="imu">
     <gravity>true</gravity>
@@ -2304,17 +2304,17 @@ limitations under the License.
 
 {{ custom_imu_macro(
   sensor_name = sensor_name + "_imu",
-  parent_link = parent_link,
+  parent_link = sensor_name + "_link",
   update_rate = imu_rate,
   topic_name = "/" + namespace + "/" + sensor_name + "/imu",
   frame_name = namespace + "/" + sensor_name,
   noise_mean = imu_noise_mean,
-  x = x,
-  y = y,
-  z = z,
-  roll = roll,
-  pitch = pitch,
-  yaw = yaw)
+  x = 0,
+  y = 0,
+  z = 0,
+  roll = -rad90,
+  pitch = 0,
+  yaw = -rad90)
 }}
 {%- endmacro -%}
 <!--}-->
