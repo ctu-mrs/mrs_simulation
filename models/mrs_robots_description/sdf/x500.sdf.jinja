@@ -72,6 +72,7 @@
   {%- set garmin_mount_mesh_file = "model://mrs_robots_description/meshes/x500v2/garmin_mount_mesh_file.stl" -%}
   {%- set lidar_mount_mesh_file = "model://mrs_robots_description/meshes/x500v2/lidar_mount_mesh_file.stl" -%}
   {%- set realsense_mount_mesh_file = "model://mrs_robots_description/meshes/x500v2/realsense_mount_mesh_file.stl" -%}
+  {%- set bluefox_mount_mesh_file = "model://mrs_robots_description/meshes/x500v2/bluefox_mount_mesh_file.stl" -%}
   {# <!--}--> #}
 
   {# Scales {--> #}
@@ -179,11 +180,11 @@
           yaw = id * 1.57079633)
         }}
 
-        {{ components.visual_mesh_macro(
+        {{ components.visual_mesh_mrs_material_macro(
           name = "arm_plastic1_" + affix,
           mesh_file = arm_plastic1_mesh_file,
           mesh_scale = mesh_scale,
-          color = "SkyBlue",
+          color = "X500Blue",
           x = 0,
           y = 0,
           z = 0,
@@ -192,11 +193,11 @@
           yaw = id * 1.57079633)
         }}
   
-        {{ components.visual_mesh_macro(
+        {{ components.visual_mesh_mrs_material_macro(
           name = "arm_plastic2_" + affix,
           mesh_file = arm_plastic2_mesh_file,
           mesh_scale = mesh_scale,
-          color = "SkyBlue",
+          color = "X500Blue",
           x = 0,
           y = 0,
           z = 0,
@@ -343,7 +344,7 @@
         color = "Red",
         x = 0,
         y = 0,
-        z = 0,
+        z = 0.001,
         roll = 0,
         pitch = 0,
         yaw = components.rad(90))
@@ -355,7 +356,7 @@
         color = "Grey",
         x = 0,
         y = 0,
-        z = 0,
+        z = 0.001,
         roll = 0,
         pitch = 0,
         yaw = components.rad(90))
@@ -416,7 +417,7 @@
         color = "Black",
         x = 0,
         y = 0,
-        z = 0,
+        z = 0.001,
         roll = 0,
         pitch = 0,
         yaw = components.rad(90))
@@ -440,6 +441,24 @@
       }}
       <!--}-->
       {% endif %}
+  
+      {% if enable_bluefox_camera_reverse or enable_bluefox_camera%}
+      <!-- bluefox mount {-->
+      {{ components.visual_mesh_macro(
+        name = "bluefox_mount",
+        mesh_file = bluefox_mount_mesh_file,
+        mesh_scale = mesh_scale_milimeters,
+        color = "FlatBlack",
+        x = 0,
+        y = 0,
+        z = 0,
+        roll = 0,
+        pitch = 0,
+        yaw = components.rad(90))
+      }}
+      <!--}-->
+      {% endif %}
+  
       <!--}-->
     
     </link>
@@ -709,7 +728,7 @@
       orientation = "",
       x = 0.0,
       y = 0.0625,
-      z = -0.023,
+      z = -0.022,
       roll = 0,
       pitch = components.rad(90),
       yaw = components.rad(-90))
@@ -830,9 +849,9 @@
       frame_rate = 100.0,
       hfov = 2.1,
       noise = 0.0,
-      x = 0.05,
-      y = -0.1,
-      z = -0.055,
+      x = 0.0,
+      y = -0.0515,
+      z = -0.038,
       roll = 0,
       pitch = components.rad90,
       yaw = components.rad180)
@@ -849,9 +868,9 @@
       frame_rate = 100.0,
       hfov = 2.1,
       noise = 0.0,
-      x = -0.05,
-      y = -0.1,
-      z = -0.055,
+      x = 0.0,
+      y = -0.0515,
+      z = -0.038,
       roll = 0,
       pitch = components.rad90,
       yaw = 0)

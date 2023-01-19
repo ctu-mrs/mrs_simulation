@@ -175,6 +175,25 @@ limitations under the License.
 {%- endmacro -%}
 <!--}-->
 
+<!-- Visual mesh macro {-->
+{%- macro visual_mesh_mrs_material_macro(name, mesh_file, mesh_scale, color, x, y, z, roll, pitch, yaw) -%}
+<visual name="{{ name }}_visual">
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
+  <geometry>
+    <mesh>
+      <uri>{{ mesh_file }}</uri>
+      <scale>{{ mesh_scale }}</scale>
+    </mesh>
+  </geometry>
+  <material>
+    <script>
+      <name>MRS/{{ color }}</name>
+      <uri>model://mrs_robots_description/materials/mrs.material</uri>
+    </script>
+  </material>
+</visual>
+{%- endmacro -%}
+<!--}-->
 <!-- Visual mesh macro with collision{-->
 {%- macro visual_mesh_with_collision_macro(name, mesh_file, mesh_scale, color, x, y, z, roll, pitch, yaw) -%}
 <visual name="{{ name }}_visual">
