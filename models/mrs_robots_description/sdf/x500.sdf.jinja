@@ -12,7 +12,7 @@
   {%- set body_radius = 0.2 -%} {# [m] #}
   {%- set body_height = 0.1 -%} {# [m] #}
   {%- set mass_prop = 0.005 -%} {# [kg] #}
-  {%- set radius_rotor = 0.126 -%} {# [m] #}
+  {%- set radius_rotor = 0.1651 -%} {# [m] #}
 
   {%- set motor_mesh_z_offset = -0.0086 -%} {# [m] #}
   {%- set rotor_xy_offset = 0.1812 -%} {# [m] #}
@@ -40,40 +40,35 @@
 
   {# Meshes {--> #}
 
-  {# Drone parts {--> #}
-  {# {%- set top_board_mesh_file = "model://mrs_robots_description/meshes/holybro/holybro_x500_top_board.dae" -%} #}
-  {# {%- set bottom_board_mesh_file = "model://mrs_robots_description/meshes/holybro/holybro_x500_bottom_board.dae" -%} #}
-  {%- set arm_mesh_file_front = "model://mrs_robots_description/meshes/holybro/holybro_x500_arm.dae" -%}
-  {%- set arm_mesh_file_back = "model://mrs_robots_description/meshes/holybro/holybro_x500_arm.dae" -%}
-  {%- set leg_mesh_file = "model://mrs_robots_description/meshes/holybro/holybro_x500_leg.dae" -%}
-  {%- set rotor_mesh_file = "model://mrs_robots_description/meshes/holybro/holybro_x500_motor.dae" -%}
-  {%- set prop_mesh_file = "model://mrs_robots_description/meshes/holybro/holybro_x500_prop.dae" -%}
-  {%- set pixhawk_mesh_file = "model://mrs_robots_description/meshes/sensors/pixhawk.dae" -%}
-
-  {%- set top_board_mesh_file = "model://mrs_robots_description/meshes/x500v2/top_board_mesh_file.stl" -%}
-  {%- set bottom_board_mesh_file = "model://mrs_robots_description/meshes/x500v2/bottom_board_mesh_file.stl" -%}
-  {%- set arm_carbon_mesh_file = "model://mrs_robots_description/meshes/x500v2/arm_carbon_mesh_file.stl" -%}
+  {# Frame parts {--> #}
+  {%- set top_board_mesh_file = "model://mrs_robots_description/meshes/x500v2/top_board_mesh_file.dae" -%}
+  {%- set bottom_board_mesh_file = "model://mrs_robots_description/meshes/x500v2/bottom_board_mesh_file.dae" -%}
+  {%- set arm_carbon_mesh_file = "model://mrs_robots_description/meshes/x500v2/arm_carbon_mesh_file.dae" -%}
   {%- set arm_plastic1_mesh_file = "model://mrs_robots_description/meshes/x500v2/arm_plastic1_mesh_file.stl" -%}
   {%- set arm_plastic2_mesh_file = "model://mrs_robots_description/meshes/x500v2/arm_plastic2_mesh_file.stl" -%}
   {%- set arm_3d_print_mesh_file = "model://mrs_robots_description/meshes/x500v2/arm_3d_print_mesh_file.stl" -%}
   {%- set leg_3d_print_mesh_file = "model://mrs_robots_description/meshes/x500v2/leg_3d_print_mesh_file.stl" -%}
+  {# <!--}--> #}
 
+  {# Motors and props {--> #}
   {%- set motor_bottom_mesh_file = "model://mrs_robots_description/meshes/x500v2/motor_bottom_mesh_file.stl" -%}
   {%- set motor_middle_mesh_file = "model://mrs_robots_description/meshes/x500v2/motor_middle_mesh_file.stl" -%}
-  
   {%- set motor_top_mesh_file = "model://mrs_robots_description/meshes/x500v2/motor_top_mesh_file.stl" -%}
-  {%- set prop_cw_mesh_file = "model://mrs_robots_description/meshes/x500v2/prop_cw_mesh_file.stl" -%}
-  {%- set prop_ccw_mesh_file = "model://mrs_robots_description/meshes/x500v2/prop_ccw_mesh_file.stl" -%}
+  {%- set prop_mesh_file = "model://mrs_robots_description/meshes/x500v2/prop_mesh_file.dae" -%}
+  {# <!--}--> #}
 
-  {%- set battery_mesh_file = "model://mrs_robots_description/meshes/x500v2/battery_mesh_file.stl" -%}
+  {# Sensors and computers {--> #}
   {%- set pixhawk6c_mesh_file = "model://mrs_robots_description/meshes/x500v2/pixhawk6c_mesh_file.stl" -%}
-  {%- set battery_mount_mesh_file = "model://mrs_robots_description/meshes/x500v2/battery_mount_mesh_file.stl" -%}
   {%- set gps_mount_mesh_file = "model://mrs_robots_description/meshes/x500v2/gps_mount_mesh_file.stl" -%}
   {%- set nuc_board_mesh_file = "model://mrs_robots_description/meshes/x500v2/nuc_board_mesh_file.stl" -%}
   {%- set nuc_cooler_mesh_file = "model://mrs_robots_description/meshes/x500v2/nuc_cooler_mesh_file.stl" -%}
+  {# <!--}--> #}
+
+  {# Mounts {--> #}
+  {%- set battery_mesh_file = "model://mrs_robots_description/meshes/x500v2/battery_mesh_file.stl" -%}
+  {%- set battery_mount_mesh_file = "model://mrs_robots_description/meshes/x500v2/battery_mount_mesh_file.stl" -%}
   {%- set nuc_hex_posts_mesh_file = "model://mrs_robots_description/meshes/x500v2/nuc_hex_posts_mesh_file.stl" -%}
   {%- set gps_module_mesh_file = "model://mrs_robots_description/meshes/x500v2/gps_module_mesh_file.stl" -%}
-
   {%- set garmin_mount_mesh_file = "model://mrs_robots_description/meshes/x500v2/garmin_mount_mesh_file.stl" -%}
   {%- set lidar_mount_mesh_file = "model://mrs_robots_description/meshes/x500v2/lidar_mount_mesh_file.stl" -%}
   {%- set realsense_mount_mesh_file = "model://mrs_robots_description/meshes/x500v2/realsense_mount_mesh_file.stl" -%}
@@ -130,11 +125,10 @@
       <!-- Body visuals {-->
 
       <!-- Boards {-->
-      {{ components.visual_mesh_macro(
+      {{ components.visual_mesh_textured_macro(
         name = "top_board",
         mesh_file = top_board_mesh_file,
         mesh_scale = mesh_scale,
-        color = "FlatBlack",
         x = 0,
         y = 0,
         z = 0,
@@ -143,11 +137,10 @@
         yaw = components.rad(90))
       }}
 
-      {{ components.visual_mesh_macro(
+      {{ components.visual_mesh_textured_macro(
         name = "bottom_board",
         mesh_file = bottom_board_mesh_file,
-        mesh_scale = mesh_scale_milimeters,
-        color = "FlatBlack",
+        mesh_scale = mesh_scale,
         x = 0,
         y = 0,
         z = 0,
@@ -174,11 +167,10 @@
           {%- set print_color = "Red" -%}
         {% endif %}
 
-        {{ components.visual_mesh_macro(
+        {{ components.visual_mesh_textured_macro(
           name = "arm_carbon_" + affix,
           mesh_file = arm_carbon_mesh_file,
           mesh_scale = mesh_scale,
-          color = "FlatBlack",
           x = 0,
           y = 0,
           z = 0,
@@ -241,57 +233,6 @@
 
       {% endfor %}
 
-      {# {{ components.visual_mesh_macro( #}
-      {#   name = "front_right_arm", #}
-      {#   mesh_file = arm_mesh_file_front, #}
-      {#   mesh_scale = mesh_scale, #}
-      {#   color = "darkgrey", #}
-      {#   x = 0, #}
-      {#   y = 0, #}
-      {#   z = 0, #}
-      {#   roll = 0, #}
-      {#   pitch = 0, #}
-      {#   yaw = components.rad(-45)) #}
-      {# }} #}
-
-      {# {{ components.visual_mesh_macro( #}
-      {#   name = "back_right_arm", #}
-      {#   mesh_file = arm_mesh_file_back, #}
-      {#   mesh_scale = mesh_scale, #}
-      {#   color = "DarkGrey", #}
-      {#   x = 0, #}
-      {#   y = 0, #}
-      {#   z = 0, #}
-      {#   roll = 0, #}
-      {#   pitch = 0, #}
-      {#   yaw = components.rad(-135)) #}
-      {# }} #}
-
-      {# {{ components.visual_mesh_macro( #}
-      {#   name = "front_left_arm", #}
-      {#   mesh_file = arm_mesh_file_front, #}
-      {#   mesh_scale = mesh_scale, #}
-      {#   color = "DarkGrey", #}
-      {#   x = 0, #}
-      {#   y = 0, #}
-      {#   z = 0, #}
-      {#   roll = 0, #}
-      {#   pitch = 0, #}
-      {#   yaw = components.rad(45)) #}
-      {# }} #}
-
-      {# {{ components.visual_mesh_macro( #}
-      {#   name = "back_left_arm", #}
-      {#   mesh_file = arm_mesh_file_back, #}
-      {#   mesh_scale = mesh_scale, #}
-      {#   color = "DarkGrey", #}
-      {#   x = 0, #}
-      {#   y = 0, #}
-      {#   z = 0, #}
-      {#   roll = 0, #}
-      {#   pitch = 0, #}
-      {#   yaw = components.rad(135)) #}
-      {# }} #}
       <!--}-->
 
       <!-- intel nuc {-->
@@ -518,9 +459,8 @@
       motor_number = 0,
       rotor_drag_coefficient = rotor_drag_coefficient,
       rolling_moment_coefficient = rolling_moment_coefficient,
-      color_1 = "Black",
-      color_2 = "Grey",
-      mesh_file_1 = prop_ccw_mesh_file,
+      color = "Grey",
+      mesh_file_1 = prop_mesh_file,
       mesh_file_2 = motor_top_mesh_file,
       meshes_z_offset = motor_mesh_z_offset,
       mesh_scale = mesh_scale_prop_ccw,
@@ -552,9 +492,8 @@
       motor_number = 1,
       rotor_drag_coefficient = rotor_drag_coefficient,
       rolling_moment_coefficient = rolling_moment_coefficient,
-      color_1 = "Black",
-      color_2 = "Grey",
-      mesh_file_1 = prop_ccw_mesh_file,
+      color = "Grey",
+      mesh_file_1 = prop_mesh_file,
       mesh_file_2 = motor_top_mesh_file,
       meshes_z_offset = motor_mesh_z_offset,
       mesh_scale = mesh_scale_prop_ccw,
@@ -586,12 +525,11 @@
       motor_number = 2,
       rotor_drag_coefficient = rotor_drag_coefficient,
       rolling_moment_coefficient = rolling_moment_coefficient,
-      color_1 = "Black",
-      color_2 = "Grey",
-      mesh_file_1 = prop_cw_mesh_file,
+      color = "Grey",
+      mesh_file_1 = prop_mesh_file,
       mesh_file_2 = motor_top_mesh_file,
       meshes_z_offset = motor_mesh_z_offset,
-      mesh_scale = mesh_scale_prop_ccw,
+      mesh_scale = mesh_scale_prop_cw,
       x = rotor_xy_offset,
       y = rotor_xy_offset,
       z = rotor_z_offset,
@@ -620,12 +558,11 @@
       motor_number = 3,
       rotor_drag_coefficient = rotor_drag_coefficient,
       rolling_moment_coefficient = rolling_moment_coefficient,
-      color_1 = "Black",
-      color_2 = "Grey",
-      mesh_file_1 = prop_cw_mesh_file,
+      color = "Grey",
+      mesh_file_1 = prop_mesh_file,
       mesh_file_2 = motor_top_mesh_file,
       meshes_z_offset = motor_mesh_z_offset,
-      mesh_scale = mesh_scale_prop_ccw,
+      mesh_scale = mesh_scale_prop_cw,
       x = -rotor_xy_offset,
       y = -rotor_xy_offset,
       z = rotor_z_offset,
@@ -882,6 +819,47 @@
 
     <!--}-->
 
+    <!-- Bluefox camera placements{-->
+
+    {% if enable_bluefox_camera_reverse %}
+    <!-- bluefox reverse {-->
+    {{ components.bluefox_camera_macro(
+      namespace = namespace,
+      camera_name = "bluefox_optflow",
+      parent_link = root,
+      frame_rate = 100.0,
+      hfov = 2.1,
+      noise = 0.0,
+      x = 0.05,
+      y = -0.1,
+      z = -0.055,
+      roll = 0,
+      pitch = components.rad90,
+      yaw = components.rad180)
+    }}
+    <!--}-->
+    {% endif %}
+
+    {% if enable_bluefox_camera %}
+    <!-- bluefox classic {-->
+    {{ components.bluefox_camera_macro(
+      namespace = namespace,
+      camera_name = "bluefox_optflow",
+      parent_link = root,
+      frame_rate = 100.0,
+      hfov = 2.1,
+      noise = 0.0,
+      x = -0.05,
+      y = -0.1,
+      z = -0.055,
+      roll = 0,
+      pitch = components.rad90,
+      yaw = 0)
+    }}
+    <!--}-->
+    {% endif %}
+
+    <!--}-->
     <!-- ========================== other sensors ========================= -->
 
   </model>
