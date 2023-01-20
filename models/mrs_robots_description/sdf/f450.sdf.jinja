@@ -26,6 +26,11 @@
   {%- set pixhawk_offset = -0.0075 -%} {# [m] #}
   {%- set use_battery_mount = true -%} {# [bool] #}
   {%- set root = "base_link" -%}
+
+  {%- set enable_motor_crash = true -%}
+  {% if disable_motor_crash %}
+    {%- set enable_motor_crash = false -%}
+  {% endif %}
   {# <!--}--> #}
 
   {# Motor constants {--> #}
@@ -537,6 +542,7 @@
       motor_number = 0,
       rotor_drag_coefficient = rotor_drag_coefficient,
       rolling_moment_coefficient = rolling_moment_coefficient,
+      enable_motor_crash = enable_motor_crash,
       color = "White",
       mesh_file = prop_mesh_file,
       mesh_scale = mesh_scale_prop_ccw,
@@ -568,6 +574,7 @@
       motor_number = 1,
       rotor_drag_coefficient = rotor_drag_coefficient,
       rolling_moment_coefficient = rolling_moment_coefficient,
+      enable_motor_crash = enable_motor_crash,
       color = "White",
       mesh_file = prop_mesh_file,
       mesh_scale = mesh_scale_prop_ccw,
@@ -599,6 +606,7 @@
       motor_number = 2,
       rotor_drag_coefficient = rotor_drag_coefficient,
       rolling_moment_coefficient = rolling_moment_coefficient,
+      enable_motor_crash = enable_motor_crash,
       color = "White",
       mesh_file = prop_mesh_file,
       mesh_scale = mesh_scale_prop_cw,
@@ -630,6 +638,7 @@
       motor_number = 3,
       rotor_drag_coefficient = rotor_drag_coefficient,
       rolling_moment_coefficient = rolling_moment_coefficient,
+      enable_motor_crash = enable_motor_crash,
       color = "White",
       mesh_file = prop_mesh_file,
       mesh_scale = mesh_scale_prop_cw,

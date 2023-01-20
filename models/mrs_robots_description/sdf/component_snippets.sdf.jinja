@@ -335,7 +335,7 @@ limitations under the License.
 <!--}-->
 
 <!-- Prop macro {-->
-{%- macro prop_macro(direction, rotor_velocity_slowdown_sim, motor_constant, moment_constant, parent, mass, radius, time_constant_up, time_constant_down, max_rot_velocity, motor_number, rotor_drag_coefficient, rolling_moment_coefficient, color, mesh_file, mesh_scale, x, y, z, roll, pitch, yaw, ixx, ixy, ixz, iyy, iyz, izz) -%}
+{%- macro prop_macro(direction, rotor_velocity_slowdown_sim, motor_constant, moment_constant, parent, mass, radius, time_constant_up, time_constant_down, max_rot_velocity, motor_number, rotor_drag_coefficient, rolling_moment_coefficient, enable_motor_crash, color, mesh_file, mesh_scale, x, y, z, roll, pitch, yaw, ixx, ixy, ixz, iyy, iyz, izz) -%}
 <link name="prop_{{ motor_number }}_link">
   <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   <inertial>
@@ -364,10 +364,11 @@ limitations under the License.
     </material>
   </visual>
   <collision name="prop_{{ motor_number }}_link_collision">
+    <pose>0 0 0 0 {{ rad90 }} 0</pose>
     <geometry>
       <cylinder>
-        <length>0.005</length>
-        <radius>{{ radius }}</radius>
+        <length>{{ 2*radius }}</length>
+        <radius>0.01</radius>
       </cylinder>
     </geometry>
     <surface>
@@ -397,6 +398,7 @@ limitations under the License.
   <rollingMomentCoefficient>{{ rolling_moment_coefficient }}</rollingMomentCoefficient>
   <motorSpeedPubTopic>/motor_speed/{{ motor_number }}</motorSpeedPubTopic>
   <rotorVelocitySlowdownSim>{{ rotor_velocity_slowdown_sim }}</rotorVelocitySlowdownSim>
+  <enableMotorCrash>{{ enable_motor_crash }}</enableMotorCrash>
 </plugin>
 
 <joint name="prop_{{ motor_number }}_joint" type="revolute">
@@ -419,7 +421,7 @@ limitations under the License.
 <!--}-->
 
 <!-- Prop macro with 2 meshes{-->
-{%- macro prop_macro_2_meshes(direction, rotor_velocity_slowdown_sim, motor_constant, moment_constant, parent, mass, radius, time_constant_up, time_constant_down, max_rot_velocity, motor_number, rotor_drag_coefficient, rolling_moment_coefficient, color, mesh_file_1, mesh_file_2, meshes_z_offset,  mesh_scale, x, y, z, roll, pitch, yaw, ixx, ixy, ixz, iyy, iyz, izz) -%}
+{%- macro prop_macro_2_meshes(direction, rotor_velocity_slowdown_sim, motor_constant, moment_constant, parent, mass, radius, time_constant_up, time_constant_down, max_rot_velocity, motor_number, rotor_drag_coefficient, rolling_moment_coefficient, enable_motor_crash, color, mesh_file_1, mesh_file_2, meshes_z_offset,  mesh_scale, x, y, z, roll, pitch, yaw, ixx, ixy, ixz, iyy, iyz, izz) -%}
 <link name="prop_{{ motor_number }}_link">
   <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   <inertial>
@@ -457,10 +459,12 @@ limitations under the License.
     </material>
   </visual>
   <collision name="prop_{{ motor_number }}_link_collision">
+    <pose>0 0 0 0 {{ rad90 }} 0</pose>
     <geometry>
-      <box>
-        <size>{{ 2*radius }} 0.02 0.005</size>
-      </box>
+      <cylinder>
+        <length>{{ 2*radius }}</length>
+        <radius>0.01</radius>
+      </cylinder>
     </geometry>
     <surface>
       <contact>
@@ -489,6 +493,7 @@ limitations under the License.
   <rollingMomentCoefficient>{{ rolling_moment_coefficient }}</rollingMomentCoefficient>
   <motorSpeedPubTopic>/motor_speed/{{ motor_number }}</motorSpeedPubTopic>
   <rotorVelocitySlowdownSim>{{ rotor_velocity_slowdown_sim }}</rotorVelocitySlowdownSim>
+  <enableMotorCrash>{{ enable_motor_crash }}</enableMotorCrash>
 </plugin>
 
 <joint name="prop_{{ motor_number }}_joint" type="revolute">

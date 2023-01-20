@@ -9,7 +9,7 @@
 
   {# Robot parameters and arguments {--> #}
   {%- set mass = 2.0 -%} {# [kg] #}
-  {%- set body_radius = 0.2 -%} {# [m] #}
+  {%- set body_radius = 0.1 -%} {# [m] #}
   {%- set body_height = 0.1 -%} {# [m] #}
   {%- set mass_prop = 0.005 -%} {# [kg] #}
   {%- set radius_rotor = 0.1651 -%} {# [m] #}
@@ -20,6 +20,12 @@
 
   {%- set use_battery_mount = true -%} {# [bool] #}
   {%- set root = "base_link" -%}
+
+  {%- set enable_motor_crash = true -%}
+  {% if disable_motor_crash %}
+    {%- set enable_motor_crash = false -%}
+  {% endif %}
+  
   {# <!--}--> #}
 
   {# Motor constants {--> #}
@@ -478,6 +484,7 @@
       motor_number = 0,
       rotor_drag_coefficient = rotor_drag_coefficient,
       rolling_moment_coefficient = rolling_moment_coefficient,
+      enable_motor_crash = enable_motor_crash,
       color = "Grey",
       mesh_file_1 = prop_mesh_file,
       mesh_file_2 = motor_top_mesh_file,
@@ -511,6 +518,7 @@
       motor_number = 1,
       rotor_drag_coefficient = rotor_drag_coefficient,
       rolling_moment_coefficient = rolling_moment_coefficient,
+      enable_motor_crash = enable_motor_crash,
       color = "Grey",
       mesh_file_1 = prop_mesh_file,
       mesh_file_2 = motor_top_mesh_file,
@@ -544,6 +552,7 @@
       motor_number = 2,
       rotor_drag_coefficient = rotor_drag_coefficient,
       rolling_moment_coefficient = rolling_moment_coefficient,
+      enable_motor_crash = enable_motor_crash,
       color = "Grey",
       mesh_file_1 = prop_mesh_file,
       mesh_file_2 = motor_top_mesh_file,
@@ -577,6 +586,7 @@
       motor_number = 3,
       rotor_drag_coefficient = rotor_drag_coefficient,
       rolling_moment_coefficient = rolling_moment_coefficient,
+      enable_motor_crash = enable_motor_crash,
       color = "Grey",
       mesh_file_1 = prop_mesh_file,
       mesh_file_2 = motor_top_mesh_file,
