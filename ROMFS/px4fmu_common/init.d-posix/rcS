@@ -183,7 +183,8 @@ fi
 
 # Adapt connection loss time threshold to max value that is 300
 # https://docs.px4.io/main/en/advanced_config/parameter_reference.html#COM_DL_LOSS_T
-param set COM_DL_LOSS_T 300
+# It works even with higher numbers than 300
+param set COM_DL_LOSS_T 1000000
 
 # Autostart ID
 autostart_file=''

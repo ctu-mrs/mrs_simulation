@@ -43,7 +43,7 @@
       <param name="time/publish_sim_time" value="false"/>
 
       <!-- connection timeout in seconds between px4 and mavros.-->
-      <param name="conn/timeout" value="300"/>
+      <param name="conn/timeout" value="1000000"/>
 
       <!-- load blacklist, config -->
       <rosparam command="load" file="$(arg pluginlists_yaml)" />
