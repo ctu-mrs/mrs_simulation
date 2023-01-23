@@ -39,8 +39,11 @@
       <param name="global_position/frame_id" value="uav$(arg ID)/utm_origin" />
       <param name="global_position/child_frame_id" value="uav$(arg ID)/fcu" />
 
-      <!-- enable simtime -->
-      <param name="time/publish_sim_time" value="True"/>
+      <!-- enable publishing simtime from px4 -->
+      <param name="time/publish_sim_time" value="false"/>
+
+      <!-- connection timeout in seconds between px4 and mavros.-->
+      <param name="conn/timeout" value="1000000"/>
 
       <!-- load blacklist, config -->
       <rosparam command="load" file="$(arg pluginlists_yaml)" />

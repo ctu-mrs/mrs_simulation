@@ -138,6 +138,9 @@ param set-default COM_RC_IN_MODE 1
 # https://docs.px4.io/main/en/advanced_config/parameter_reference.html#COM_RCL_EXCEPT
 param set-default COM_RCL_EXCEPT 5
 
+# Ignored COM Loss in simulation.
+param set-default NAV_DLL_ACT 0
+
 # Speedup SITL startup
 param set-default EKF2_REQ_GPS_H 0.5
 
@@ -177,6 +180,11 @@ if [ -n "$PX4_SIM_SPEED_FACTOR" ]; then
 	echo "COM_OBC_LOSS_T set to $COM_OBC_LOSS_T_LONGER"
 	param set COM_OBC_LOSS_T $COM_OBC_LOSS_T_LONGER
 fi
+
+# Adapt connection loss time threshold to max value that is 300
+# https://docs.px4.io/main/en/advanced_config/parameter_reference.html#COM_DL_LOSS_T
+# It works even with higher numbers than 300
+param set COM_DL_LOSS_T 1000000
 
 # Autostart ID
 autostart_file=''
