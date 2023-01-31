@@ -1023,7 +1023,7 @@
     {# <!--}--> #}
 
     {# UV cameras {--> #}
-    {% if enable_uv_camera %}
+    {% if enable_dual_uv_cameras %}
     <!-- Dual UV cameras {-->
     {{ components.uvcam_macro(
       parent_link = root,
@@ -1031,7 +1031,7 @@
       calibration_file = uvcam_calib_file,
       occlusions = uvcam_occlusions,
       frame_rate = 80,
-      number = 1,
+      device_id = namespace + "_1",
       x = 0.037,
       y = 0.1175,
       z = 0.057,
@@ -1046,7 +1046,7 @@
       calibration_file = uvcam_calib_file,
       occlusions = uvcam_occlusions,
       frame_rate = 80,
-      number = 2,
+      device_id = namespace + "_2",
       x = 0.037,
       y = -0.1175,
       z = 0.057,
@@ -1065,7 +1065,7 @@
       calibration_file = uvcam_calib_file,
       occlusions = uvcam_occlusions,
       frame_rate = 60,
-      number = 1,
+      device_id = namespace + "_3",
       x = 0.0,
       y = 0.0,
       z = -0.1,
@@ -1228,7 +1228,7 @@
     {% for id_, signal_id_, x_, y_, z_, roll_, pitch_, yaw_ in uv_leds_macro_parameters %}
       {{ components.uvled_macro(
         parent_link = root,
-        number = id_,
+        device_id = namespace + "_" + id_ | string(),
         signal_id = signal_id_,
         x = x_,
         y = y_,

@@ -2274,8 +2274,8 @@ limitations under the License.
 <!--}-->
 
 <!-- Macro to add a UV Camera {-->
-{%- macro uvcam_macro(parent_link, calibration_file, occlusions, frame_rate, number, camera_publish_topic, x, y, z, roll, pitch, yaw) -%}
-<link name="uvcam_{{ number }}_link">
+{%- macro uvcam_macro(parent_link, calibration_file, occlusions, frame_rate, device_id, camera_publish_topic, x, y, z, roll, pitch, yaw) -%}
+<link name="uvcam_{{ device_id }}_link">
   <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   {{ zero_inertial_macro() }}
   <visual name="visual">
@@ -2293,23 +2293,23 @@ limitations under the License.
       </script>
     </material>
   </visual>
-  <sensor name="uvcam_{{ number }}_sensor" type="rfid" >
+  <sensor name="uvcam_{{ device_id }}_sensor" type="rfid" >
     <update_rate>1</update_rate>
-    <plugin name='uvcam_{{ number }}_plugin' filename="libuvdar_cam.so">
+    <plugin name='uvcam_{{ device_id }}_plugin' filename="libuvdar_cam.so">
       <alwaysOn>false</alwaysOn>
       <updateRate>{{ frame_rate }}</updateRate>
       <occlusion>{{ occlusions }}</occlusion>
       <framerate>{{ frame_rate }}</framerate>
       <calibration_file>{{ calibration_file }}</calibration_file>
-      <number>{{ number }}</number>
+      <device_id>{{ device_id }}</device_id>
       <camera_publish_topic>{{ camera_publish_topic }}</camera_publish_topic>
     </plugin>
   </sensor>
 </link>
 
-<joint name="uvcam_{{ number }}_joint" type="fixed">
+<joint name="uvcam_{{ device_id }}_joint" type="fixed">
   <parent>{{ parent_link }}</parent>
-  <child>uvcam_{{ number }}_link</child>
+  <child>uvcam_{{ device_id }}_link</child>
 </joint>
 {%- endmacro -%}
 <!--}-->
@@ -2950,8 +2950,8 @@ limitations under the License.
 <!--}-->
 
 <!-- Macro to add a UV LED{-->
-{%- macro uvled_macro(parent_link, number, signal_id , x, y, z, roll, pitch, yaw) -%}
-<link name="uvled_{{ number }}_link">
+{%- macro uvled_macro(parent_link, device_id, signal_id , x, y, z, roll, pitch, yaw) -%}
+<link name="uvled_{{ device_id }}_link">
   <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   {{ zero_inertial_macro() }}
   <visual name="main_body_visual">
@@ -2997,21 +2997,20 @@ limitations under the License.
       </script>
     </material>
   </visual>
-  <sensor name="uvled_{{ number }}_sensor" type="rfid">
+  <sensor name="uvled_{{ device_id }}_sensor" type="rfid">
     <update_rate>1</update_rate>
-    <plugin name='uvled_{{ number }}_plugin' filename="libuvdar_led.so">
-      <link_name>uvled_{{ number }}_link</link_name>
+    <plugin name='uvled_{{ device_id }}_plugin' filename="libuvdar_led.so">
       <alwaysOn>false</alwaysOn>
       <updateRate>1</updateRate>
       <signal_id>{{ signal_id }}</signal_id>
-      <number>{{ number }}</number>
+      <device_id>{{ device_id }}</device_id>
     </plugin>
   </sensor>
 </link>
 
-<joint name="uvled_{{ number }}_joint" type="fixed">
+<joint name="uvled_{{ device_id }}_joint" type="fixed">
   <parent>{{ parent_link }}</parent>
-  <child>uvled_{{ number }}_link</child>
+  <child>uvled_{{ device_id }}_link</child>
   <disableFixedJointLumping>true</disableFixedJointLumping>
   <preserveFixedJoint>true</preserveFixedJoint>
 </joint>
