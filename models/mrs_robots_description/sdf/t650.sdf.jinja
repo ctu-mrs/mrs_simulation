@@ -1228,7 +1228,7 @@
     {% for id_, signal_id_, x_, y_, z_, roll_, pitch_, yaw_ in uv_leds_macro_parameters %}
       {{ components.uvled_macro(
         parent_link = root,
-        number = id_,
+        device_id = namespace + "_" + id_ | string(),
         signal_id = signal_id_,
         x = x_,
         y = y_,
