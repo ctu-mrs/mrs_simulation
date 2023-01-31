@@ -194,6 +194,7 @@ limitations under the License.
 </visual>
 {%- endmacro -%}
 <!--}-->
+
 <!-- Visual mesh macro with collision{-->
 {%- macro visual_mesh_with_collision_macro(name, mesh_file, mesh_scale, color, x, y, z, roll, pitch, yaw) -%}
 <visual name="{{ name }}_visual">
@@ -276,6 +277,43 @@ limitations under the License.
 }}
 <collision name="{{ name }}_link_collision">
   <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
+  <geometry>
+    <cylinder>
+      <length>{{ collision_height }}</length>
+      <radius>{{ collision_radius }}</radius>
+    </cylinder>
+  </geometry>
+  <surface>
+    <contact>
+      <ode>
+        <min_depth>0.001</min_depth>
+        <max_vel>0.0</max_vel>
+      </ode>
+    </contact>
+    <friction>
+      <ode/>
+    </friction>
+  </surface>
+</collision>
+{%- endmacro -%}
+<!--}-->
+
+<!-- Leg macro with offset {-->
+{%- macro leg_offset_macro(name, mesh_file, mesh_scale, color, x, y, z, roll, pitch, yaw, collision_height, collision_radius, offset_x, offset_y, offset_z) -%}
+{{ visual_mesh_macro(
+  name = name,
+  mesh_file = mesh_file,
+  mesh_scale = mesh_scale,
+  color = color,
+  x = x,
+  y = y,
+  z = z,
+  roll = roll,
+  pitch = pitch,
+  yaw = yaw)
+}}
+<collision name="{{ name }}_link_collision">
+  <pose>{{ x + offset_x }} {{ y + offset_y }} {{ z + offset_z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
   <geometry>
     <cylinder>
       <length>{{ collision_height }}</length>

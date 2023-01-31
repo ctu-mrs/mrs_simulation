@@ -160,10 +160,10 @@
       <!-- Arms and legs {-->
       {% for id in range(0, 4) %}
 
-        {%- set affix = "front_left" -%}
+        {%- set affix = "front_right" -%}
         {%- set print_color = "Black" -%}
         {% if id == 1 %}
-          {%- set affix = "front_right" -%}
+          {%- set affix = "front_left" -%}
         {% endif %}
         {% if id == 2 %}
           {%- set affix = "back_left" -%}
@@ -225,20 +225,79 @@
           yaw = id * 1.57079633)
         }}
 
-        {{ components.visual_mesh_with_collision_macro(
-          name = "leg_3d_print_" + affix,
-          mesh_file = leg_3d_print_mesh_file,
-          mesh_scale = mesh_scale,
-          color = print_color,
-          x = 0,
-          y = 0,
-          z = 0,
-          roll = 0,
-          pitch = 0,
-          yaw = id * 1.57079633)
-        }}
-
       {% endfor %}
+
+      {{ components.leg_offset_macro(
+        name = "leg_3d_print_front_right",
+        mesh_file = leg_3d_print_mesh_file,
+        mesh_scale = mesh_scale,
+        color = "Black",
+        x = 0,
+        y = 0,
+        z = 0,
+        roll = 0,
+        pitch = 0,
+        yaw = 0,
+        collision_height = 0.165,
+        collision_radius = 0.015,
+        offset_x = 0.13,
+        offset_y = -0.13,
+        offset_z = -0.07)
+      }}
+
+     {{ components.leg_offset_macro(
+        name = "leg_3d_print_front_left",
+        mesh_file = leg_3d_print_mesh_file,
+        mesh_scale = mesh_scale,
+        color = "Black",
+        x = 0,
+        y = 0,
+        z = 0,
+        roll = 0,
+        pitch = 0,
+        yaw = 1.57079633,
+        collision_height = 0.165,
+        collision_radius = 0.015,
+        offset_x = 0.13,
+        offset_y = 0.13,
+        offset_z = -0.07)
+      }}
+
+      {{ components.leg_offset_macro(
+        name = "leg_3d_print_back_left",
+        mesh_file = leg_3d_print_mesh_file,
+        mesh_scale = mesh_scale,
+        color = "Red",
+        x = 0,
+        y = 0,
+        z = 0,
+        roll = 0,
+        pitch = 0,
+        yaw = 3.14159266,
+        collision_height = 0.165,
+        collision_radius = 0.015,
+        offset_x = -0.13,
+        offset_y = 0.13,
+        offset_z = -0.07)
+      }}
+
+      {{ components.leg_offset_macro(
+        name = "leg_3d_print_back_right",
+        mesh_file = leg_3d_print_mesh_file,
+        mesh_scale = mesh_scale,
+        color = "Red",
+        x = 0,
+        y = 0,
+        z = 0,
+        roll = 0,
+        pitch = 0,
+        yaw = 4.71238899,
+        collision_height = 0.165,
+        collision_radius = 0.015,
+        offset_x = -0.13,
+        offset_y = -0.13,
+        offset_z = -0.07)
+      }}
 
       <!--}-->
 
@@ -298,12 +357,12 @@
       <!--}-->
 
       <!-- motors {-->
-      {%- set affix = "front_left" -%}
+      {%- set affix = "front_right" -%}
 
       {% for id in range(0, 4) %}
 
         {% if id == 1 %}
-          {%- set affix = "front_right" -%}
+          {%- set affix = "front_left" -%}
         {% endif %}
         {% if id == 2 %}
           {%- set affix = "back_left" -%}
