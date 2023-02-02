@@ -64,7 +64,6 @@
   {%- set bluefox_garmin_mount_mesh = "model://mrs_robots_description/meshes/tarot/t650/tarot_t650_bluefox_garmin_mount.dae" -%}
   {%- set ouster_mount_mesh = "model://mrs_robots_description/meshes/tarot/t650/tarot_t650_ouster_mount.dae" -%}
   {%- set rplidar_mount_mesh = "model://mrs_robots_description/meshes/tarot/t650/tarot_t650_rplidar_mount.dae" -%}
-  {%- set uvdar_mount_mesh = "model://mrs_robots_description/meshes/tarot/t650/tarot_t650_uvdar_mount.dae" -%}
   {%- set realsense_front_mount_mesh = "model://mrs_robots_description/meshes/tarot/t650/tarot_t650_realsense_front_mount.dae" -%}
   {# <!--}--> #}
 
@@ -441,23 +440,6 @@
         roll = 0,
         pitch = 0,
         yaw = components.rad90)
-      }}
-      <!--}-->
-      {% endif %}
-     
-      {% if enable_uv_camera %}
-      <!-- UVDAR mount {-->
-      {{ components.visual_mesh_macro(
-        name = "uvdar_mount",
-        mesh_file = uvdar_mount_mesh,
-        mesh_scale = mesh_scale_milimeters,
-        color = "White",
-        x = 0.025,
-        y = 0.0,
-        z = 0.043,
-        roll = 0,
-        pitch = 0,
-        yaw = 0)
       }}
       <!--}-->
       {% endif %}
@@ -1022,41 +1004,6 @@
     {% endif %}
     {# <!--}--> #}
 
-    {# UV cameras {--> #}
-    {% if enable_dual_uv_cameras %}
-    <!-- Dual UV cameras {-->
-    {{ components.uvcam_macro(
-      parent_link = root,
-      camera_publish_topic = "/" + namespace + "/uvdar_bluefox_left/image_raw",
-      calibration_file = uvcam_calib_file,
-      occlusions = uvcam_occlusions,
-      frame_rate = 80,
-      device_id = namespace + "_1",
-      x = 0.037,
-      y = 0.1175,
-      z = 0.057,
-      roll = 0,
-      pitch = 0,
-      yaw = components.rad70)
-    }}
-
-    {{ components.uvcam_macro(
-      parent_link = root,
-      camera_publish_topic = "/" + namespace + "/uvdar_bluefox_right/image_raw",
-      calibration_file = uvcam_calib_file,
-      occlusions = uvcam_occlusions,
-      frame_rate = 80,
-      device_id = namespace + "_2",
-      x = 0.037,
-      y = -0.1175,
-      z = 0.057,
-      roll = 0,
-      pitch = 0,
-      yaw = -components.rad70)
-    }}
-    <!--}-->
-    {% endif %}
-
     {% if enable_downward_uv_camera %}
     <!-- Downward UV camera {-->
     {{ components.uvcam_macro(
@@ -1210,34 +1157,6 @@
       pitch = 0,
       yaw = 0)
     }}
-    <!--}-->
-    {% endif %}
-    {# <!--}--> #}
-
-    {# UV leds {--> #}
-    {% if enable_uv_leds %}
-    <!-- UV leds {-->
-    {# -- leds configuration -- (id, signal_id, x, y, z, roll, pitch, yaw) #}
-    {%- set uv_leds_macro_parameters = [(1, uvled_s_l, 0.2382,   0.1375, -0.07, 0.0, components.rad90, 0.5236),
-                                        (2, uvled_s_l, 0,        0.2750, -0.07, 0.0, components.rad90, 1.5708),
-                                        (3, uvled_s_r, -0.2382,  0.1375, -0.07, 0.0, components.rad90, 2.6180),
-                                        (4, uvled_s_r, -0.2382, -0.1375, -0.07, 0.0, components.rad90, 3.6652),
-                                        (5, uvled_s_r,  0,      -0.2750, -0.07, 0.0, components.rad90, 4.7124),
-                                        (6, uvled_s_r,  0.2382, -0.1375, -0.07, 0.0, components.rad90, 5.7596)] -%}
-
-    {% for id_, signal_id_, x_, y_, z_, roll_, pitch_, yaw_ in uv_leds_macro_parameters %}
-      {{ components.uvled_macro(
-        parent_link = root,
-        device_id = namespace + "_" + id_ | string(),
-        signal_id = signal_id_,
-        x = x_,
-        y = y_,
-        z = z_,
-        roll = roll_,
-        pitch = pitch_,
-        yaw = yaw_)
-      }}
-    {% endfor %}
     <!--}-->
     {% endif %}
     {# <!--}--> #}
