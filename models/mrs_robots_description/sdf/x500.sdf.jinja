@@ -79,6 +79,7 @@
   {%- set lidar_mount_mesh_file = "model://mrs_robots_description/meshes/x500v2/lidar_mount_mesh_file.stl" -%}
   {%- set realsense_mount_mesh_file = "model://mrs_robots_description/meshes/x500v2/realsense_mount_mesh_file.stl" -%}
   {%- set bluefox_mount_mesh_file = "model://mrs_robots_description/meshes/x500v2/bluefox_mount_mesh_file.stl" -%}
+  {%- set uvdar_mount_mesh = "model://mrs_robots_description/meshes/dji/f450/dji_f450_uvdar_mount.dae" -%}
   {# <!--}--> #}
 
   {# Scales {--> #}
@@ -524,6 +525,23 @@
       <!--}-->
       {% endif %}
   
+      {% if enable_dual_uv_cameras %}
+      <!-- UVDAR mount {-->
+      {{ components.visual_mesh_macro(
+        name = "uvdar_mount",
+        mesh_file = uvdar_mount_mesh,
+        mesh_scale = mesh_scale_milimeters,
+        color = "DarkGrey",
+        x = 0.027,
+        y = 0,
+        z = 0.075,
+        roll = 0,
+        pitch = 0,
+        yaw = 0)
+      }}
+      <!--}-->
+      {% endif %}
+      
       <!--}-->
     
     </link>
@@ -948,7 +966,121 @@
     {% endif %}
 
     <!--}-->
+
+    {# Dual UV cameras {--> #}
+    {% if enable_dual_uv_cameras %}
+    <!-- Dual UV cameras {-->
+    {{ components.uvcam_macro(
+      parent_link = root,
+      camera_publish_topic = "/" + namespace + "/uvdar_bluefox_left/image_raw",
+      calibration_file = uvcam_calib_file,
+      occlusions = uvcam_occlusions,
+      frame_rate = 60,
+      device_id = namespace + "_1",
+      x = 0.039,
+      y = 0.1175,
+      z = 0.089,
+      roll = 0,
+      pitch = 0,
+      yaw = components.rad70)
+    }}
+
+    {{ components.uvcam_macro(
+      parent_link = root,
+      camera_publish_topic = "/" + namespace + "/uvdar_bluefox_right/image_raw",
+      calibration_file = uvcam_calib_file,
+      occlusions = uvcam_occlusions,
+      frame_rate = 60,
+      device_id =  namespace + "_2",
+      x = 0.039,
+      y = -0.1175,
+      z = 0.089,
+      roll = 0,
+      pitch = 0,
+      yaw = -components.rad70)
+    }}
+    <!--}-->
+    {% endif %}
+    {# <!--}--> #}
+
+    {# Back UV cameras {--> #}
+    {% if enable_back_uv_camera %}
+    <!-- Back UV camera {-->
+    {{ components.uvcam_macro(
+      parent_link = root,
+      camera_publish_topic = "/" + namespace + "/uvdar_bluefox_back/image_raw",
+      calibration_file = uvcam_calib_file,
+      occlusions = uvcam_occlusions,
+      frame_rate = 60,
+      device_id =  namespace + "_3",
+      x = -0.1,
+      y = 0.0,
+      z = 0.085,
+      roll = components.rad90,
+      pitch = 0,
+      yaw = components.rad180)
+    }}
+    <!--}-->
+    {% endif %}
+    {# <!--}--> #}
+
     <!-- ========================== other sensors ========================= -->
+
+    {# UV leds {--> #}
+    {% if enable_uv_leds %}
+    <!-- UV leds {-->
+    {# -- leds configuration -- (id, signal_id, x, y, z, roll, pitch, yaw) #}
+    {%- set uv_leds_macro_parameters = [(1, uvled_s_l, -0.1947045,  0.2017755, 0.025, 0.0, components.rad90,  components.rad90),
+                                        (2, uvled_s_l, -0.2017755,  0.1947045, 0.025, 0.0, components.rad90,  components.rad180),
+                                        (3, uvled_s_r, -0.2017755, -0.1947045, 0.025, 0.0, components.rad90, -components.rad180),
+                                        (4, uvled_s_r, -0.1947045, -0.2017755, 0.025, 0.0, components.rad90, -components.rad90),
+                                        (5, uvled_s_r,  0.1947045, -0.2017755, 0.025, 0.0, components.rad90, -components.rad90),
+                                        (6, uvled_s_r,  0.2017755, -0.1947045, 0.025, 0.0, components.rad90,  0.0),
+                                        (7, uvled_s_l,  0.2017755,  0.1947045, 0.025, 0.0, components.rad90,  0.0),
+                                        (8, uvled_s_l,  0.1947045,  0.2017755, 0.025, 0.0, components.rad90,  components.rad90)] -%}
+
+    {% for id_, signal_id_, x_, y_, z_, roll_, pitch_, yaw_ in uv_leds_macro_parameters %}
+      {{ components.uvled_macro(
+        parent_link = root,
+        device_id = namespace + "_" + id_ | string(),
+        signal_id = signal_id_,
+        x = x_,
+        y = y_,
+        z = z_,
+        roll = roll_,
+        pitch = pitch_,
+        yaw = yaw_)
+      }}
+    {% endfor %}
+    <!--}-->
+    {% endif %}
+    {# <!--}--> #}
+
+    {# UV leds beacon {--> #}
+    {% if enable_uv_leds_beacon %}
+    <!-- UV led beacon {-->
+    {# -- leds configuration -- (id, signal_id, x, y, z, roll, pitch, yaw) #}
+    {%- set uv_leds_macro_parameters = [("b1", uvled_beacon_s,  0.01, 0.0,  0.125, 0.0, components.rad90, 0.0),
+                                        ("b2", uvled_beacon_s,  0.0,  0.01, 0.125, 0.0, components.rad90, components.rad90),
+                                        ("b3", uvled_beacon_s, -0.01, 0.0,  0.125, 0.0, components.rad90, components.rad180),
+                                        ("b4", uvled_beacon_s,  0.0, -0.01, 0.125, 0.0, components.rad90, components.rad270)] -%}
+
+    {% for id_, signal_id_, x_, y_, z_, roll_, pitch_, yaw_ in uv_leds_macro_parameters %}
+      {{ components.uvled_macro(
+        parent_link = root,
+        device_id = namespace + "_" + id_ | string(),
+        signal_id = signal_id_,
+        x = x_,
+        y = y_,
+        z = z_,
+        roll = roll_,
+        pitch = pitch_,
+        yaw = yaw_)
+      }}
+    {% endfor %}
+    <!--}-->
+    {% endif %}
+    {# <!--}--> #}
 
   </model>
 </sdf>
