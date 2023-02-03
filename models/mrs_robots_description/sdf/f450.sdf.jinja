@@ -1368,15 +1368,32 @@
     {# UV leds {--> #}
     {% if enable_uv_leds %}
     <!-- UV leds {-->
+
+    {% if uvled_s_l != "None" %}
+      {% set led1 = uvled_s_l %}
+      {% set led3 = uvled_s_l %}
+    {% else %}
+      {% set led1 = uvled_s[0] %}
+      {% set led3 = uvled_s[2] %}
+    {% endif %}
+
+    {% if uvled_s_r != "None" %}
+      {% set led2 = uvled_s_r %}
+      {% set led4 = uvled_s_r %}
+    {% else %}
+      {% set led2 = uvled_s[1] %}
+      {% set led4 = uvled_s[3] %}
+    {% endif %}
+
     {# -- leds configuration -- (id, signal_id, x, y, z, roll, pitch, yaw) #}
-    {%- set uv_leds_macro_parameters = [(1, uvled_s_l, -0.1697045,  0.1767755, -0.05, 0.0, components.rad90,  components.rad90),
-                                        (2, uvled_s_l, -0.1767755,  0.1697045, -0.05, 0.0, components.rad90,  components.rad180),
-                                        (3, uvled_s_r, -0.1767755, -0.1697045, -0.05, 0.0, components.rad90, -components.rad180),
-                                        (4, uvled_s_r, -0.1697045, -0.1767755, -0.05, 0.0, components.rad90, -components.rad90),
-                                        (5, uvled_s_r,  0.1697045, -0.1767755, -0.05, 0.0, components.rad90, -components.rad90),
-                                        (6, uvled_s_r,  0.1767755, -0.1697045, -0.05, 0.0, components.rad90,  0.0),
-                                        (7, uvled_s_l,  0.1767755,  0.1697045, -0.05, 0.0, components.rad90,  0.0),
-                                        (8, uvled_s_l,  0.1697045,  0.1767755, -0.05, 0.0, components.rad90,  components.rad90)] -%}
+    {%- set uv_leds_macro_parameters = [(1, led1,  0.1767755,  0.1697045, -0.05, 0.0, components.rad90,  0.0),
+                                        (2, led1,  0.1697045,  0.1767755, -0.05, 0.0, components.rad90,  components.rad90),
+                                        (3, led2,  0.1697045, -0.1767755, -0.05, 0.0, components.rad90, -components.rad90),
+                                        (4, led2,  0.1767755, -0.1697045, -0.05, 0.0, components.rad90,  0.0),
+                                        (5, led3, -0.1697045,  0.1767755, -0.05, 0.0, components.rad90,  components.rad90),
+                                        (6, led3, -0.1767755,  0.1697045, -0.05, 0.0, components.rad90,  components.rad180),
+                                        (7, led4, -0.1767755, -0.1697045, -0.05, 0.0, components.rad90, -components.rad180),
+                                        (8, led4, -0.1697045, -0.1767755, -0.05, 0.0, components.rad90, -components.rad90)] -%}
 
     {% for id_, signal_id_, x_, y_, z_, roll_, pitch_, yaw_ in uv_leds_macro_parameters %}
       {{ components.uvled_macro(
