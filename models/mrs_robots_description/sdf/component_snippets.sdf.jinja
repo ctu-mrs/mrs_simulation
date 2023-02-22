@@ -2318,7 +2318,7 @@ limitations under the License.
 {%- macro servo_camera_macro(parent, offset_pitch_link_x, offset_pitch_link_y, offset_pitch_link_z, offset_pitch_link_yaw, offset_pitch_link_roll, offset_pitch_link_pitch, offset_roll_link_x, offset_roll_link_y, offset_roll_link_z, offset_roll_link_yaw, offset_roll_link_roll, offset_roll_link_pitch, tilt_update_rate, max_pitch, min_pitch, max_pitch_rate, max_roll, min_roll, max_roll_rate, compensate_tilt_roll, compensate_tilt_pitch, parent_frame_name, sensor_base_frame_name, camera_frame_name, camera_update_rate, horizontal_fov, img_width, img_height, roll_link_mesh_file, pitch_link_mesh_file, mesh_scale) -%}
 
 <link name="servo_camera_gimbal_link">
-  <pose>{{ offset_pitch_link_x }} {{ offset_pitch_link_y }} {{ offset_pitch_link_z }} {{ offset_pitch_link_roll }} {{ offset_pitch_link_pitch }} {{ offset_pitch_link_yaw }}</pose>
+  <pose relative_to = "servo_camera_roll_joint"> 0 0 0 0 0 0</pose>
   {{ zero_inertial_macro() }}
   <visual name="visual">
     <pose>0 0 0 0 0 0</pose>
@@ -2344,7 +2344,7 @@ limitations under the License.
 </link>
 
 <link name="servo_camera_link">
-  <pose>{{ offset_roll_link_x }} {{ offset_roll_link_y }} {{ offset_roll_link_z }} {{ offset_roll_link_roll }} {{ offset_roll_link_pitch }} {{ offset_roll_link_yaw }}</pose>
+  <pose relative_to = "servo_camera_pitch_joint"> 0 0 0 0 0 0</pose>
   {{ zero_inertial_macro() }}
   <visual name="visual">
     <pose>0 0 0 0 0 0</pose>
@@ -2421,17 +2421,18 @@ limitations under the License.
   <max_roll_rate>{{ max_roll_rate }}</max_roll_rate>
   <max_roll>{{ max_roll }}</max_roll>
   <min_roll>{{ min_roll }}</min_roll>
-  <joint_name_pitch>servo_camera_joint_pitch</joint_name_pitch>
-  <joint_name_roll>servo_camera_joint_roll</joint_name_roll>
+  <joint_name_pitch>servo_camera_pitch_joint</joint_name_pitch>
+  <joint_name_roll>servo_camera_roll_joint</joint_name_roll>
   <parent_link_pitch>servo_camera_gimbal_link</parent_link_pitch>
   <parent_link_roll>{{ parent }}</parent_link_roll>
   <compensate_tilt_roll>{{ compensate_tilt_roll }}</compensate_tilt_roll>
   <compensate_tilt_pitch>{{ compensate_tilt_pitch }}</compensate_tilt_pitch>
 </plugin>
 
-<joint name="servo_camera_joint_roll" type="revolute">
+<joint name="servo_camera_roll_joint" type="revolute">
   <parent>{{ parent }}</parent>
   <child>servo_camera_gimbal_link</child>
+  <pose relative_to = "{{ parent }}">{{ offset_roll_link_x }} {{ offset_roll_link_y }} {{ offset_roll_link_z }} {{ offset_roll_link_roll }} {{ offset_roll_link_pitch }} {{ offset_roll_link_yaw }}</pose>
   <axis>
     <xyz>1 0 0</xyz>
     <limit>
@@ -2441,15 +2442,16 @@ limitations under the License.
       <velocity>10</velocity>
     </limit>
     <dynamics>
-      <damping>0.05</damping>
-      <friction>0.05</friction>
+      <damping>0.0</damping>
+      <friction>0.0</friction>
     </dynamics>
   </axis>
 </joint>
 
-<joint name="servo_camera_joint_pitch" type="revolute">
+<joint name="servo_camera_pitch_joint" type="revolute">
   <parent>servo_camera_gimbal_link</parent>
   <child>servo_camera_link</child>
+  <pose relative_to = "servo_camera_roll_joint">{{ offset_pitch_link_x }} {{ offset_pitch_link_y }} {{ offset_pitch_link_z }} {{ offset_pitch_link_roll }} {{ offset_pitch_link_pitch }} {{ offset_pitch_link_yaw }}</pose>
   <axis>
     <xyz>0 1 0</xyz>
     <limit>
@@ -2459,8 +2461,8 @@ limitations under the License.
       <velocity>10</velocity>
     </limit>
     <dynamics>
-      <damping>0.05</damping>
-      <friction>0.05</friction>
+      <damping>0.0</damping>
+      <friction>0.0</friction>
     </dynamics>
   </axis>
 </joint>
@@ -2915,8 +2917,8 @@ limitations under the License.
       <velocity>10</velocity>
     </limit>
     <dynamics>
-      <damping>0.05</damping>
-      <friction>0.05</friction>
+      <damping>0.0</damping>
+      <friction>0.0</friction>
     </dynamics>
   </axis>
 </joint>
