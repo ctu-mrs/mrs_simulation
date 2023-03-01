@@ -224,6 +224,35 @@ limitations under the License.
 {%- endmacro -%}
 <!--}-->
 
+<!-- Visual mesh macro with cylindrical collision{-->
+{%- macro visual_mesh_with_cylindrical_collision_macro(name, mesh_file, mesh_scale, color, x, y, z, roll, pitch, yaw, collision_height, collision_radius) -%}
+<visual name="{{ name }}_visual">
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
+  <geometry>
+    <mesh>
+      <uri>{{ mesh_file }}</uri>
+      <scale>{{ mesh_scale }}</scale>
+    </mesh>
+  </geometry>
+  <material>
+    <script>
+      <name>Gazebo/{{ color }}</name>
+      <uri>file://media/materials/scripts/gazebo.material</uri>
+    </script>
+  </material>
+</visual>
+<collision name="{{ name }}_collision">
+  <pose>{{ x }} {{ y }} {{ z }} {{ roll }} {{ pitch }} {{ yaw }}</pose>
+  <geometry>
+    <cylinder>
+      <height>{{ collision_height }}</height>
+      <radius>{{ collision_radius }}</radius>
+    </cylinder>
+  </geometry>
+</collision>
+{%- endmacro -%}
+<!--}-->
+
 <!-- Visual mesh textured macro {-->
 {%- macro visual_mesh_textured_macro(name, mesh_file, mesh_scale, x, y, z, roll, pitch, yaw) -%}
 <visual name="{{ name }}_visual">

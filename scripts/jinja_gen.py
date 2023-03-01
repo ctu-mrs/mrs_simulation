@@ -23,7 +23,7 @@ def str2bool(v):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('filename', help="jinja file that the sdf file should be generated from")
+    parser.add_argument('filepath', help="full path to the jinja file that the sdf file should be generated from")
     parser.add_argument('--mavlink_addr', default="INADDR_ANY", help="IP address for PX4 SITL")
     parser.add_argument('--mavlink_udp_port', default=14560, help="Mavlink UDP port for mavlink access")
     parser.add_argument('--mavlink_tcp_port', default=4560, help="TCP port for PX4 SITL")
@@ -50,25 +50,21 @@ if __name__ == "__main__":
 
     # print('Generating a templated model using jinja')
 
-    filename = None 
-    
+    filename = os.path.basename(args.filepath)
+    model_name = filename.split('.')[0]
+    model_dir = os.path.realpath(os.path.dirname(args.filepath))
+
+    # find the path to the mrs_robots_description/sdf directory which should always be included
     rospack = rospkg.RosPack()
-    mrs_simulation_path = rospack.get_path('mrs_simulation')
-    mrs_robots_description_dir = os.path.join(mrs_simulation_path, 'models', 'mrs_robots_description')
+    mrs_simulation_path = os.path.realpath(rospack.get_path('mrs_simulation'))
+    mrs_models_dir = os.path.join(mrs_simulation_path, 'models')
 
-    if os.path.exists(args.filename) and os.path.isfile(args.filename):
-        filename = args.filename
-    else:
-        temp_filename = os.path.join(mrs_simulation_path, 'models', 'mrs_robots_description', 'sdf', args.filename)
-        if os.path.exists(temp_filename) and os.path.isfile(temp_filename):
-            # print('Loaded "%s" from "%s"' % (args.filename, temp_filename))
-            filename = temp_filename
+    env = jinja2.Environment(loader=jinja2.FileSystemLoader((model_dir, mrs_models_dir)))
+    # print("Jinja env. directories:\n\t{}\n\t{}".format(model_dir, mrs_models_dir))
+    
+    template = env.get_template(filename)
 
-    models_dir = os.path.join(mrs_simulation_path, 'models')
-    env = jinja2.Environment(loader=jinja2.FileSystemLoader(models_dir))
-    template = env.get_template(os.path.relpath(filename, models_dir))
-
-    d = {'name' : os.path.basename(filename).split('.')[0], \
+    d = {'name' : model_name, \
          'mavlink_addr': args.mavlink_addr, \
          'mavlink_udp_port': args.mavlink_udp_port, \
          'mavlink_tcp_port': args.mavlink_tcp_port, \
@@ -87,8 +83,7 @@ if __name__ == "__main__":
          'use_tcp': args.use_tcp, \
          'visual_material': args.visual_material, \
          'gps_indoor_jamming': args.gps_indoor_jamming, \
-         'namespace': args.namespace, \
-         'mrs_robots_description_dir': mrs_robots_description_dir}
+         'namespace': args.namespace}
     
 
     # reading the data from the file
