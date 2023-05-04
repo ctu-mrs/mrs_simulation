@@ -476,5 +476,179 @@
     }}
     <!--}-->
 
+    <!-- ================================================================== -->
+    <!-- ||                  optional sensor definitions                 || -->
+    <!-- ================================================================== -->
+
+
+    <!-- ======================= rangefinder sensors ======================-->
+
+    {# Garmin {--> #}
+    {% if enable_rangefinder %}
+    <!-- Garmin {-->
+    {# {{ components.garmin_macro("lidar0", root, -0.077, 0, -0.069, 0, components.rad(90), 0) }} - uncomment when simulation will work with pixgarm #}
+    {{ components.external_garmin_macro(
+      namespace = namespace,
+      parent_link = root,
+      orientation = "",
+      x = 0.7 * board_radius * components.cos90,
+      y = 0.7 * board_radius * -components.sin90,
+      z = - (arm_height + 0.033),
+      roll = 0,
+      pitch = components.rad(90),
+      yaw = components.rad(90))
+    }}
+    <!--}-->
+    {% endif %}
+      {# <!--}--> #}
+
+    <!-- ========================== LIDAR sensors ========================= -->
+
+    {# Ouster {--> #}
+    {% if enable_ouster %}
+    <!-- Ouster  {-->
+    {{ components.ouster_macro(
+      namespace = namespace,
+      parent_link = root,
+      sensor_name = "os",
+      ouster_model = ouster_model,
+      rot_freq = 10,
+      noise = 0.03,
+      enable_gpu_ray = use_gpu_ray,
+      x = 0.0,
+      y = 0.0,
+      z = 0.066,
+      roll = 0,
+      pitch = 0,
+      yaw = 0)
+    }}
+    <!--}-->
+    {% endif %}
+      {# <!--}--> #}
+
+    <!-- ========================= camera sensors ========================= -->
+
+    {% if enable_realsense_down %}
+    <!-- realsense down {-->
+    {{ components.realsense_macro(
+      namespace = namespace,
+      camera_name = "rgbd",
+      camera_suffix="_down",
+      parent_link = root,
+      enable_realistic_realsense = enable_realistic_realsense,
+      x = 0.22,
+      y = 0,
+      z = -0.1017,
+      roll = 0,
+      pitch = components.rad90,
+      yaw = 0)
+    }}
+    <!--}-->
+    {% endif %}
+
+    {# Servo camera {--> #}
+    {% if enable_servo_camera %}
+    <!-- Servo camera {-->
+    {{ components.servo_camera_macro(
+      parent = root,
+      parent_frame_name = namespace + "/fcu",
+      camera_frame_name = namespace + "/servo_camera_optical",
+      sensor_base_frame_name = namespace + "/servo_camera",
+      offset_pitch_link_x = 0.0,
+      offset_pitch_link_y = 0.0,
+      offset_pitch_link_z = 0.0,
+      offset_pitch_link_roll = 0.0,
+      offset_pitch_link_yaw = 0.0,
+      offset_pitch_link_pitch = 0.0,
+      offset_roll_link_x = 0.2,
+      offset_roll_link_y = 0.0,
+      offset_roll_link_z = -0.1,
+      offset_roll_link_roll = 0.0,
+      offset_roll_link_yaw = 0.0,
+      offset_roll_link_pitch = 0.0,
+      tilt_update_rate = 5.0,
+      min_pitch = -1.57,
+      max_pitch = 1.57,
+      min_roll = -0.6,
+      max_roll = 0.6,
+      max_pitch_rate = 0.1,
+      max_roll_rate = 0.1,
+      camera_update_rate = 30,
+      horizontal_fov = 1.92,
+      img_width = 1920,
+      img_height = 1080,
+      compensate_tilt_roll = true,
+      compensate_tilt_pitch = true,
+      pitch_link_mesh_file = "",
+      roll_link_mesh_file = "",
+      mesh_scale = "")
+    }}
+    <!--}-->
+    {% endif %}
+      {# <!--}--> #}
+
+    {# Thermal cameras {--> #}
+    {% if enable_thermal_camera %}
+    <!-- Three thermal cameras {-->
+    {{ components.thermal_camera_macro(
+      camera_name = "thermal_top",
+      camera_topic_name = "/" + namespace + "/thermal/top",
+      parent_frame_name = namespace + "/fcu",
+      camera_frame_name = "thermal/top_optical",
+      sensor_base_frame_name = namespace + "/thermal/top",
+      parent_link = root,
+      frame_rate = 14.0,
+      hfov = 0.575959,
+      image_width = 32,
+      image_height = 32,
+      x = 0.15,
+      y = 0.06,
+      z = -0.025,
+      roll = 0,
+      pitch = components.rad(-30),
+      yaw = 0)
+    }}
+
+    {{ components.thermal_camera_macro(
+      camera_name = "thermal_middle",
+      camera_topic_name = "/" + namespace + "/thermal/middle",
+      parent_frame_name = namespace + "/fcu",
+      camera_frame_name = "thermal/middle_optical",
+      sensor_base_frame_name = namespace + "/thermal/middle",
+      parent_link = root,
+      frame_rate = 14.0,
+      hfov = 0.575959,
+      image_width = 32,
+      image_height = 32,
+      x = 0.16,
+      y = 0.06,
+      z = -0.055,
+      roll = 0,
+      pitch = 0,
+      yaw = 0)
+    }}
+
+    {{ components.thermal_camera_macro(
+      camera_name = "thermal_bottom",
+      camera_topic_name = "/" + namespace + "/thermal/bottom",
+      parent_frame_name = namespace + "/fcu",
+      camera_frame_name = "thermal/bottom_optical",
+      sensor_base_frame_name = namespace + "/thermal/bottom",
+      parent_link = root,
+      frame_rate = 14.0,
+      hfov = 0.575959,
+      image_width = 32,
+      image_height = 32,
+      x = 0.15,
+      y = 0.06,
+      z = -0.085,
+      roll = 0,
+      pitch = components.rad(30),
+      yaw = 0)
+    }}
+    <!--}-->
+    {% endif %}
+      {# <!--}--> #}
+
   </model>
 </sdf>
