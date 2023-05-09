@@ -8,7 +8,7 @@
   {# ================================================================== #}
 
   {# Robot parameters and arguments {--> #}
-  {%- set mass = 6.0 -%} {# [kg] #}
+  {%- set mass = 4.65 -%} {# [kg] #}
   {%- set body_radius = 0.1 -%} {# [m] #}
   {%- set body_height = 0.1 -%} {# [m] #}
   {%- set mass_prop = 0.005 -%} {# [kg] #}
@@ -31,7 +31,7 @@
 
   {# Motor constants {--> #}
   {%- set rotor_velocity_slowdown_sim = 0.0159236 -%}
-  {%- set motor_constant = 23 -%} {# [kg.m/s^2] #}
+  {%- set motor_constant = 27.2 -%} {# 86% -> 271.19W [kg.m/s^2] #}
   {%- set moment_constant = 0.016 -%} {# [m] #}
   {%- set time_constant_up = 1.0 / 80.0 -%} {# [s] #}
   {%- set time_constant_down = 1.0 / 40.0 -%} {# [s] #}
@@ -491,9 +491,9 @@
       namespace = namespace,
       parent_link = root,
       orientation = "",
-      x = 0.7 * board_radius * components.cos90,
-      y = 0.7 * board_radius * -components.sin90,
-      z = - (arm_height + 0.033),
+      x = -0.03,
+      y = -0.07,
+      z = 0,
       roll = 0,
       pitch = components.rad(90),
       yaw = components.rad(90))
