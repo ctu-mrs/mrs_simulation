@@ -480,6 +480,26 @@
     <!-- ||                  optional sensor definitions                 || -->
     <!-- ================================================================== -->
 
+    {# Ground truth {--> #}
+    {% if enable_ground_truth %}
+    <!-- Ground truth {-->
+    {{ components.odometry_plugin_macro(
+      odometry_sensor_name = "ground_truth",
+      parent_link = root,
+      topic_name = "ground_truth",
+      noise = "0",
+      frame_name = "world",
+      frame_rate = "150",
+      x = 0,
+      y = 0,
+      z = 0,
+      roll = 0,
+      pitch = 0,
+      yaw = 0)
+    }}
+    <!--}-->
+    {% endif %}
+    {# <!--}--> #}
 
     <!-- ======================= rangefinder sensors ======================-->
 
