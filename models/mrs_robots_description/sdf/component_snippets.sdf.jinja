@@ -2070,7 +2070,7 @@ limitations under the License.
     <update_rate>60</update_rate>
     <visualize>0</visualize>
   </sensor>
-  <!--}-->
+ a <!--}-->
   <!--}-->
 
 </link>
@@ -2137,30 +2137,52 @@ limitations under the License.
 {%- endmacro -%}
 <!--}-->
 
+<<<<<<< HEAD
 <!-- Macro to add a Basler Dart camera {-->
 {%- macro basler_camera_macro(namespace, camera_name, parent_link, frame_rate, hfov, noise, x, y, z, roll, pitch, yaw) -%}
+=======
+<!-- Macro to add a Basler daA1600-60um camera with 4mm lens {-->
+{%- macro basler_camera_macro(namespace, camera_name, parent_link x, y, z, roll, pitch, yaw) -%}
+>>>>>>> 1d9368d7ead30761618607fae74297a83f468744
 {{ camera_macro(
   parent_link = parent_link,
   camera_name = camera_name,
   parent_frame_name = namespace + "/fcu",
   camera_frame_name = namespace + "/" + camera_name + "_optical",
   sensor_base_frame_name = namespace  + "/" + camera_name,
+<<<<<<< HEAD
   frame_rate = frame_rate,
   horizontal_fov = hfov,
   image_width = 1920,
+=======
+  frame_rate = 60,
+  horizontal_fov = 49.43,
+  image_width = 1600,
+>>>>>>> 1d9368d7ead30761618607fae74297a83f468744
   image_height = 1200,
   min_distance = 0.02,
   max_distance = 80,
   noise_mean = 0.0,
+<<<<<<< HEAD
   noise_stddev = noise,
   mesh_file = "model://mrs_robots_description/meshes/sensors/basler_dart.stl",
   mesh_scale = "0.001 0.001 0.001",
+=======
+  noise_stddev = 0.0,
+  mesh_file = "model://mrs_robots_description/meshes/sensors/bluefox.dae",
+  mesh_scale = "1 1 1",
+>>>>>>> 1d9368d7ead30761618607fae74297a83f468744
   color = "DarkGrey",
   visual_x = 0,
   visual_y = 0,
   visual_z = 0,
+<<<<<<< HEAD
   visual_roll = 0,
   visual_pitch = -rad90,
+=======
+  visual_roll = rad90,
+  visual_pitch = 0,
+>>>>>>> 1d9368d7ead30761618607fae74297a83f468744
   visual_yaw = 0,
   x = x,
   y = y,
