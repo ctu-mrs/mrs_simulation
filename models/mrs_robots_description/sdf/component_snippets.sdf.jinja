@@ -2137,6 +2137,41 @@ limitations under the License.
 {%- endmacro -%}
 <!--}-->
 
+<!-- Macro to add a Basler Dart camera {-->
+{%- macro basler_camera_macro(namespace, camera_name, parent_link, frame_rate, hfov, noise, x, y, z, roll, pitch, yaw) -%}
+{{ camera_macro(
+  parent_link = parent_link,
+  camera_name = camera_name,
+  parent_frame_name = namespace + "/fcu",
+  camera_frame_name = namespace + "/" + camera_name + "_optical",
+  sensor_base_frame_name = namespace  + "/" + camera_name,
+  frame_rate = frame_rate,
+  horizontal_fov = hfov,
+  image_width = 1920,
+  image_height = 1200,
+  min_distance = 0.02,
+  max_distance = 80,
+  noise_mean = 0.0,
+  noise_stddev = noise,
+  mesh_file = "model://mrs_robots_description/meshes/sensors/basler_dart.stl",
+  mesh_scale = "0.001 0.001 0.001",
+  color = "DarkGrey",
+  visual_x = 0,
+  visual_y = 0,
+  visual_z = 0,
+  visual_roll = 0,
+  visual_pitch = -rad90,
+  visual_yaw = 0,
+  x = x,
+  y = y,
+  z = z,
+  roll = roll,
+  pitch = pitch,
+  yaw = yaw)
+}}
+{%- endmacro -%}
+<!--}-->
+
 <!-- Macro to add a Fisheye camera {-->
 {%- macro fisheye_camera_macro(namespace, camera_name, topic_ns_prefix, parent_link, frame_rate, noise, x, y, z, roll, pitch, yaw) -%}
 {{ fisheye_macro(

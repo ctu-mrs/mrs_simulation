@@ -491,12 +491,12 @@
       namespace = namespace,
       parent_link = root,
       orientation = "",
-      x = -0.03,
-      y = -0.07,
-      z = 0,
+      x = -0.05,
+      y = 0.0,
+      z = -0.055,
       roll = 0,
       pitch = components.rad(90),
-      yaw = components.rad(90))
+      yaw = 0)
     }}
     <!--}-->
     {% endif %}
@@ -515,9 +515,9 @@
       rot_freq = 10,
       noise = 0.03,
       enable_gpu_ray = use_gpu_ray,
-      x = 0.0,
+      x = 0.095,
       y = 0.0,
-      z = 0.066,
+      z = 0.042,
       roll = 0,
       pitch = 0,
       yaw = 0)
@@ -536,9 +536,28 @@
       camera_suffix="_down",
       parent_link = root,
       enable_realistic_realsense = enable_realistic_realsense,
-      x = 0.22,
+      x = 0.09,
       y = 0,
-      z = -0.1017,
+      z = -0.04,
+      roll = 0,
+      pitch = components.rad90,
+      yaw = 0)
+    }}
+    <!--}-->
+  {% endif %}
+
+    {% if enable_basler_camera_down %}
+    <!-- basler down {-->
+    {{ components.basler_camera_macro(
+      namespace = namespace,
+      camera_name = "basler_down",
+      parent_link = root,
+      frame_rate = 30.0,
+      hfov = 2.1,
+      noise = 0.007,
+      x = 0.06,
+      y = 0.0,
+      z = -0.050,
       roll = 0,
       pitch = components.rad90,
       yaw = 0)
@@ -571,12 +590,12 @@
       max_pitch = 1.57,
       min_roll = -0.6,
       max_roll = 0.6,
-      max_pitch_rate = 0.1,
-      max_roll_rate = 0.1,
+      max_pitch_rate = 2.0,
+      max_roll_rate = 2.0,
       camera_update_rate = 30,
       horizontal_fov = 1.92,
-      img_width = 1920,
-      img_height = 1080,
+      img_width = 1280,
+      img_height = 720,
       compensate_tilt_roll = true,
       compensate_tilt_pitch = true,
       pitch_link_mesh_file = "",
