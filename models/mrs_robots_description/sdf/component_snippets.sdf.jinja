@@ -439,6 +439,11 @@ limitations under the License.
   <enableMotorCrash>{{ enable_motor_crash }}</enableMotorCrash>
 </plugin>
 
+<plugin name="motor{{ motor_number }}_speed_republisher_plugin" filename="libMRSGazeboMotorSpeedRepublisherPlugin.so">
+  <robotNamespace/>
+  <motorSpeedTopic>/motor_speed/{{ motor_number }}</motorSpeedTopic>
+</plugin>
+
 <joint name="prop_{{ motor_number }}_joint" type="revolute">
   <parent>{{ parent }}</parent>
   <child>prop_{{ motor_number }}_link</child>
@@ -532,6 +537,11 @@ limitations under the License.
   <motorSpeedPubTopic>/motor_speed/{{ motor_number }}</motorSpeedPubTopic>
   <rotorVelocitySlowdownSim>{{ rotor_velocity_slowdown_sim }}</rotorVelocitySlowdownSim>
   <enableMotorCrash>{{ enable_motor_crash }}</enableMotorCrash>
+</plugin>
+
+<plugin name="motor{{ motor_number }}_speed_republisher_plugin" filename="libMRSGazeboMotorSpeedRepublisherPlugin.so">
+  <robotNamespace/>
+  <motorSpeedTopic>/motor_speed/{{ motor_number }}</motorSpeedTopic>
 </plugin>
 
 <joint name="prop_{{ motor_number }}_joint" type="revolute">
