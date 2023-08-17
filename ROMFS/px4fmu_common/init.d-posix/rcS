@@ -262,6 +262,7 @@ mavlink stream -r 100 -s GLOBAL_POSITION_INT -u $udp_offboard_port_local
 mavlink stream -r 10 -s RC_CHANNELS -u $udp_offboard_port_local
 mavlink stream -r 10 -s SYS_STATUS -u $udp_offboard_port_local
 mavlink stream -r 100 -s HEARTBEAT -u $udp_offboard_port_local
+mavlink stream -r 100 -s ODOMETRY -u $udp_offboard_port_local
 
 # execute autostart post script if any
 [ -e "$autostart_file".post ] && . "$autostart_file".post
@@ -275,5 +276,5 @@ else
 fi
 . ${R}etc/init.d/rc.logging
 
-mavlink boot_complete
-replay trystart
+	mavlink boot_complete
+	replay trystart
