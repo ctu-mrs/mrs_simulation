@@ -573,17 +573,18 @@
       camera_name = "basler_down",
       parent_link = root,
       frame_rate = 30.0,
-      hfov = 2.1,
+      hfov = 1.990252,
       noise = 0.007,
-      x = 0.06,
-      y = 0.0,
-      z = -0.050,
-      roll = 0,
+      x = 0,
+      y = 0.1,
+      z = -0.22,
+      roll = components.rad90,
       pitch = components.rad90,
       yaw = 0)
     }}
     <!--}-->
-    {% endif %}
+      {% endif %}
+623.037145, 0.000000, 325.528122, 0.000000, 623.843810, 248.324351, 0.0, 0.0, 1.0
 
     {# Servo camera {--> #}
     {% if enable_servo_camera %}
@@ -622,7 +623,7 @@
       roll_link_mesh_file = "",
       mesh_scale = "")
     }}
-    <!--}-->
+    <!--}-->a
     {% endif %}
       {# <!--}--> #}
 
