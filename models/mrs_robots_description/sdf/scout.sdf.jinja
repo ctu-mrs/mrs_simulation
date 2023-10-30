@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sdf version='1.7'>
+
+  {%- import "mrs_robots_description/sdf/component_snippets.sdf.jinja" as components -%}
+
+  {# ================================================================== #}
+  {# ||                    parameters definition                     || #}
+  {# ================================================================== #}
+
+  {# Robot parameters and arguments {--> #}
+  {%- set mass = 7.5 -%} {# [kg] #}
+  {%- set use_battery_mount = true -%} {# [bool] #}
+
+  {%- set root = "base_link" -%}
+
+  {# <!--}--> #}
+
+  {# Motor constants {--> #}
+  {%- set motor_constant = 23.44 -%} {# [kg.m/s^2] #}
+  {%- set moment_constant = 0.016 -%} {# [m] #}
+  {%- set time_constant_up = 1.0 / 80.0 -%} {# [s] #}
+  {%- set time_constant_down = 1.0 / 40.0 -%} {# [s] #}
+  {%- set max_rot_velocity = 1 -%} {# [rad/s] #}
+  {%- set rotor_drag_coefficient = 0.001 -%} {# orig 8.06428e-04 #}
+  {%- set rolling_moment_coefficient = "1.0e-6" -%}
+  {# <!--}--> #}
+
+  {# Meshes {--> #}
+
+  {# Parts {--> #}
+  {%- set main_body_mesh_file = "model://mrs_robots_description/meshes/scout/scout_mini_base_link2.dae" -%}
+  {%- set wheel_file = "model://mrs_robots_description/meshes/scout/wheel.dae"-%}
+  {# <!--}--> #}
+
+  {# Scales {--> #}
+  {%- set mesh_scale = "1 1 1" -%}
+  {%- set mesh_scale_milimeters = "0.001 0.001 0.001" -%}
+  {# <!--}--> #}
+
+  {# <!--}--> #}
+
+  <model name="{{ name }}">
+    <link name="{{ root }}">
+      <inertial>
+        <pose>0 0 0 0 -0 0</pose>
+        <mass>60</mass>
+        <inertia>
+          <ixx>2.28864</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>5.10398</iyy>
+          <iyz>0</iyz>
+          <izz>3.43147</izz>
+        </inertia>
+      </inertial>
+      <collision name='base_link_collision'>
+        <pose>0 0 0 1.57 -0 1.57</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>{{ main_body_mesh_file }}</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name='base_link_visual'>
+        <pose>0 0 0 1.57 -0 1.57</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>{{ main_body_mesh_file }}</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+
+    <joint name='front_left_wheel' type='revolute'>
+      <pose relative_to='base_link'>0.231976 0.208252 -0.100998 -1.57 0 0</pose>
+      <parent>base_link</parent>
+      <child>front_left_wheel_link</child>
+      <axis>
+        <xyz>0 0 -1</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='front_left_wheel_link'>
+      <pose relative_to='front_left_wheel'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 -0 0</pose>
+        <mass>3</mass>
+        <inertia>
+          <ixx>0.7171</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.7171</iyy>
+          <iyz>0</iyz>
+          <izz>0.1361</izz>
+        </inertia>
+      </inertial>
+      <collision name='front_left_wheel_link_collision'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://mrs_robots_description/meshes/scout/wheel.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name='front_left_wheel_link_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://mrs_robots_description/meshes/scout/wheel.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='front_right_wheel' type='revolute'>
+      <pose relative_to='base_link'>0.231976 -0.208252 -0.099998 1.57 -0 0</pose>
+      <parent>base_link</parent>
+      <child>front_right_wheel_link</child>
+      <axis>
+        <xyz>0 0 -1</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='front_right_wheel_link'>
+      <pose relative_to='front_right_wheel'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 -0 0</pose>
+        <mass>3</mass>
+        <inertia>
+          <ixx>0.7171</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.7171</iyy>
+          <iyz>0</iyz>
+          <izz>0.1361</izz>
+        </inertia>
+      </inertial>
+      <collision name='front_right_wheel_link_collision'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://mrs_robots_description/meshes/scout/wheel.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name='front_right_wheel_link_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://mrs_robots_description/meshes/scout/wheel.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='rear_left_wheel' type='revolute'>
+      <pose relative_to='base_link'>-0.231976 0.208252 -0.100998 -1.57 0 0</pose>
+      <parent>base_link</parent>
+      <child>rear_left_wheel_link</child>
+      <axis>
+        <xyz>0 0 -1</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='rear_left_wheel_link'>
+      <pose relative_to='rear_left_wheel'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 -0 0</pose>
+        <mass>3</mass>
+        <inertia>
+          <ixx>0.7171</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.7171</iyy>
+          <iyz>0</iyz>
+          <izz>0.1361</izz>
+        </inertia>
+      </inertial>
+      <collision name='rear_left_wheel_link_collision'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://mrs_robots_description/meshes/scout/wheel.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name='rear_left_wheel_link_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://mrs_robots_description/meshes/scout/wheel.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='rear_right_wheel' type='revolute'>
+      <pose relative_to='base_link'>-0.231976 -0.208252 -0.099998 1.57 -0 0</pose>
+      <parent>base_link</parent>
+      <child>rear_right_wheel_link</child>
+      <axis>
+        <xyz>0 0 -1</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='rear_right_wheel_link'>
+      <pose relative_to='rear_right_wheel'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 -0 0</pose>
+        <mass>3</mass>
+        <inertia>
+          <ixx>0.7171</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.7171</iyy>
+          <iyz>0</iyz>
+          <izz>0.1361</izz>
+        </inertia>
+      </inertial>
+      <collision name='rear_right_wheel_link_collision'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://mrs_robots_description/meshes/scout/wheel.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name='rear_right_wheel_link_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://mrs_robots_description/meshes/scout/wheel.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <frame name='inertial_joint' attached_to='base_link'>
+      <pose>0 0 0 0 -0 0</pose>
+    </frame>
+    <frame name='inertial_link' attached_to='inertial_joint'/>
+    <!-- ================================================================== -->
+    <!-- ||                compulsory sensor definitions                 || -->
+    <!-- ================================================================== -->
+
+    <!-- Mavlink interface {-->
+    {{ components.mavlink_interface_macro(
+      mavlink_addr = mavlink_addr,
+      mavlink_udp_port = mavlink_udp_port,
+      mavlink_tcp_port = mavlink_tcp_port,
+      serial_enabled = serial_enabled,
+      serial_device = serial_device,
+      baudrate = serial_baudrate,
+      qgc_addr = qgc_addr,
+      qgc_udp_port = qgc_udp_port,
+      sdk_addr = sdk_addr,
+      sdk_udp_port =sdk_udp_port,
+      hil_mode = hil_mode,
+      hil_state_level = hil_state_level,
+      send_vision_estimation = send_vision_estimation,
+      send_odometry = send_odometry,
+      enable_lockstep = use_lockstep,
+      use_tcp = use_tcp)
+    }}
+    <!--}-->
+
+    <!-- GPS {-->
+    {{ components.gps_macro(
+      gps_name = "gps0",
+      parent_link = root,
+      update_rate = 10,
+      gps_noise = true,
+      gps_xy_random_walk = 2.0,
+      gps_z_random_walk = 4.0,
+      gps_xy_noise_density = "2.0e-4",
+      gps_z_noise_density = "4.0e-4",
+      gps_vxy_noise_density = 0.2,
+      gps_vz_noise_density = 0.4,
+      x = 0,
+      y = 0,
+      z = 0,
+      roll = 0,
+      pitch = 0,
+      yaw = 0)
+    }}
+    <!--}-->
+
+    <!-- Magnetometer {-->
+    {{ components.magnetometer_plugin_macro(
+      pub_rate = 100,
+      noise_density = 0.0004,
+      random_walk = 0.0000064,
+      bias_correlation_time = 600,
+      mag_topic = "/mag")
+    }}
+    <!--}-->
+
+    <!-- GPS groundtruth {-->
+    {{ components.gps_groundtruth_plugin_macro(
+      home_latitude = 0,
+      home_longitude = 0,
+      home_altitude = 0)
+    }}
+    <!--}-->
+
+    <!-- Barometer {-->
+    {{ components.barometer_plugin_macro(
+      baro_topic = "/baro",
+      pub_rate = 50,
+      baro_drift_pa_per_sec = 0)
+    }}
+    <!--}-->
+
+    <!-- IMU {-->
+    {{ components.imu_plugin_macro(
+      imu_name = "imu",
+      parent_link = root,
+      imu_topic = "/imu",
+      gyroscope_noise_density = 0.00018665,
+      gyroscope_random_walk = 0.000038785,
+      gyroscope_bias_correlation_time = 1000.0,
+      gyroscope_turn_on_bias_sigma = 0.0087,
+      accelerometer_noise_density = 0.00186,
+      accelerometer_random_walk = 0.006,
+      accelerometer_bias_correlation_time = 300.0,
+      accelerometer_turn_on_bias_sigma = 0.1960,
+      x = 0,
+      y = 0,
+      z = 0,
+      roll = 0,
+      pitch = 0,
+      yaw = 0)
+    }}
+    <!--}-->
+
+  </model>
+</sdf>

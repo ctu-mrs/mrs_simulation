@@ -26,7 +26,7 @@ MAVLINK_TCP_BASE_PORT = 4560
 MAVLINK_UDP_BASE_PORT = 14560
 LAUNCH_BASE_PORT = 14900
 DEFAULT_VEHICLE_TYPE = 't650'
-VEHICLE_TYPES = ['f450', 'f550', 't650', 'x500', 'eaglemk2', 'f330', 'brus', 'naki', 'big_dofec']
+VEHICLE_TYPES = ['f450', 'f550', 't650', 'x500', 'eaglemk2', 'f330', 'brus', 'naki', 'big_dofec', 'scout']
 SPAWNING_DELAY_SECONDS = 6
 
 class MrsDroneSpawner():
@@ -260,7 +260,7 @@ class MrsDroneSpawner():
             self.queued_vehicles.append('uav' + str(ID))
             self.process_queue.append((self.launch_mavros, (ID, uav_roslaunch_args)))
             self.process_queue.append((self.spawn_simulation_model, (ID, uav_roslaunch_args)))
-            self.process_queue.append((self.launch_firmware, (ID, uav_roslaunch_args)))
+            # self.process_queue.append((self.launch_firmware, (ID, uav_roslaunch_args)))
         self.process_queue_mutex.release()
         # #}
 
